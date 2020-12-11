@@ -123,6 +123,10 @@ const ExtendedFilters = () => {
 									{
 										label: 'Nature tour',
 										value: 'nature'
+									},
+									{
+										label: 'City tour',
+										value: 'city'
 									}
 								]
 							},
