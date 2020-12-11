@@ -1,0 +1,11 @@
+mutation EditPreparationStatus($preparationId: Int!) {
+	editPreparationStatus(preparationId: $preparationId) {
+		...Preparation
+	}
+}
+
+mutation DeletePreparation($preparationId: Int!) {
+	deletePreparation(preparationId: $preparationId) {
+		...Preparation
+	}
+}

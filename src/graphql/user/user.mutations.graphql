@@ -1,0 +1,15 @@
+mutation SignIn($data: SignInInput!) {
+	signIn(data: $data) {
+		...Me
+	}
+}
+
+mutation SignUp($data: AddUserInput!) {
+	signUp(data: $data) {
+		...Me
+	}
+}
+
+mutation SignOut {
+	signOut
+}

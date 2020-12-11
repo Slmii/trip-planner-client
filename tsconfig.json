@@ -1,0 +1,37 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"target": "esnext",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"allowSyntheticDefaultImports": true,
+		"paths": {
+			"@lib/*": ["src/lib/*"],
+			"@styles/*": ["src/styles/*"],
+			"@components/*": ["src/components/*"],
+			"@generated/*": ["src/generated/*"],
+			"@theme/*": ["src/theme/*"]
+		},
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"pretty": true
+	},
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/lib/redux/with-redus-store.js"],
+	"exclude": ["node_modules"]
+}

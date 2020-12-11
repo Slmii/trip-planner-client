@@ -1,0 +1,39 @@
+{
+	"root": true, // Make sure eslint picks up the config at the root of the directory
+	"parserOptions": {
+		"ecmaVersion": 2020, // Use the latest ecmascript standard
+		"sourceType": "module", // Allows using import/export statements
+		"ecmaFeatures": {
+			"jsx": true // Enable JSX since we're using React
+		}
+	},
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended",
+		"plugin:jsx-a11y/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/eslint-recommended"
+	],
+	"env": {
+		"es6": true,
+		"browser": true,
+		"jest": true,
+		"node": true,
+		"commonjs": true
+	},
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"rules": {
+		"react/react-in-jsx-scope": "off",
+		"@typescript-eslint/no-inferrable-types": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/no-var-requires": "off"
+	}
+}

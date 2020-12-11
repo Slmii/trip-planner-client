@@ -1,0 +1,5 @@
+mutation DeleteActivity($activityId: Int!) {
+	deleteActivity(activityId: $activityId) {
+		...Activity
+	}
+}

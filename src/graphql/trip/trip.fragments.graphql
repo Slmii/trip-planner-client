@@ -1,0 +1,23 @@
+fragment Trip on Trip {
+	id
+	uuid
+	userId
+	name
+	description
+	public
+	dateFrom
+	dateTo
+	adults
+	children
+	infants
+	backgroundUrl
+	createdAt
+	updatedAt
+	isInFavorite
+	locations {
+		...Location
+	}
+	preparations {
+		...Preparation
+	}
+}

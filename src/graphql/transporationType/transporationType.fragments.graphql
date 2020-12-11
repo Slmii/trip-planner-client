@@ -1,0 +1,5 @@
+fragment TransportationType on TransportationType {
+	id
+	name
+	type
+}

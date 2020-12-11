@@ -1,0 +1,7 @@
+fragment Preparation on Preparation {
+	id
+	uuid
+	name
+	description
+	status
+}

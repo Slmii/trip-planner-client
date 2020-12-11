@@ -1,0 +1,5 @@
+query TripActivities($tripId: Int!, $isCreator: Boolean) {
+	tripActivities(tripId: $tripId, isCreator: $isCreator) {
+		...Activity
+	}
+}

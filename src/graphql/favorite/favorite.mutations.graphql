@@ -1,0 +1,21 @@
+mutation AddFavorite($tripId: Int!) {
+	addFavorite(tripId: $tripId) {
+		id
+		uuid
+		userId
+		tripId
+		createdAt
+		updatedAt
+	}
+}
+
+mutation DeleteFavorite($tripId: Int!) {
+	deleteFavorite(tripId: $tripId) {
+		id
+		uuid
+		userId
+		tripId
+		createdAt
+		updatedAt
+	}
+}

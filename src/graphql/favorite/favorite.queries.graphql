@@ -1,0 +1,8 @@
+query MyFavorites($where: TripWhereInput, $pagination: PaginationInput!, $orderBy: TripSortByInput) {
+	myFavorites(where: $where, pagination: $pagination, orderBy: $orderBy) {
+		trips {
+			...Trip
+		}
+		totalCount
+	}
+}

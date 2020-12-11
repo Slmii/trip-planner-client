@@ -1,0 +1,7 @@
+query ActivityTypes {
+	activityTypes {
+		name
+		type
+		id
+	}
+}

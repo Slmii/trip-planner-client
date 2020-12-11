@@ -1,0 +1,20 @@
+query MyTrips($where: TripWhereInput, $pagination: PaginationInput!, $orderBy: TripSortByInput) {
+	myTrips(where: $where, pagination: $pagination, orderBy: $orderBy) {
+		trips {
+			...Trip
+		}
+		totalCount
+	}
+}
+
+query Trip($tripId: Int!) {
+	trip(tripId: $tripId) {
+		...Trip
+	}
+}
+
+query MyUpcomingTrip {
+	myUpcomingTrip {
+		...Trip
+	}
+}

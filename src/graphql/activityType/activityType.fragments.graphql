@@ -1,0 +1,5 @@
+fragment ActivityType on ActivityType {
+	id
+	name
+	type
+}

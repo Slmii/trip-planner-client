@@ -1,0 +1,24 @@
+fragment Activity on Activity {
+	id
+	uuid
+	name
+	description
+	location
+	date
+	timezone
+	public
+	maxPeople
+	activityType {
+		id
+		name
+		type
+	}
+	transportationType {
+		id
+		name
+		type
+	}
+	users {
+		name
+	}
+}

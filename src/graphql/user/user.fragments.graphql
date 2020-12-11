@@ -1,0 +1,6 @@
+fragment Me on User {
+	id
+	email
+	name
+	role
+}
