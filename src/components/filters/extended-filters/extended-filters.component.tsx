@@ -29,7 +29,6 @@ import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/g
 
 import theme from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
-import { FaLess } from 'react-icons/fa';
 
 const ExtendedFilters = () => {
 	const router = useRouter();

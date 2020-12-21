@@ -16,7 +16,7 @@ export const formatDate = ({ date, timezone, format = 'DD-MM-YYY' }: { date: Dat
 	return dayjs(date).format(format);
 };
 
-export const calculatePreperationCompletionPercentage = (preparations: PreparationFragment[]) => {
+export const calculatePreperationsCompletionPercentage = (preparations: PreparationFragment[]) => {
 	return Math.round((preparations.filter(preparation => preparation.status).length / preparations.length) * 100);
 };
 
