@@ -1,6 +1,6 @@
 import { SortOrder } from '@generated/graphql';
 
-import { ArrayValues, ChipsPrefixMapping } from '@components/filters';
+import { ArrayValues, ChipsPrefixMapping, FiltersState } from '@components/filters';
 
 export const SORT_BY_VALUES: ArrayValues[] = [
 	{
@@ -40,3 +40,14 @@ export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
 };
 
 export const QUERY_STRINGS = ['search', 'departureDate', 'returnDate', 'activityDate', 'activityType', 'transportationType'];
+
+export const INITIAL_FILTERS_STATE: FiltersState = {
+	search: null,
+	departureDate: null,
+	returnDate: null,
+	activityDate: null,
+	activityType: null,
+	transportationType: null,
+	sort: 'dateFrom',
+	order: SortOrder.Asc
+};

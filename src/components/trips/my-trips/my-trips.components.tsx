@@ -4,14 +4,13 @@ import { useSelector } from 'react-redux';
 import { Trips } from '@components/trips';
 import { selectFilters } from '@lib/redux/filters';
 import { helpers } from '@lib/utils';
-import { SortOrder, Trip, useMyTripsQuery } from '@generated/graphql';
+import { Trip, useMyTripsQuery } from '@generated/graphql';
 
 const MyTrips = () => {
 	const router = useRouter();
-	const {
-		rows,
-		extended: { sort, order, search, activityType, transportationType }
-	} = useSelector(selectFilters);
+	const { rows } = useSelector(selectFilters);
+
+	const { search, activityType, transportationType, sort, order } = helpers.getQueryStringFilters(router.query);
 
 	const { data, loading } = useMyTripsQuery({
 		variables: {
@@ -24,13 +23,13 @@ const MyTrips = () => {
 			},
 			where: {
 				search: {
-					contains: search ?? undefined
+					contains: search
 				},
 				activityType: {
-					equals: activityType ?? undefined
+					equals: activityType
 				},
 				transportationType: {
-					equals: transportationType ?? undefined
+					equals: transportationType
 				}
 			}
 		}

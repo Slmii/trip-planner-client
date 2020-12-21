@@ -5,8 +5,8 @@ import { ParsedUrlQuery } from 'querystring';
 dayjs.extend(utc);
 dayjs.extend(timezonePlugin);
 
-import { filters } from '@lib/redux';
-import { PreparationFragment } from '@generated/graphql';
+import { FiltersState } from '@components/filters';
+import { PreparationFragment, SortOrder } from '@generated/graphql';
 
 export const formatDate = ({ date, timezone, format = 'DD-MM-YYY' }: { date: Date; timezone?: string; format?: string }) => {
 	if (timezone) {
@@ -25,20 +25,19 @@ export const getCurrentPage = (query: ParsedUrlQuery) => {
 	return page;
 };
 
-// export const removeProperties = <T extends keyof FiltersState>(object: T, properties: string[]) => {
-// 	const transformedObject = Object.entries(object).reduce((accum, [key, value]) => {
-// 		if (!properties.includes(key)) {
-// 			accum[key as T] = value as FiltersState[T];
-// 		}
-
-// 		return accum;
-// 	}, {} as Record<T, FiltersState[T]>);
-
-// 	return transformedObject;
-// };
-
 export const getQueryStringFilters = (query: ParsedUrlQuery) => {
-	return (query as unknown) as filters.Extended;
+	const queryStrings = (query as unknown) as FiltersState;
+
+	return {
+		search: queryStrings.search ?? undefined,
+		departureDate: queryStrings.departureDate ?? undefined,
+		returnDate: queryStrings.returnDate ?? undefined,
+		activityDate: queryStrings.activityDate ?? undefined,
+		activityType: queryStrings.activityType ?? undefined,
+		transportationType: queryStrings.transportationType ?? undefined,
+		sort: queryStrings.sort ?? 'dateFrom',
+		order: queryStrings.order ?? SortOrder.Asc
+	};
 };
 
 export const hasProperties = <T>(object: Record<keyof T, T[keyof T]>, properties: Array<keyof T>) => {

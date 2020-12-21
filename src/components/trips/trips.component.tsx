@@ -4,7 +4,7 @@ const Box = require('@material-ui/core/Box').default;
 
 import { Cards, Skeleton } from '@components/card';
 import { Breadcrumbs } from '@components/breadcrumbs';
-import { Filters } from '@components/filters';
+import { RowsView } from '@components/filters';
 import { Pagination } from '@components/pagination';
 import { TripsProps } from '@lib/types';
 import { selectRows } from '@lib/redux/filters';
@@ -21,7 +21,7 @@ const Trips = ({ pageName, trips, loading, totalCount }: TripsProps) => {
 				<Typography variant='h5' component='h1'>
 					{pageName} <Typography variant='overline'>({totalCount} results)</Typography>
 				</Typography>
-				<Filters />
+				<RowsView />
 			</Box>
 			{loading ? <Skeleton number={10} /> : <Cards trips={trips} />}
 			<Box display='flex' justifyContent='center' mt={1}>

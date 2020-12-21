@@ -1,22 +1,11 @@
-import { SortOrder } from '@generated/graphql';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 
-import { FiltersState, View, Rows, Extended } from './filters.types';
+import { FiltersState, View, Rows } from './filters.types';
 
 const initialState: FiltersState = {
 	view: 'list',
-	rows: '10',
-	extended: {
-		search: '',
-		departureDate: null,
-		returnDate: null,
-		activityDate: null,
-		activityType: null,
-		transportationType: null,
-		sort: 'dateFrom',
-		order: SortOrder.Asc
-	}
+	rows: '10'
 };
 
 const filtersSlice = createSlice({
@@ -30,13 +19,6 @@ const filtersSlice = createSlice({
 		setRows: (state, action: PayloadAction<Rows>) => {
 			const rows = action.payload;
 			state.rows = rows;
-		},
-		setExtended: (state, action: PayloadAction<Extended>) => {
-			const extended = action.payload;
-			state.extended = extended;
-		},
-		resetExtended: (state, _action: PayloadAction<void>) => {
-			state.extended = initialState.extended;
 		}
 	},
 	extraReducers: {
@@ -47,6 +29,6 @@ const filtersSlice = createSlice({
 	}
 });
 
-export const { setView, setRows, setExtended, resetExtended } = filtersSlice.actions;
+export const { setView, setRows } = filtersSlice.actions;
 
 export default filtersSlice.reducer;

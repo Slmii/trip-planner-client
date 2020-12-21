@@ -1,45 +1,40 @@
 import cn from 'classnames';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 const Container = require('@material-ui/core/Container').default;
 const Box = require('@material-ui/core/Box').default;
-const Chip = require('@material-ui/core/Chip').default;
 const SearchIcon = require('@material-ui/icons/Search').default;
 const TuneIcon = require('@material-ui/icons/Tune').default;
 const ArrowDropDownIcon = require('@material-ui/icons/ArrowDropDown').default;
 const ArrowDropUpIcon = require('@material-ui/icons/ArrowDropUp').default;
 const ClearIcon = require('@material-ui/icons/Clear').default;
 
-import { ORDER_BY_VALUES, SORT_BY_VALUES, CHIPS_PREFIX_MAPPING, AnchorElementState, ChipsPrefixMapping } from '@components/filters';
+import {
+	ORDER_BY_VALUES,
+	SORT_BY_VALUES,
+	INITIAL_FILTERS_STATE,
+	AnchorElementState,
+	FiltersState,
+	SelectedFilters,
+	MenuItemClick
+} from '@components/filters';
 import { InputField } from '@components/inputs';
 import { Button } from '@components/button';
 import { Menu } from '@components/menu';
 import { helpers } from '@lib/utils';
-import { filters } from '@lib/redux';
 import { useFirstRender } from '@lib/hooks';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
 
 import theme from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
+import { FaLess } from 'react-icons/fa';
 
 const ExtendedFilters = () => {
 	const router = useRouter();
-	const dispatch = useDispatch();
 
-	const selectedExtendedFilters = useSelector(filters.selectExtended);
-	const {
-		search: selectedSearch,
-		departureDate: selectedDepartureDate,
-		returnDate: selectedReturnDate,
-		activityDate: selectedActivityDate,
-		activityType: selectedActivityType,
-		transportationType: selectedTransportationType,
-		sort: selectedSort,
-		order: selectedOrder
-	} = selectedExtendedFilters;
+	const [filters, setFilters] = useState<FiltersState>(INITIAL_FILTERS_STATE);
 
 	const [showFilters, setShowFilters] = useState(false);
 	const [anchorEls, setAnchorEls] = useState<AnchorElementState>({
@@ -49,7 +44,7 @@ const ExtendedFilters = () => {
 		sort: null
 	});
 
-	const [searchInput, setSearchInput] = useState('');
+	const [searchInput, setSearchInput] = useState<string | null>(null);
 
 	const { data: activityTypesData } = useActivityTypesQuery();
 	const { data: transportationTypesData } = useTransportationTypesQuery();
@@ -59,7 +54,6 @@ const ExtendedFilters = () => {
 	const { buttonMr, buttonMl, buttonMb, activeButton, errorButtonOutlined } = globalStyles();
 
 	useEffect(() => {
-		const queryStrings = helpers.getQueryStringFilters(router.query);
 		const {
 			search: qsSearch,
 			departureDate: qsDepartureDate,
@@ -69,21 +63,23 @@ const ExtendedFilters = () => {
 			transportationType: qsTransportationType,
 			sort: qsSort,
 			order: qsOrder
-		} = queryStrings;
+		} = helpers.getQueryStringFilters(router.query);
 
-		const currentQueryStringFilters: filters.Extended = {
-			search: qsSearch ?? '',
-			departureDate: qsDepartureDate ?? selectedDepartureDate,
-			returnDate: qsReturnDate ?? selectedReturnDate,
-			activityDate: qsActivityDate ?? selectedActivityDate,
-			activityType: qsActivityType ?? selectedActivityType,
-			transportationType: qsTransportationType ?? selectedTransportationType,
-			sort: qsSort ?? selectedSort,
-			order: qsOrder ?? selectedOrder
+		// Make new object with type FiltersState. Use this to set state.
+		// Use null instead of undefined because the state does not accept undefined.
+		const queryStringsFilters: FiltersState = {
+			search: qsSearch ?? null,
+			departureDate: qsDepartureDate ?? null,
+			returnDate: qsReturnDate ?? null,
+			activityDate: qsActivityDate ?? null,
+			activityType: qsActivityType ?? null,
+			transportationType: qsTransportationType ?? null,
+			sort: qsSort,
+			order: qsOrder
 		};
 
 		// Show the filters section if there are any query strings in the URL
-		helpers.hasProperties<filters.Extended>(queryStrings, [
+		helpers.hasProperties<FiltersState>(queryStringsFilters, [
 			'search',
 			'departureDate',
 			'returnDate',
@@ -93,13 +89,8 @@ const ExtendedFilters = () => {
 		]) && setShowFilters(true);
 
 		// Set query strings from the URL in the according state
-		setSearchInput(qsSearch ?? selectedSearch);
-		dispatch(filters.setExtended(currentQueryStringFilters));
-
-		// Reset store after unmouting component because we dont want to bring over the filters to another component
-		return () => {
-			dispatch(filters.resetExtended());
-		};
+		setSearchInput(queryStringsFilters.search);
+		setFilters(queryStringsFilters);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -107,26 +98,27 @@ const ExtendedFilters = () => {
 	useDeepCompareEffect(() => {
 		if (!firstRender) {
 			// Set query strings in URL after each filter change
-			router.push(
-				`/trips/${router.query.trips}?page=1${Object.entries(selectedExtendedFilters)
+			router.push({
+				pathname: `/trips/${router.query.trips}`,
+				query: Object.entries(filters)
 					.filter(([_, value]) => value)
-					.map(([key, value]) => `&${key}=${value}`)
-					.join('')}`
-			);
+					.reduce((accum, [key, value]) => {
+						accum[key] = value;
+						return accum;
+					}, {} as Record<string, string>)
+			});
 		}
-	}, [firstRender, selectedExtendedFilters]);
+	}, [firstRender, filters]);
 
-	const handleOnChipDelete = (type: keyof filters.Extended) => {
+	const handleOnChipDelete = (type: keyof FiltersState) => {
 		if (type === 'search') {
 			setSearchInput('');
 		}
 
-		dispatch(
-			filters.setExtended({
-				...selectedExtendedFilters,
-				[type]: type === 'search' ? '' : null
-			})
-		);
+		setFilters(prevState => ({
+			...prevState,
+			[type]: null
+		}));
 	};
 
 	const handleOnMenuOpen = (e: React.MouseEvent, type: keyof AnchorElementState) => {
@@ -137,32 +129,29 @@ const ExtendedFilters = () => {
 		setAnchorEls(prevState => ({ ...prevState, [type]: null }));
 	};
 
-	const handleOnMenuItemClick = (type: keyof filters.Extended, value: string) => {
-		dispatch(
-			filters.setExtended({
-				...selectedExtendedFilters,
-				[type]: value
-			})
-		);
+	const handleOnMenuItemClick = ({ type, value, closeMenu = true }: MenuItemClick) => {
+		setFilters(prevState => ({
+			...prevState,
+			[type]: value
+		}));
 
-		setAnchorEls(prevState => ({ ...prevState, [type]: null }));
+		if (closeMenu) {
+			setAnchorEls(prevState => ({ ...prevState, [type]: null }));
+		}
 	};
 
 	const handleOnSubmitSearch = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		dispatch(
-			filters.setExtended({
-				...selectedExtendedFilters,
-				search: searchInput
-			})
-		);
+		setFilters(prevState => ({
+			...prevState,
+			search: searchInput
+		}));
 	};
 
 	const handleOnClearFilters = () => {
 		setSearchInput('');
-
-		dispatch(filters.resetExtended());
+		setFilters(INITIAL_FILTERS_STATE);
 	};
 
 	return (
@@ -180,11 +169,10 @@ const ExtendedFilters = () => {
 							<Box component='form' onSubmit={handleOnSubmitSearch} width='100%' display='flex'>
 								<InputField
 									label='Search'
-									placeholder='...'
 									type='text'
 									name='search'
 									size='small'
-									value={searchInput}
+									value={searchInput as string}
 									onChange={e => setSearchInput(e.target.value)}
 								/>
 								<Button
@@ -276,8 +264,12 @@ const ExtendedFilters = () => {
 											activityTypesData?.activityTypes.map(({ name, type }) => ({
 												label: name,
 												value: type,
-												onMenuItemClick: value => handleOnMenuItemClick('activityType', value),
-												selected: selectedActivityType === type
+												onMenuItemClick: value =>
+													handleOnMenuItemClick({
+														type: 'activityType',
+														value
+													}),
+												selected: filters.activityType === type
 											})) || []
 										}
 									/>
@@ -289,8 +281,12 @@ const ExtendedFilters = () => {
 											transportationTypesData?.transportationTypes.map(({ name, type }) => ({
 												label: name,
 												value: type,
-												onMenuItemClick: value => handleOnMenuItemClick('transportationType', value),
-												selected: selectedTransportationType === type
+												onMenuItemClick: value =>
+													handleOnMenuItemClick({
+														type: 'transportationType',
+														value
+													}),
+												selected: filters.transportationType === type
 											})) || []
 										}
 									/>
@@ -307,13 +303,12 @@ const ExtendedFilters = () => {
 													label,
 													value,
 													onMenuItemClick: value =>
-														dispatch(
-															filters.setExtended({
-																...selectedExtendedFilters,
-																sort: value as filters.SortBy
-															})
-														),
-													selected: selectedSort === value
+														handleOnMenuItemClick({
+															type: 'sort',
+															value,
+															closeMenu: false
+														}),
+													selected: filters.sort === value
 												}))
 											},
 											{
@@ -323,61 +318,23 @@ const ExtendedFilters = () => {
 													label,
 													value,
 													onMenuItemClick: value =>
-														dispatch(
-															filters.setExtended({
-																...selectedExtendedFilters,
-																order: value as filters.OrderBy
-															})
-														),
-													selected: selectedOrder === value
+														handleOnMenuItemClick({
+															type: 'order',
+															value,
+															closeMenu: false
+														}),
+													selected: filters.order === value
 												}))
 											}
 										]}
 									/>
 								</Box>
-								<Box display='flex' flexWrap='wrap'>
-									{Object.entries(selectedExtendedFilters).map(([key, value]) => {
-										if (value) {
-											let typeName = value;
-
-											const isSortOrder = key === 'sort' || key === 'order';
-											const isType = key === 'activityType' || key === 'transportationType';
-
-											if (isType) {
-												typeName =
-													activityTypesData?.activityTypes.find(activity => activity.type === value)?.name ??
-													transportationTypesData?.transportationTypes.find(
-														transportation => transportation.type === value
-													)?.name;
-											} else if (isSortOrder) {
-												typeName = [...SORT_BY_VALUES, ...ORDER_BY_VALUES].find(item => item.value === value)
-													?.label;
-											}
-
-											const label = `${CHIPS_PREFIX_MAPPING[key as keyof ChipsPrefixMapping]}: ${typeName}`;
-
-											const conditionalProps: { onDelete?: () => void } = {};
-
-											if (!isSortOrder) {
-												conditionalProps.onDelete = () => handleOnChipDelete(key as keyof filters.Extended);
-											}
-
-											return (
-												<Chip
-													key={key}
-													className={`${buttonMr} ${buttonMb}`}
-													label={label}
-													variant='outlined'
-													color='secondary'
-													size='small'
-													{...conditionalProps}
-												/>
-											);
-										}
-
-										return null;
-									})}
-								</Box>
+								<SelectedFilters
+									filters={filters}
+									activityTypes={activityTypesData?.activityTypes}
+									transportationTypes={transportationTypesData?.transportationTypes}
+									onDelete={handleOnChipDelete}
+								/>
 							</>
 						)}
 					</Box>

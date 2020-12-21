@@ -6,7 +6,7 @@ const ViewModuleIcon = require('@material-ui/icons/ViewModule').default;
 import { ToggleButton } from '@components/button';
 import { View, setView, setRows, Rows, selectFilters } from '@lib/redux/filters';
 
-const Filters = () => {
+const RowsView = () => {
 	const dispatch = useDispatch();
 	const { view, rows } = useSelector(selectFilters);
 
@@ -59,4 +59,4 @@ const Filters = () => {
 	);
 };
 
-export default Filters;
+export default RowsView;

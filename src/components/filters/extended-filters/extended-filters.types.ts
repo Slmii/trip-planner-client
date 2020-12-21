@@ -1,5 +1,21 @@
-import { filters } from '@lib/redux';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { SortOrder, TripSortByInput } from '@generated/graphql';
 
+import { ActivityType, KeyOf, TransportationType, ValueOf } from '@lib/types';
+
+export type SortBy = keyof TripSortByInput;
+export type OrderBy = SortOrder;
+
+export interface FiltersState {
+	search: string | null;
+	departureDate: MaterialUiPickersDate;
+	returnDate: MaterialUiPickersDate;
+	activityDate: MaterialUiPickersDate;
+	activityType: ActivityType | null;
+	transportationType: TransportationType | null;
+	sort: SortBy;
+	order: OrderBy;
+}
 export interface AnchorElementState {
 	filters: null | HTMLElement;
 	activityType: null | HTMLElement;
@@ -8,8 +24,14 @@ export interface AnchorElementState {
 }
 
 export interface ArrayValues {
-	value: filters.SortBy | filters.OrderBy;
+	value: SortBy | OrderBy;
 	label: string;
 }
 
-export type ChipsPrefixMapping = filters.Extended & { sort: string; order: string };
+export interface MenuItemClick {
+	type: KeyOf<FiltersState>;
+	value: ValueOf<FiltersState>;
+	closeMenu?: boolean;
+}
+
+export type ChipsPrefixMapping = FiltersState & { sort: string; order: string };

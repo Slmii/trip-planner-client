@@ -8,6 +8,4 @@ export const selectRows = createSelector([selectFiltersState], filters => filter
 
 export const selectView = createSelector([selectFiltersState], filters => filters.view);
 
-export const selectExtended = createSelector([selectFiltersState], filters => filters.extended);
-
 export const selectFilters = createSelector([selectFiltersState], filters => filters);
