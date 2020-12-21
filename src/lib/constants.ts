@@ -9,3 +9,12 @@ export const STRENGTH = {
 	4: 'Good',
 	5: 'Strong'
 };
+
+export const CHIPS_PREFIX_MAPPING: Record<string, string> = {
+	search: 'Search',
+	departureDate: 'Departure date',
+	returnDate: 'Return date',
+	activityDate: 'Activity date',
+	activityType: 'Activity',
+	transportationType: 'Transportation'
+};

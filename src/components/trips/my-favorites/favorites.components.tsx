@@ -8,16 +8,27 @@ import { selectFilters } from '@lib/redux/filters';
 
 const MyFavorites = () => {
 	const { page } = useContext(PaginationContext);
-	const { rows, orderSort } = useSelector(selectFilters);
+	const { rows, orderSort, extendedFilters } = useSelector(selectFilters);
 
 	const { data, loading } = useMyFavoritesQuery({
 		variables: {
 			orderBy: {
-				[orderSort.order]: orderSort.sort
+				[orderSort.sort]: orderSort.order
 			},
 			pagination: {
 				skip: page * Number(rows),
 				take: Number(rows)
+			},
+			where: {
+				search: {
+					contains: extendedFilters.search || undefined
+				},
+				activityType: {
+					equals: extendedFilters.activityType ?? undefined
+				},
+				transportationType: {
+					equals: extendedFilters.transportationType ?? undefined
+				}
 			}
 		}
 	});

@@ -205,11 +205,11 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 								</Typography>
 							</Box>
 							<IconButton
-								color='secondary'
 								tooltip={true}
 								icon={<Cancel fontSize='large' />}
 								title='Close summary'
 								onClick={handleOnDrawerClose}
+								color='primary'
 							/>
 						</Box>
 						<Box display='flex' alignItems='center'>
@@ -251,7 +251,12 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 						{preparations.length ? (
 							<Box display='flex' alignItems='center'>
 								<Box width='82.5%'>
-									<LinearProgress className={iconMr} variant='determinate' value={preperationCompletionPercentage} />
+									<LinearProgress
+										className={iconMr}
+										variant='determinate'
+										value={preperationCompletionPercentage}
+										color='secondary'
+									/>
 								</Box>
 								<Typography
 									variant='subtitle2'
@@ -290,17 +295,10 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 					</Box>
 				</Box>
 				<Box padding='0 30px 30px 30px' display='flex' justifyContent='flex-end'>
-					<Button
-						className={buttonMr}
-						color='secondary'
-						variant='outlined'
-						fullWidth={false}
-						type='button'
-						onClick={handleOnDrawerClose}
-					>
+					<Button className={buttonMr} variant='outlined' fullWidth={false} type='button' onClick={handleOnDrawerClose}>
 						Close
 					</Button>
-					<Button color='secondary' variant='contained' fullWidth={false} type='button'>
+					<Button variant='contained' fullWidth={false} type='button'>
 						Manage
 					</Button>
 				</Box>

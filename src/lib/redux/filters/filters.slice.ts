@@ -1,13 +1,19 @@
+import { SortOrder } from '@generated/graphql';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 
-import { SortOrder } from '@generated/graphql';
-import { FiltersState, View, Rows, SortBy, OrderBy } from './filters.types';
+import { FiltersState, View, Rows, Extended } from './filters.types';
 
-export const initialState: FiltersState = {
+const initialState: FiltersState = {
 	view: 'list',
 	rows: '10',
-	orderSort: {
+	extended: {
+		search: '',
+		departureDate: null,
+		returnDate: null,
+		activityDate: null,
+		activityType: null,
+		transportationType: null,
 		sort: 'dateFrom',
 		order: SortOrder.Asc
 	}
@@ -25,13 +31,12 @@ const filtersSlice = createSlice({
 			const rows = action.payload;
 			state.rows = rows;
 		},
-		setSortBy: (state, action: PayloadAction<SortBy>) => {
-			const sortBy = action.payload;
-			state.orderSort.sort = sortBy;
+		setExtended: (state, action: PayloadAction<Extended>) => {
+			const extended = action.payload;
+			state.extended = extended;
 		},
-		setOrderBy: (state, action: PayloadAction<OrderBy>) => {
-			const orderby = action.payload;
-			state.orderSort.order = orderby;
+		resetExtended: (state, _action: PayloadAction<void>) => {
+			state.extended = initialState.extended;
 		}
 	},
 	extraReducers: {
@@ -42,6 +47,6 @@ const filtersSlice = createSlice({
 	}
 });
 
-export const { setView, setRows, setSortBy, setOrderBy } = filtersSlice.actions;
+export const { setView, setRows, setExtended, resetExtended } = filtersSlice.actions;
 
 export default filtersSlice.reducer;

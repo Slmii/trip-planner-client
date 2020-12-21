@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { IS_SERVER } from '@lib/constants';
 import { useRouter } from 'next/router';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 interface ContextProps {
 	page: number;
@@ -10,14 +8,21 @@ interface ContextProps {
 
 export const PaginationContext = createContext<ContextProps>({
 	page: 0,
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setPage: () => {}
 });
 
 const PaginationContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
-	const { page: pageNr } = router.query;
+	const [page, setPage] = useState(1);
 
-	const [page, setPage] = useState(pageNr ? Number(pageNr[0]) - 1 : 0);
+	useEffect(() => {
+		if (router.query.page) {
+			const currentPage = ((router.query.page as unknown) as number) || 1;
+			setPage(currentPage);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<PaginationContext.Provider

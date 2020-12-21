@@ -101,7 +101,6 @@ const Card = ({
 					<Box display='flex'>
 						<Button
 							variant={isCreator ? 'outlined' : 'contained'}
-							color='secondary'
 							fullWidth={false}
 							size='large'
 							onClick={() => (isSelected ? onClose() : onView(trip.id))}
@@ -110,7 +109,7 @@ const Card = ({
 							View
 						</Button>
 						{isCreator && (
-							<Button variant='contained' color='secondary' size='large' fullWidth={false}>
+							<Button variant='contained' size='large' fullWidth={false}>
 								Manage
 							</Button>
 						)}
@@ -128,7 +127,7 @@ const Card = ({
 						)}
 						{trip.isInFavorite ? (
 							<IconButton
-								color='secondary'
+								color='primary'
 								aria-label='remove from favorite'
 								tooltip={true}
 								icon={<FavoriteIcon />}
@@ -137,7 +136,7 @@ const Card = ({
 							/>
 						) : (
 							<IconButton
-								color='secondary'
+								color='primary'
 								aria-label='add to favorite'
 								tooltip={true}
 								icon={<FavoriteBorderIcon />}
@@ -145,14 +144,12 @@ const Card = ({
 								onClick={() => onAddFavorite(trip.id)}
 							/>
 						)}
-						<IconButton color='secondary' aria-label='share' tooltip={true} icon={<ShareIcon />} title='Share trip' />
+						<IconButton aria-label='share' color='primary' tooltip={true} icon={<ShareIcon />} title='Share trip' />
 					</Box>
 				</Box>
 			</Box>
 		</S.Card>
 	);
 };
-
-// Card.whyDidYouRender = true;
 
 export default React.memo(Card);

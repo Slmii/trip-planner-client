@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 
 import { MyTrips, MyFavorites } from '@components/trips';
 import { Layout } from '@components/common';
-import { PaginationContextProvider } from '@lib/context';
 import { withApollo } from '@lib/apollo';
 
 function TripsPage() {
@@ -16,11 +15,7 @@ function TripsPage() {
 		body = <MyFavorites />;
 	}
 
-	return (
-		<PaginationContextProvider>
-			<Layout>{body}</Layout>
-		</PaginationContextProvider>
-	);
+	return <Layout>{body}</Layout>;
 }
 
 export default withApollo({ ssr: true })(TripsPage);

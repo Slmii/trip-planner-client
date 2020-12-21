@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
-// import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 const Box = require('@material-ui/core/Box').default;
 const CircularProgress = require('@material-ui/core/CircularProgress').default;
 const AccountCircle = require('@material-ui/icons/AccountCircle').default;
@@ -11,7 +11,7 @@ const { useTheme } = require('@material-ui/core/styles');
 import { Button } from '@components/button';
 import { Dropdown } from '@components/dropdown';
 import { useOutsideClick } from '@lib/hooks';
-import { MeDocument, MeQuery, useMeQuery, useSignOutMutation } from '@generated/graphql';
+import { useMeQuery, useSignOutMutation } from '@generated/graphql';
 
 import * as S from './header.styled';
 import { Theme } from '@theme/index';
@@ -22,7 +22,7 @@ function Header() {
 	const [visible, setVisible] = useState<boolean>(false);
 	const { iconMr } = globalStyles();
 
-	// const apolloClient = useApolloClient();
+	const apolloClient = useApolloClient();
 	const router = useRouter();
 	const theme: Theme = useTheme();
 	useOutsideClick(profileMenuRef, () => setVisible(false));
@@ -33,28 +33,29 @@ function Header() {
 
 	const handleOnSignOut = async () => {
 		setVisible(false);
-		await signOut({
-			update: (cache, _result) => {
-				cache.writeQuery<MeQuery>({
-					query: MeDocument,
-					data: {
-						__typename: 'Query',
-						me: null
-					}
-				});
+		// await signOut({
+		// 	update: (cache, _result) => {
+		// 		cache.writeQuery<MeQuery>({
+		// 			query: MeDocument,
+		// 			data: {
+		// 				__typename: 'Query',
+		// 				me: null
+		// 			}
+		// 		});
 
-				cache.modify({
-					fields: {
-						myTrips(_, { DELETE }) {
-							return DELETE;
-						}
-					}
-				});
-			}
-		});
+		// 		cache.modify({
+		// 			fields: {
+		// 				myTrips(_, { DELETE }) {
+		// 					return DELETE;
+		// 				}
+		// 			}
+		// 		});
+		// 	}
+		// });
 
-		// await client.clearStore();
-		// router.push('/signin');
+		await signOut();
+		await apolloClient.clearStore();
+		router.push('/signin');
 	};
 
 	const handleOnSignInClick = () => {
@@ -75,6 +76,7 @@ function Header() {
 				maxWidth={1280}
 				marginLeft='auto'
 				marginRight='auto'
+				p={1.5}
 			>
 				<Box>
 					<Link href='/'>
@@ -100,19 +102,13 @@ function Header() {
 					</S.NavbarItem>
 					{meLoading || signOutLoading ? (
 						<Box display='flex' justifyContent='center' alignItems='center' width='100px' ml={0.75}>
-							<CircularProgress size='1.5rem' />
+							<CircularProgress size='1.5rem' color='secondary' />
 						</Box>
 					) : data?.me ? (
 						<S.ProfileMenu ref={profileMenuRef} onClick={() => setVisible(!visible)}>
 							<AccountCircle className={iconMr} />
 							<Box className='bold'>
-								{badgeCount ? (
-									<S.PulseBadge color='primary' variant='dot'>
-										{data.me.name}
-									</S.PulseBadge>
-								) : (
-									<>{data.me.name}</>
-								)}
+								{badgeCount ? <S.PulseBadge variant='dot'>{data.me.name}</S.PulseBadge> : <>{data.me.name}</>}
 							</Box>
 							<Dropdown
 								visible={visible}
@@ -122,7 +118,7 @@ function Header() {
 										element: (
 											<Box display='flex'>
 												<Box fontWeight='bold'>Notifications</Box>
-												<S.Badge color='primary' badgeContent={badgeCount} max={99} />
+												<S.Badge color='secondary' badgeContent={badgeCount} max={99} />
 											</Box>
 										)
 									},
@@ -150,10 +146,10 @@ function Header() {
 						<>
 							<S.NavbarItem>
 								<Button
-									variant='contained'
-									color='primary'
+									variant='outlined'
+									color='secondary'
 									size='large'
-									className='fs-14 bold'
+									className='fs-14 bold white'
 									onClick={handleOnSignInClick}
 								>
 									Sign in
@@ -161,8 +157,8 @@ function Header() {
 							</S.NavbarItem>
 							<S.NavbarItem>
 								<Button
-									variant='outlined'
-									color='primary'
+									variant='contained'
+									color='secondary'
 									size='large'
 									className='fs-14 bold white'
 									onClick={handleOnSignUpClick}

@@ -1,12 +1,11 @@
-import { Fragment } from 'react';
 const MuiMenu = require('@material-ui/core/Menu').default;
 const ListSubheader = require('@material-ui/core/ListSubheader').default;
 const MuiMenuItem = require('@material-ui/core/MenuItem').default;
 const Typography = require('@material-ui/core/Typography').default;
 
-import { MenuProps } from '@lib/types';
+import { MenuItem, MenuProps, MultipleMenuItem } from '@lib/types';
 
-const Menu = ({ anchorEl, onClose, type, menu }: MenuProps) => {
+const Menu = ({ anchorEl, onClose, type, menu, multiple = false }: MenuProps) => {
 	return (
 		<MuiMenu
 			id={`${type}-menu`}
@@ -18,23 +17,34 @@ const Menu = ({ anchorEl, onClose, type, menu }: MenuProps) => {
 			transformOrigin={{ vertical: 'top', horizontal: 'left' }}
 			getContentAnchorEl={null}
 		>
-			{menu.map(({ subHeader, onMenuItemClick, menuItems }) => {
-				const body: JSX.Element[] = [];
+			{multiple
+				? (menu as MultipleMenuItem[]).map(({ subHeader, type, menuItems }) => {
+						const body: JSX.Element[] = [];
 
-				if (subHeader) {
-					body.push(<ListSubheader>{subHeader}</ListSubheader>);
-				}
+						body.push(<ListSubheader>{subHeader}</ListSubheader>);
 
-				menuItems.forEach(({ label, value }) =>
-					body.push(
-						<MuiMenuItem key={value} onClick={() => onMenuItemClick?.(value)}>
+						menuItems.forEach(({ label, value, selected, onMenuItemClick }) =>
+							body.push(
+								<MuiMenuItem
+									key={value}
+									value={`${type}-${value}`}
+									onClick={() => onMenuItemClick(value)}
+									selected={selected}
+								>
+									<Typography variant='body2'>{label}</Typography>
+								</MuiMenuItem>
+							)
+						);
+
+						return body;
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  })
+				: (menu as MenuItem[]).map(({ label, value, selected, onMenuItemClick }) => (
+						<MuiMenuItem key={value} value={value} onClick={() => onMenuItemClick(value)} selected={selected}>
 							<Typography variant='body2'>{label}</Typography>
 						</MuiMenuItem>
-					)
-				);
-
-				return body;
-			})}
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  ))}
 		</MuiMenu>
 	);
 };

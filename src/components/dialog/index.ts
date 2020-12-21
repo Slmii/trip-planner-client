@@ -1,3 +1,3 @@
-import Dialog, { Transition } from './dialog/dialog.component';
+import Dialog, { Transition, ErrorButtonContained } from './dialog/dialog.component';
 
-export { Dialog, Transition };
+export { Dialog, Transition, ErrorButtonContained };

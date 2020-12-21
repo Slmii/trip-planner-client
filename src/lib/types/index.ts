@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { FieldInputProps } from 'formik';
+import { ParsedUrlQuery } from 'querystring';
 
 import { MeFragment, PreparationFragment, Trip } from '@generated/graphql';
 import { filters } from '@lib/redux';
@@ -7,27 +8,27 @@ import { filters } from '@lib/redux';
 type WithChildren<T = Record<string, unknown>> = T & { children?: ReactNode };
 
 // Component Types
-export type DropdownProps = {
+export interface DropdownProps {
 	className?: string;
 	visible: boolean;
 	items: DropdownItems[];
-};
+}
 
-type DropdownItems = {
+interface DropdownItems {
 	name?: string;
 	element?: JSX.Element;
 	href?: string;
 	divider?: boolean;
 	action?: () => Promise<void> | void;
-};
+}
 
-export type DropDownItemProps = {
+export interface DropDownItemProps {
 	name?: string;
 	element?: JSX.Element;
 	action?: () => Promise<void> | void;
-};
+}
 
-export type FormInputFieldProps = {
+export interface FormInputFieldProps {
 	name: string;
 	label?: string;
 	type?: string;
@@ -40,9 +41,9 @@ export type FormInputFieldProps = {
 	placeholder?: string;
 	size?: InputSize;
 	startAdornment?: JSX.Element;
-};
+}
 
-export type InputFieldProps = {
+export interface InputFieldProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	field?: FieldInputProps<any>;
 	value?: string;
@@ -66,11 +67,11 @@ export type InputFieldProps = {
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	onFocus?: (event: React.FocusEvent) => void;
 	onFocusOut?: (event: React.FocusEvent) => void;
-};
+}
 
-export type InputSelectProps = {
-	value: string;
-	menuItems: MenuItem[];
+export interface InputSelectProps {
+	value: string | string[];
+	menu: MultipleMenuItem[] | MenuItem[];
 	label?: string;
 	autoWidth?: boolean;
 	multiple?: boolean;
@@ -80,17 +81,25 @@ export type InputSelectProps = {
 	minWidth?: number;
 	fullWidth?: boolean;
 	required?: boolean;
-	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
+	onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
 
-export type MenuItem = {
+export interface MenuItem {
 	value: string;
 	label: JSX.Element | string;
-};
+	onMenuItemClick: (value: string) => void;
+	selected?: boolean;
+}
+
+export interface MultipleMenuItem {
+	menuItems: MenuItem[];
+	type: string;
+	subHeader: string;
+}
 
 export interface ButtonProps extends WithChildren {
 	type?: ButtonType;
-	color?: Color;
+	color?: Color | 'error';
 	variant?: ButtonVariant;
 	size?: Size;
 	loading?: boolean;
@@ -102,7 +111,7 @@ export interface ButtonProps extends WithChildren {
 	className?: string;
 }
 
-export type CardProps = {
+export interface CardProps {
 	trip: Trip;
 	isUpcomingTrip: boolean;
 	isSelected: boolean;
@@ -113,81 +122,76 @@ export type CardProps = {
 	onAddFavorite: (tripId: number) => void;
 	onDeleteFavorite: (tripId: number) => void;
 	onClose: () => void;
-};
+}
 
-export type ToggleButtonProps = {
+export interface ToggleButtonProps {
 	defaultValue: string;
 	buttons: { value: string; title: string; label: string | JSX.Element }[];
 	onChange: (value: filters.View | filters.Rows) => void;
 	size?: Size;
 	orientation?: 'vertical' | 'horizontal';
-};
+}
 
-export type TripsProps = {
+export interface TripsProps {
 	trips: Trip[];
 	loading: boolean;
 	pageName: string;
 	totalCount: number;
-};
+}
 
-export type PaginationProps = {
-	page: number;
-	count: number;
-	onChange: (event: React.ChangeEvent<unknown>, value: number) => void;
-};
-
-export type IconButtonProps = {
+export interface IconButtonProps {
 	title: string;
 	icon: JSX.Element;
 	tooltip?: boolean;
 	onClick?: (event: React.KeyboardEvent | React.MouseEvent) => void;
 	color?: 'primary' | 'secondary' | 'error';
-};
+}
 
-export type TripSummaryProps = {
+export interface TripSummaryProps {
 	tripId: number;
 	me?: MeFragment | null;
 	onClose: () => void;
-};
+}
 
-export type PreparationProps = {
+export interface PreparationProps {
 	preparation: PreparationFragment;
 	onDelete: (preparationId: number) => void;
 	onStatusChange: (preparationId: number) => void;
-};
+}
 
-export type MenuItemOnClick<T> = {
+export interface MenuItemOnClick<T> {
 	label: string;
 	value: T;
-};
+}
 
-export type MenuProps = {
+export interface MenuProps {
 	anchorEl: HTMLElement | null;
 	type: string;
-	menu: {
-		menuItems: MenuItem[];
-		subHeader?: string;
-		onMenuItemClick?: (value: string) => void;
-	}[];
+	menu: MultipleMenuItem[] | MenuItem[];
 	onClose?: () => void;
-};
+	multiple?: boolean;
+}
 
 // End Component Types
 
 // Formik Types
-export type SignInInitialValues = {
+export interface SignInInitialValues {
 	email: string;
 	password: string;
-};
+}
 
-export type SignUpInitialValues = {
+export interface SignUpInitialValues {
 	email: string;
 	firstName: string;
 	lastName: string;
 	password: string;
 	confirmPassword: string;
-};
+}
 // End Formik Types
+
+// Rest
+
+// End Rest
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text';
 export type ButtonType = 'submit' | 'button' | 'reset';
@@ -199,8 +203,10 @@ export type InputSize = 'small' | 'medium';
 export type Severity = 'error' | 'warning' | 'success' | 'info';
 export type ActivityType = 'hiking' | 'beach' | 'tour' | 'nature';
 export type TransportationType = 'taxi' | 'bus' | 'foot' | 'motorcycle';
+export type ValueOf<T> = T[keyof T];
+export type KeyOf<T> = keyof T;
 
-export type User = {
+export interface User {
 	userId: number;
 	role: string;
-};
+}

@@ -5,7 +5,7 @@ body {
 	font-family: 'Cairo', serif;
 	margin: 0;
 	font-size: 100%;
-	background-color: $background;
+	background-color: #ffffff;
 	color: $text;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -52,6 +52,10 @@ h5 {
 	color: $secondary;
 }
 
+.error {
+	color: $error;
+}
+
 .bold {
 	font-weight: 600;
 }
@@ -75,6 +79,10 @@ a {
 
 .white {
 	color: white !important;
+}
+
+.text {
+	color: $text !important;
 }
 
 *:disabled {

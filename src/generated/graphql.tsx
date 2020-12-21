@@ -2,6 +2,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -207,14 +209,11 @@ export type PaginationInput = {
 };
 
 export type TripWhereInput = {
-  name?: Maybe<StringFilter>;
-  description?: Maybe<StringFilter>;
-  public?: Maybe<BoolFilter>;
-  adults?: Maybe<IntFilter>;
-  children?: Maybe<IntFilter>;
-  infants?: Maybe<IntFilter>;
+  search?: Maybe<StringFilter>;
   from?: Maybe<DateFilter>;
   to?: Maybe<DateFilter>;
+  activityType?: Maybe<StringFilter>;
+  transportationType?: Maybe<StringFilter>;
 };
 
 export type StringFilter = {
@@ -229,22 +228,6 @@ export type StringFilter = {
   startsWith?: Maybe<Scalars['String']>;
   endsWith?: Maybe<Scalars['String']>;
   not?: Maybe<Scalars['String']>;
-};
-
-export type BoolFilter = {
-  equals?: Maybe<Scalars['Boolean']>;
-  not?: Maybe<Scalars['Boolean']>;
-};
-
-export type IntFilter = {
-  equals?: Maybe<Scalars['Int']>;
-  in?: Maybe<Array<Scalars['Int']>>;
-  notIn?: Maybe<Array<Scalars['Int']>>;
-  lt?: Maybe<Scalars['Int']>;
-  lte?: Maybe<Scalars['Int']>;
-  gt?: Maybe<Scalars['Int']>;
-  gte?: Maybe<Scalars['Int']>;
-  not?: Maybe<Scalars['Int']>;
 };
 
 export type DateFilter = {
@@ -318,6 +301,11 @@ export type UserWhereInput = {
   role?: Maybe<Role>;
   from?: Maybe<DateFilter>;
   to?: Maybe<DateFilter>;
+};
+
+export type BoolFilter = {
+  equals?: Maybe<Scalars['Boolean']>;
+  not?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
@@ -514,16 +502,16 @@ export type ChangeForgottenPasswordInput = {
 
 export type ActivityFragment = (
   { __typename?: 'Activity' }
-  & Pick<Activity, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Activity, 'id' | 'uuid' | 'name' | 'description' | 'location' | 'date' | 'timezone' | 'public' | 'maxPeople'>
   & { activityType: (
     { __typename?: 'ActivityType' }
-    & Pick<ActivityType, '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<ActivityType, 'id' | 'name' | 'type'>
   ), transportationType: (
     { __typename?: 'TransportationType' }
-    & Pick<TransportationType, '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<TransportationType, 'id' | 'name' | 'type'>
   ), users: Array<(
     { __typename?: 'User' }
-    & Pick<User, '[object Object]'>
+    & Pick<User, 'name'>
   )> }
 );
 
@@ -556,7 +544,7 @@ export type TripActivitiesQuery = (
 
 export type ActivityTypeFragment = (
   { __typename?: 'ActivityType' }
-  & Pick<ActivityType, '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<ActivityType, 'id' | 'name' | 'type'>
 );
 
 export type ActivityTypesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -566,7 +554,7 @@ export type ActivityTypesQuery = (
   { __typename?: 'Query' }
   & { activityTypes: Array<(
     { __typename?: 'ActivityType' }
-    & Pick<ActivityType, '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<ActivityType, 'name' | 'type' | 'id'>
   )> }
 );
 
@@ -579,7 +567,7 @@ export type AddFavoriteMutation = (
   { __typename?: 'Mutation' }
   & { addFavorite: (
     { __typename?: 'Favorite' }
-    & Pick<Favorite, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<Favorite, 'id' | 'uuid' | 'userId' | 'tripId' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -592,7 +580,7 @@ export type DeleteFavoriteMutation = (
   { __typename?: 'Mutation' }
   & { deleteFavorite: (
     { __typename?: 'Favorite' }
-    & Pick<Favorite, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<Favorite, 'id' | 'uuid' | 'userId' | 'tripId' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -607,7 +595,7 @@ export type MyFavoritesQuery = (
   { __typename?: 'Query' }
   & { myFavorites: (
     { __typename?: 'TripsResponse' }
-    & Pick<TripsResponse, '[object Object]'>
+    & Pick<TripsResponse, 'totalCount'>
     & { trips: Array<(
       { __typename?: 'Trip' }
       & TripFragment
@@ -617,12 +605,12 @@ export type MyFavoritesQuery = (
 
 export type LocationFragment = (
   { __typename?: 'Location' }
-  & Pick<Location, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Location, 'id' | 'uuid' | 'tripId' | 'name'>
 );
 
 export type PreparationFragment = (
   { __typename?: 'Preparation' }
-  & Pick<Preparation, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Preparation, 'id' | 'uuid' | 'name' | 'description' | 'status'>
 );
 
 export type EditPreparationStatusMutationVariables = Exact<{
@@ -653,7 +641,7 @@ export type DeletePreparationMutation = (
 
 export type TransportationTypeFragment = (
   { __typename?: 'TransportationType' }
-  & Pick<TransportationType, '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<TransportationType, 'id' | 'name' | 'type'>
 );
 
 export type TransportationTypesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -663,13 +651,13 @@ export type TransportationTypesQuery = (
   { __typename?: 'Query' }
   & { transportationTypes: Array<(
     { __typename?: 'TransportationType' }
-    & Pick<TransportationType, '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<TransportationType, 'name' | 'type' | 'id'>
   )> }
 );
 
 export type TripFragment = (
   { __typename?: 'Trip' }
-  & Pick<Trip, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Trip, 'id' | 'uuid' | 'userId' | 'name' | 'description' | 'public' | 'dateFrom' | 'dateTo' | 'adults' | 'children' | 'infants' | 'backgroundUrl' | 'createdAt' | 'updatedAt' | 'isInFavorite'>
   & { locations: Array<(
     { __typename?: 'Location' }
     & LocationFragment
@@ -703,7 +691,7 @@ export type MyTripsQuery = (
   { __typename?: 'Query' }
   & { myTrips: (
     { __typename?: 'TripsResponse' }
-    & Pick<TripsResponse, '[object Object]'>
+    & Pick<TripsResponse, 'totalCount'>
     & { trips: Array<(
       { __typename?: 'Trip' }
       & TripFragment
@@ -737,7 +725,7 @@ export type MyUpcomingTripQuery = (
 
 export type MeFragment = (
   { __typename?: 'User' }
-  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<User, 'id' | 'email' | 'name' | 'role'>
 );
 
 export type SignInMutationVariables = Exact<{
@@ -771,7 +759,7 @@ export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type SignOutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, '[object Object]'>
+  & Pick<Mutation, 'signOut'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -942,9 +930,6 @@ export function useTripActivitiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type TripActivitiesQueryHookResult = ReturnType<typeof useTripActivitiesQuery>;
 export type TripActivitiesLazyQueryHookResult = ReturnType<typeof useTripActivitiesLazyQuery>;
 export type TripActivitiesQueryResult = Apollo.QueryResult<TripActivitiesQuery, TripActivitiesQueryVariables>;
-export function refetchTripActivitiesQuery(variables?: TripActivitiesQueryVariables) {
-      return { query: TripActivitiesDocument, variables: variables }
-    }
 export const ActivityTypesDocument = gql`
     query ActivityTypes {
   activityTypes {
@@ -979,9 +964,6 @@ export function useActivityTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ActivityTypesQueryHookResult = ReturnType<typeof useActivityTypesQuery>;
 export type ActivityTypesLazyQueryHookResult = ReturnType<typeof useActivityTypesLazyQuery>;
 export type ActivityTypesQueryResult = Apollo.QueryResult<ActivityTypesQuery, ActivityTypesQueryVariables>;
-export function refetchActivityTypesQuery(variables?: ActivityTypesQueryVariables) {
-      return { query: ActivityTypesDocument, variables: variables }
-    }
 export const AddFavoriteDocument = gql`
     mutation AddFavorite($tripId: Int!) {
   addFavorite(tripId: $tripId) {
@@ -1094,9 +1076,6 @@ export function useMyFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type MyFavoritesQueryHookResult = ReturnType<typeof useMyFavoritesQuery>;
 export type MyFavoritesLazyQueryHookResult = ReturnType<typeof useMyFavoritesLazyQuery>;
 export type MyFavoritesQueryResult = Apollo.QueryResult<MyFavoritesQuery, MyFavoritesQueryVariables>;
-export function refetchMyFavoritesQuery(variables?: MyFavoritesQueryVariables) {
-      return { query: MyFavoritesDocument, variables: variables }
-    }
 export const EditPreparationStatusDocument = gql`
     mutation EditPreparationStatus($preparationId: Int!) {
   editPreparationStatus(preparationId: $preparationId) {
@@ -1195,9 +1174,6 @@ export function useTransportationTypesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type TransportationTypesQueryHookResult = ReturnType<typeof useTransportationTypesQuery>;
 export type TransportationTypesLazyQueryHookResult = ReturnType<typeof useTransportationTypesLazyQuery>;
 export type TransportationTypesQueryResult = Apollo.QueryResult<TransportationTypesQuery, TransportationTypesQueryVariables>;
-export function refetchTransportationTypesQuery(variables?: TransportationTypesQueryVariables) {
-      return { query: TransportationTypesDocument, variables: variables }
-    }
 export const DeleteTripDocument = gql`
     mutation DeleteTrip($tripId: Int!) {
   deleteTrip(tripId: $tripId) {
@@ -1268,9 +1244,6 @@ export function useMyTripsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<My
 export type MyTripsQueryHookResult = ReturnType<typeof useMyTripsQuery>;
 export type MyTripsLazyQueryHookResult = ReturnType<typeof useMyTripsLazyQuery>;
 export type MyTripsQueryResult = Apollo.QueryResult<MyTripsQuery, MyTripsQueryVariables>;
-export function refetchMyTripsQuery(variables?: MyTripsQueryVariables) {
-      return { query: MyTripsDocument, variables: variables }
-    }
 export const TripDocument = gql`
     query Trip($tripId: Int!) {
   trip(tripId: $tripId) {
@@ -1304,9 +1277,6 @@ export function useTripLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TripQ
 export type TripQueryHookResult = ReturnType<typeof useTripQuery>;
 export type TripLazyQueryHookResult = ReturnType<typeof useTripLazyQuery>;
 export type TripQueryResult = Apollo.QueryResult<TripQuery, TripQueryVariables>;
-export function refetchTripQuery(variables?: TripQueryVariables) {
-      return { query: TripDocument, variables: variables }
-    }
 export const MyUpcomingTripDocument = gql`
     query MyUpcomingTrip {
   myUpcomingTrip {
@@ -1339,9 +1309,6 @@ export function useMyUpcomingTripLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type MyUpcomingTripQueryHookResult = ReturnType<typeof useMyUpcomingTripQuery>;
 export type MyUpcomingTripLazyQueryHookResult = ReturnType<typeof useMyUpcomingTripLazyQuery>;
 export type MyUpcomingTripQueryResult = Apollo.QueryResult<MyUpcomingTripQuery, MyUpcomingTripQueryVariables>;
-export function refetchMyUpcomingTripQuery(variables?: MyUpcomingTripQueryVariables) {
-      return { query: MyUpcomingTripDocument, variables: variables }
-    }
 export const SignInDocument = gql`
     mutation SignIn($data: SignInInput!) {
   signIn(data: $data) {
@@ -1467,6 +1434,3 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export function refetchMeQuery(variables?: MeQueryVariables) {
-      return { query: MeDocument, variables: variables }
-    }

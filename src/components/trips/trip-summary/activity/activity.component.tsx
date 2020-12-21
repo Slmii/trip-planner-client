@@ -161,7 +161,7 @@ const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete
 							title='Delete'
 							onClick={() => onDelete(id)}
 						/>
-						<IconButton color='secondary' tooltip={true} icon={<ShareIcon fontSize='small' />} title='Share' />
+						<IconButton color='primary' tooltip={true} icon={<ShareIcon fontSize='small' />} title='Share' />
 					</Box>
 				</Box>
 			</AccordionDetails>

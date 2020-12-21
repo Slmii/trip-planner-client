@@ -1,16 +1,20 @@
 const FormControl = require('@material-ui/core/FormControl').default;
 const InputLabel = require('@material-ui/core/InputLabel').default;
-const MenuItem = require('@material-ui/core/MenuItem').default;
+const MuiMenuItem = require('@material-ui/core/MenuItem').default;
 const Typography = require('@material-ui/core/Typography').default;
-const Chip = require('@material-ui/core/Chip').default;
+const ListSubheader = require('@material-ui/core/ListSubheader').default;
 
-import { InputSelectProps } from '@lib/types';
+import { InputSelectProps, MenuItem, MultipleMenuItem } from '@lib/types';
 
 import { Select } from './input-select.styled';
 
+interface OptionalChipsProps {
+	onDelete?: (type: string) => void;
+}
+
 const InputSelect = ({
 	value,
-	menuItems,
+	menu,
 	label,
 	autoWidth = false,
 	multiple = false,
@@ -37,7 +41,57 @@ const InputSelect = ({
 				autoWidth={autoWidth}
 				multiple={multiple}
 				native={native}
-				renderValue={(selected: string) => <Chip label={selected} />}
+				renderValue={(selected: string | string[]) => {
+					if (Array.isArray(selected)) {
+						return selected
+							.map(selected => {
+								const [type, value] = selected.split('-');
+
+								const foundMenu = (menu as MultipleMenuItem[]).find(menu => menu.type === type);
+								const foundMenuItem = foundMenu?.menuItems.find(menuItem => menuItem.value === value);
+
+								return foundMenuItem?.label;
+							})
+							.join(', ');
+					}
+
+					return selected;
+				}}
+				// renderValue={(selected: string | string[]) => {
+				// 	if (Array.isArray(selected)) {
+				// 		return selected.map(selected => {
+				// 			const [type, value] = selected.split('-');
+
+				// 			const foundMenu = (menu as MultipleMenuItem[]).find(menu => menu.type === type);
+				// 			const foundMenuItem = foundMenu?.menuItems.find(menuItem => menuItem.value === value);
+
+				// 			const label = `${foundMenu?.subHeader}: ${foundMenuItem?.label}`;
+
+				// 			const optionalChipsProps: OptionalChipsProps = {};
+
+				// 			if (onRenderedValueDelete) {
+				// 				optionalChipsProps.onDelete = type => onRenderedValueDelete(type);
+				// 			}
+
+				// 			return (
+				// 				<Chip
+				// 					key={selected}
+				// 					className={buttonMr}
+				// 					label={label}
+				// 					variant='outlined'
+				// 					color='primary'
+				// 					size={size}
+				// 					onMouseDown={(event: React.MouseEvent) => event.stopPropagation()}
+				// 					{...optionalChipsProps}
+				// 				/>
+				// 			);
+				// 		});
+				// 	}
+
+				// 	const label = (menu as MenuItem[]).find(({ value }) => value === selected)?.label;
+
+				// 	return <Typography variant='body2'>{label}</Typography>;
+				// }}
 				MenuProps={{
 					anchorOrigin: {
 						vertical: 'bottom',
@@ -50,11 +104,29 @@ const InputSelect = ({
 					getContentAnchorEl: null
 				}}
 			>
-				{menuItems.map(({ value, label }, idx) => (
-					<MenuItem key={idx} value={value}>
-						<Typography variant='body2'>{label}</Typography>
-					</MenuItem>
-				))}
+				{multiple
+					? (menu as MultipleMenuItem[]).map(({ subHeader, type, menuItems }) => {
+							const body: JSX.Element[] = [];
+
+							body.push(<ListSubheader>{subHeader}</ListSubheader>);
+
+							menuItems.forEach(({ label, value }) =>
+								body.push(
+									<MuiMenuItem key={value} value={`${type}-${value}`}>
+										<Typography variant='body2'>{label}</Typography>
+									</MuiMenuItem>
+								)
+							);
+
+							return body;
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  })
+					: (menu as MenuItem[]).map(({ label, value }) => (
+							<MuiMenuItem key={value} value={value}>
+								<Typography variant='body2'>{label}</Typography>
+							</MuiMenuItem>
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  ))}
 			</Select>
 		</FormControl>
 	);

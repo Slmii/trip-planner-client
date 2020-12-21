@@ -11,19 +11,6 @@ import { wrapper } from '@lib/redux';
 import theme from '@theme/index';
 import '../styles/global.scss';
 
-// if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-// 	const whyDidYouRender = require('@welldone-software/why-did-you-render');
-
-// 	whyDidYouRender(React, {
-// 		trackAllPureComponents: true,
-// 		trackHooks: true,
-// 		trackExtraHooks: [
-// 			[React, 'useState'],
-// 			[require('react-redux/lib'), 'useSelector']
-// 		]
-// 	});
-// }
-
 function MyApp({ Component, pageProps }: AppProps) {
 	useEffect(() => {
 		// Remove the server-side injected CSS.

@@ -97,7 +97,7 @@ export default function SignIn() {
 								</a>
 							</Link>
 						</Box>
-						<Button type='submit' size='large' loading={submitState.isSubmitted}>
+						<Button type='submit' color='secondary' size='large' loading={submitState.isSubmitted}>
 							Sign In
 						</Button>
 						<Box textAlign='center' mt={3}>

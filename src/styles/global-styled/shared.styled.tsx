@@ -30,6 +30,14 @@ export const globalStyles = makeStyles((theme: Theme) =>
 			top: 0,
 			width: '100%'
 		},
+		errorButtonOutlined: {
+			backgroundColor: 'white',
+			borderColor: theme.palette.error.light,
+			color: theme.palette.error.main,
+			'&:hover': {
+				borderColor: theme.palette.error.main
+			}
+		},
 		iconMr: {
 			marginRight: 8
 		},
@@ -38,6 +46,9 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		},
 		buttonMr: {
 			marginRight: 8
+		},
+		buttonMb: {
+			marginBottom: 8
 		},
 		buttonMl: {
 			marginLeft: 8
@@ -77,11 +88,8 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		warning: {
 			color: theme.palette.warning.dark
 		},
-		buttonNoBorder: {
-			borderColor: 'rgba(0, 3, 0, 0.23)',
-			'&:hover': {
-				borderColor: theme.palette.text.primary
-			}
+		activeButton: {
+			borderColor: theme.palette.text.primary
 		}
 	})
 );

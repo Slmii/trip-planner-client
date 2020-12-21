@@ -15,7 +15,7 @@ export const Card = styled('div')(({ theme }) => ({
 		zIndex: 2
 	},
 	'&:hover': {
-		boxShadow: theme.boxShadow
+		boxShadow: '0 0 11px rgba(37,32,31,.3)'
 	}
 }));
 
@@ -34,7 +34,7 @@ export const CardHeader = styled('div')(({ theme }) => ({
 	width: 600,
 	height: '100%',
 	overflow: 'hidden',
-	backgroundColor: theme.palette.secondary.light,
+	backgroundColor: theme.palette.primary.light,
 	borderTopLeftRadius: `${theme.shape.borderRadius}px`,
 	borderBottomLeftRadius: `${theme.shape.borderRadius}px`
 }));

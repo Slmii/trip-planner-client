@@ -3,10 +3,10 @@ import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 let theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: '#3885E9'
+			main: '#4A898B'
 		},
 		secondary: {
-			main: '#4A898B'
+			main: '#3885E9'
 		},
 		error: {
 			main: '#ED4949'
@@ -61,24 +61,26 @@ let theme = createMuiTheme({
 	boxShadow: '0 2px 4px 0 rgba(17,34,68,0.4)',
 	spacing: 16,
 	overrides: {
-		MuiButton: {
-			containedSizeLarge: {
-				minHeight: 45
-			},
-			containedSizeSmall: {
-				minHeight: 33
-			},
-			contained: {
-				minHeight: 40
-			},
-			outlinedSizeLarge: {
-				minHeight: 45
-			},
-			outlinedSizeSmall: {
-				minHeight: 33
-			},
+		MuiChip: {
 			outlined: {
-				minHeight: 40
+				backgroundColor: 'white'
+			}
+		},
+		MuiBreadcrumbs: {
+			root: {
+				fontSize: 14
+			}
+		},
+		MuiButton: {
+			sizeSmall: {
+				minHeight: 33
+			},
+			colorInherit: {
+				borderColor: 'rgba(0, 0, 0, 0.23)',
+				backgroundColor: 'white',
+				'&:hover': {
+					borderColor: '#444444'
+				}
 			}
 		}
 	}

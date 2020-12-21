@@ -25,8 +25,8 @@ export const ProfileMenu = styled('div')(({ theme }) => ({
 export const PulseBadge = withStyles(theme =>
 	createStyles({
 		badge: {
-			backgroundColor: theme.palette.primary.main,
-			color: theme.palette.primary.main,
+			backgroundColor: theme.palette.secondary.main,
+			color: theme.palette.secondary.main,
 			boxShadow: `0 0 0 2px ${theme.boxShadow}`,
 			'&::after': {
 				position: 'absolute',

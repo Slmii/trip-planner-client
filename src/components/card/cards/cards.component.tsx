@@ -184,6 +184,4 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 	);
 };
 
-// Cards.whyDidYouRender = true;
-
 export default React.memo(Cards);
