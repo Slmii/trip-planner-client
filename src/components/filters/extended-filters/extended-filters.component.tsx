@@ -75,7 +75,6 @@ const ExtendedFilters = () => {
 			setSearchInput('');
 		}
 
-		// TODO: remove query strings from URL
 		const queryStrings = helpers.convertToFiltersRouterQueryObject({ filters: queryStringFilters, removeQueryStrings: [type] });
 
 		router.push({
