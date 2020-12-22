@@ -3,13 +3,7 @@ import ExtendedFilters from './extended-filters/extended-filters.component';
 import SelectedFilters from './selected-filters/selected-filters.component';
 
 export { RowsView, ExtendedFilters, SelectedFilters };
-export {
-	SORT_BY_VALUES,
-	ORDER_BY_VALUES,
-	CHIPS_PREFIX_MAPPING,
-	QUERY_STRINGS,
-	INITIAL_FILTERS_STATE
-} from './extended-filters/extended-fitlters.constants';
+export { SORT_BY_VALUES, ORDER_BY_VALUES, CHIPS_PREFIX_MAPPING, QUERY_STRINGS } from './extended-filters/extended-fitlters.constants';
 export type {
 	AnchorElementState,
 	ArrayValues,
@@ -17,5 +11,5 @@ export type {
 	FiltersState,
 	SortBy,
 	OrderBy,
-	MenuItemClick
+	FilterChange
 } from './extended-filters/extended-filters.types';

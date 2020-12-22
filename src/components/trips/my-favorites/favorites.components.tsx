@@ -1,33 +1,36 @@
+import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Trips } from '@components/trips';
-import { PaginationContext } from '@lib/context';
+import { filters } from '@lib/redux';
+import { helpers } from '@lib/utils';
 import { Trip, useMyFavoritesQuery } from '@generated/graphql';
-import { selectFilters } from '@lib/redux/filters';
 
 const MyFavorites = () => {
-	const { page } = useContext(PaginationContext);
-	const { rows, orderSort, extendedFilters } = useSelector(selectFilters);
+	const router = useRouter();
+	const { rows } = useSelector(filters.selectFilters);
+
+	const { search, activityType, transportationType, sort, order } = helpers.getQueryStringFilters(router.query);
 
 	const { data, loading } = useMyFavoritesQuery({
 		variables: {
 			orderBy: {
-				[orderSort.sort]: orderSort.order
+				[sort]: order
 			},
 			pagination: {
-				skip: page * Number(rows),
+				skip: (helpers.getCurrentPage(router.query) - 1) * Number(rows),
 				take: Number(rows)
 			},
 			where: {
 				search: {
-					contains: extendedFilters.search || undefined
+					contains: search
 				},
 				activityType: {
-					equals: extendedFilters.activityType ?? undefined
+					equals: activityType
 				},
 				transportationType: {
-					equals: extendedFilters.transportationType ?? undefined
+					equals: transportationType
 				}
 			}
 		}

@@ -6,7 +6,6 @@ const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const List = require('@material-ui/core/List').default;
 const Collapse = require('@material-ui/core/Collapse').default;
-const Divider = require('@material-ui/core/Divider').default;
 const LinearProgress = require('@material-ui/core/LinearProgress').default;
 const Cancel = require('@material-ui/icons/Cancel').default;
 const LockIcon = require('@material-ui/icons/Lock').default;

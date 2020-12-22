@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import { FieldInputProps } from 'formik';
-import { ParsedUrlQuery } from 'querystring';
 
-import { MeFragment, PreparationFragment, Trip } from '@generated/graphql';
+import { FiltersState } from '@components/filters';
 import { filters } from '@lib/redux';
+import { MeFragment, PreparationFragment, Trip } from '@generated/graphql';
 
 type WithChildren<T = Record<string, unknown>> = T & { children?: ReactNode };
 
@@ -190,6 +190,13 @@ export interface SignUpInitialValues {
 // End Formik Types
 
 // Rest
+
+export interface FiltersRouterQueryObject {
+	filters: FiltersState;
+	queryString?: KeyOf<FiltersState>;
+	value?: ValueOf<FiltersState>;
+	removeQueryStrings?: Array<KeyOf<FiltersState>>;
+}
 
 // End Rest
 

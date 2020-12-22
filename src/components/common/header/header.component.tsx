@@ -33,26 +33,6 @@ function Header() {
 
 	const handleOnSignOut = async () => {
 		setVisible(false);
-		// await signOut({
-		// 	update: (cache, _result) => {
-		// 		cache.writeQuery<MeQuery>({
-		// 			query: MeDocument,
-		// 			data: {
-		// 				__typename: 'Query',
-		// 				me: null
-		// 			}
-		// 		});
-
-		// 		cache.modify({
-		// 			fields: {
-		// 				myTrips(_, { DELETE }) {
-		// 					return DELETE;
-		// 				}
-		// 			}
-		// 		});
-		// 	}
-		// });
-
 		await signOut();
 		await apolloClient.clearStore();
 		router.push('/signin');

@@ -6,6 +6,7 @@ dayjs.extend(utc);
 dayjs.extend(timezonePlugin);
 
 import { FiltersState } from '@components/filters';
+import { KeyOf, ValueOf, FiltersRouterQueryObject } from '@lib/types';
 import { PreparationFragment, SortOrder } from '@generated/graphql';
 
 export const formatDate = ({ date, timezone, format = 'DD-MM-YYY' }: { date: Date; timezone?: string; format?: string }) => {
@@ -25,11 +26,11 @@ export const getCurrentPage = (query: ParsedUrlQuery) => {
 	return page;
 };
 
-export const getQueryStringFilters = (query: ParsedUrlQuery) => {
+export const getQueryStringFilters = (query: ParsedUrlQuery): FiltersState => {
 	const queryStrings = (query as unknown) as FiltersState;
 
 	return {
-		search: queryStrings.search ?? undefined,
+		search: queryStrings.search || undefined,
 		departureDate: queryStrings.departureDate ?? undefined,
 		returnDate: queryStrings.returnDate ?? undefined,
 		activityDate: queryStrings.activityDate ?? undefined,
@@ -40,10 +41,79 @@ export const getQueryStringFilters = (query: ParsedUrlQuery) => {
 	};
 };
 
-export const hasProperties = <T>(object: Record<keyof T, T[keyof T]>, properties: Array<keyof T>) => {
-	return Object.entries(object).some(([key, _value]) => properties.includes(key as keyof T));
+export const hasQueryStrings = <T>(object: Partial<Record<KeyOf<T>, ValueOf<T>>>, properties: Array<KeyOf<T>>) => {
+	return Object.entries(object)
+		.filter(([key, _value]) => properties.includes(key as KeyOf<T>))
+		.some(([_key, value]) => value);
 };
 
-export const hasNotProperties = <T>(object: Record<keyof T, T[keyof T]>, properties: Array<keyof T>) => {
-	return Object.keys(object).every(key => !properties.includes(key as keyof T));
+/**
+ * If only `filters` property is defined then only check for existing query strings (filters) in the URL.
+ * If `queryString` is defined then so should `value` be. This then will replace the existing query string (filter) with the new chosen value.
+ * `filter` will then be a fallback if a query string (filter) is already present in the URL. This way we dont lose the state of all chosen filters.
+ */
+export const convertToFiltersRouterQueryObject = ({ filters, queryString, value, removeQueryStrings }: FiltersRouterQueryObject) => {
+	const filtersRouterObject: Partial<Record<KeyOf<FiltersState>, string>> = {};
+	const valueToString = value as string;
+
+	const {
+		search: qsSearch,
+		departureDate: qsDepartureDate,
+		returnDate: qsReturnDate,
+		activityDate: qsActivityDate,
+		activityType: qsActivityType,
+		transportationType: qsTransportationType,
+		sort: qsSort,
+		order: qsOrder
+	} = filters;
+
+	if (queryString === 'search') {
+		if ((value as string).length) {
+			filtersRouterObject[queryString] = valueToString;
+		}
+	} else if (qsSearch) {
+		filtersRouterObject.search = qsSearch;
+	}
+
+	if (queryString === 'activityType') {
+		filtersRouterObject[queryString] = valueToString;
+	} else if (qsActivityType) {
+		filtersRouterObject.activityType = qsActivityType;
+	}
+
+	if (queryString === 'transportationType') {
+		filtersRouterObject[queryString] = valueToString;
+	} else if (qsTransportationType) {
+		filtersRouterObject.transportationType = qsTransportationType;
+	}
+
+	if (queryString === 'sort') {
+		filtersRouterObject[queryString] = valueToString;
+	} else if (qsSort) {
+		filtersRouterObject.sort = qsSort;
+	}
+
+	if (queryString === 'order') {
+		filtersRouterObject[queryString] = valueToString;
+	} else if (qsOrder) {
+		filtersRouterObject.order = qsOrder;
+	}
+
+	console.log('before', filtersRouterObject);
+
+	if (removeQueryStrings) {
+		return Object.entries(filtersRouterObject).reduce((accum, [key, value]) => {
+			if (!removeQueryStrings.includes(key as KeyOf<FiltersState>)) {
+				accum[key as KeyOf<FiltersState>] = value;
+			}
+
+			return accum;
+		}, {} as Partial<Record<KeyOf<FiltersState>, string>>);
+	}
+
+	return filtersRouterObject;
+};
+
+export const hasNotProperties = <T>(object: Record<KeyOf<T>, ValueOf<T>>, properties: Array<KeyOf<T>>) => {
+	return Object.keys(object).every(key => !properties.includes(key as KeyOf<T>));
 };

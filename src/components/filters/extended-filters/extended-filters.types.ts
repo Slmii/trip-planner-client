@@ -7,16 +7,19 @@ export type SortBy = keyof TripSortByInput;
 export type OrderBy = SortOrder;
 
 export interface FiltersState {
-	search: string | null;
-	departureDate: MaterialUiPickersDate;
-	returnDate: MaterialUiPickersDate;
-	activityDate: MaterialUiPickersDate;
-	activityType: ActivityType | null;
-	transportationType: TransportationType | null;
+	search?: string;
+	departureDate?: MaterialUiPickersDate;
+	returnDate?: MaterialUiPickersDate;
+	activityDate?: MaterialUiPickersDate;
+	activityType?: ActivityType;
+	transportationType?: TransportationType;
 	sort: SortBy;
 	order: OrderBy;
 }
 export interface AnchorElementState {
+	departureDate: null | HTMLElement;
+	returnDate: null | HTMLElement;
+	activityDate: null | HTMLElement;
 	filters: null | HTMLElement;
 	activityType: null | HTMLElement;
 	transportationType: null | HTMLElement;
@@ -28,8 +31,8 @@ export interface ArrayValues {
 	label: string;
 }
 
-export interface MenuItemClick {
-	type: KeyOf<FiltersState>;
+export interface FilterChange {
+	queryString: KeyOf<FiltersState>;
 	value: ValueOf<FiltersState>;
 	closeMenu?: boolean;
 }

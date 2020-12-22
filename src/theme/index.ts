@@ -64,6 +64,9 @@ let theme = createMuiTheme({
 		MuiChip: {
 			outlined: {
 				backgroundColor: 'white'
+			},
+			sizeSmall: {
+				height: 28
 			}
 		},
 		MuiBreadcrumbs: {
@@ -74,6 +77,9 @@ let theme = createMuiTheme({
 		MuiButton: {
 			sizeSmall: {
 				minHeight: 33
+			},
+			sizeLarge: {
+				minHeight: 45
 			},
 			colorInherit: {
 				borderColor: 'rgba(0, 0, 0, 0.23)',
