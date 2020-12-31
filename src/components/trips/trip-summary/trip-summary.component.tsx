@@ -10,14 +10,11 @@ const LinearProgress = require('@material-ui/core/LinearProgress').default;
 const Cancel = require('@material-ui/icons/Cancel').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
-const DateRangeIcon = require('@material-ui/icons/DateRange').default;
-const PublicIcon = require('@material-ui/icons/Public').default;
 const ExpandMore = require('@material-ui/icons/ExpandMore').default;
 const ExpandLess = require('@material-ui/icons/ExpandLess').default;
 
 import { IconButton, Button } from '@components/button';
-import { TripSummarySkeleton, Activity, Preparation } from '@components/trips';
-import { helpers } from '@lib/utils';
+import { TripSummarySkeleton, Activity, Preparation, TripDateLocation } from '@components/trips';
 import { TripSummaryProps } from '@lib/types';
 import { dialog, snackbar } from '@lib/redux';
 import {
@@ -211,25 +208,8 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 								color='primary'
 							/>
 						</Box>
-						<Box display='flex' alignItems='center'>
-							<DateRangeIcon className={iconMr} fontSize='inherit' />
-							<Typography variant='subtitle1' color='textSecondary'>
-								{helpers.formatDate({
-									date: dateFrom,
-									format: 'DD MMM'
-								})}{' '}
-								-{' '}
-								{helpers.formatDate({
-									date: dateTo,
-									format: 'DD MMM'
-								})}
-							</Typography>
-						</Box>
-						<Box display='flex' mb={0.5} alignItems='center'>
-							<PublicIcon className={iconMr} fontSize='inherit' />
-							<Typography variant='subtitle1' color='textSecondary'>
-								{locations.length ? locations.map(location => location.name).join(' - ') : '-'}
-							</Typography>
+						<Box mb={1}>
+							<TripDateLocation trip={tripData.trip} />
 						</Box>
 						<Typography variant='body2'>{description}</Typography>
 					</Box>

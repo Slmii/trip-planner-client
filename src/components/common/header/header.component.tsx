@@ -4,8 +4,9 @@ import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 const Box = require('@material-ui/core/Box').default;
+const Avatar = require('@material-ui/core/Avatar').default;
 const CircularProgress = require('@material-ui/core/CircularProgress').default;
-const AccountCircle = require('@material-ui/icons/AccountCircle').default;
+const Menu = require('@material-ui/icons/Menu').default;
 const { useTheme } = require('@material-ui/core/styles');
 
 import { Button } from '@components/button';
@@ -13,7 +14,7 @@ import { Dropdown } from '@components/dropdown';
 import { useOutsideClick } from '@lib/hooks';
 import { useMeQuery, useSignOutMutation } from '@generated/graphql';
 
-import * as S from './header.styled';
+import { NavbarItem, ProfileMenu, Badge, PulseBadge } from './header.styled';
 import { Theme } from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
 
@@ -66,30 +67,41 @@ function Header() {
 					</Link>
 				</Box>
 				<Box display='flex' alignItems='center'>
-					<S.NavbarItem>
+					<NavbarItem>
 						<Link href='/search'>
 							<a className='bold white' title='Look for trips'>
 								Look for trips
 							</a>
 						</Link>
-					</S.NavbarItem>
-					<S.NavbarItem>
+					</NavbarItem>
+					<NavbarItem>
 						<Link href='/planner'>
 							<a className='bold white' title='Planner'>
 								Plan a trip
 							</a>
 						</Link>
-					</S.NavbarItem>
+					</NavbarItem>
 					{meLoading || signOutLoading ? (
 						<Box display='flex' justifyContent='center' alignItems='center' width='100px' ml={0.75}>
 							<CircularProgress size='1.5rem' color='secondary' />
 						</Box>
 					) : data?.me ? (
-						<S.ProfileMenu ref={profileMenuRef} onClick={() => setVisible(!visible)}>
-							<AccountCircle className={iconMr} />
-							<Box className='bold'>
-								{badgeCount ? <S.PulseBadge variant='dot'>{data.me.name}</S.PulseBadge> : <>{data.me.name}</>}
-							</Box>
+						<NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
+							<PulseBadge
+								overlap='circle'
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'right'
+								}}
+								variant='dot'
+							>
+								<Avatar style={{ width: 44, height: 44 }}>
+									{data.me.name
+										.split(' ')
+										.map(n => n[0])
+										.join('')}
+								</Avatar>
+							</PulseBadge>
 							<Dropdown
 								visible={visible}
 								items={[
@@ -98,7 +110,7 @@ function Header() {
 										element: (
 											<Box display='flex'>
 												<Box fontWeight='bold'>Notifications</Box>
-												<S.Badge color='secondary' badgeContent={badgeCount} max={99} />
+												<Badge color='secondary' badgeContent={badgeCount} max={99} />
 											</Box>
 										)
 									},
@@ -113,7 +125,7 @@ function Header() {
 									},
 									{
 										href: '/account',
-										element: <Box>Selami Sensei</Box>
+										element: <Box>{data.me.name}</Box>
 									},
 									{
 										action: handleOnSignOut,
@@ -121,31 +133,25 @@ function Header() {
 									}
 								]}
 							/>
-						</S.ProfileMenu>
+						</NavbarItem>
 					) : (
 						<>
-							<S.NavbarItem>
-								<Button
-									variant='outlined'
-									color='secondary'
-									size='large'
-									className='fs-14 bold white'
-									onClick={handleOnSignInClick}
-								>
+							<NavbarItem>
+								<Button variant='outlined' color='secondary' size='large' className='bold' onClick={handleOnSignInClick}>
 									Sign in
 								</Button>
-							</S.NavbarItem>
-							<S.NavbarItem>
+							</NavbarItem>
+							<NavbarItem>
 								<Button
 									variant='contained'
 									color='secondary'
 									size='large'
-									className='fs-14 bold white'
+									className='bold white'
 									onClick={handleOnSignUpClick}
 								>
 									Sign up
 								</Button>
-							</S.NavbarItem>
+							</NavbarItem>
 						</>
 					)}
 				</Box>

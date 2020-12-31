@@ -72,7 +72,7 @@ export default function SignIn() {
 					}
 				}}
 			>
-				{(props: FormikProps<SignInInitialValues>) => (
+				{props => (
 					<Form className='w-100' onSubmit={props.handleSubmit}>
 						<Box textAlign='center' mb='20px'>
 							<Typography variant='h6' component='h1' gutterBottom>

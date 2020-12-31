@@ -5,5 +5,6 @@ import TripSummary from './trip-summary/trip-summary.component';
 import TripSummarySkeleton from './trip-summary/skeleton/skeleton.component';
 import Activity from './trip-summary/activity/activity.component';
 import Preparation from './trip-summary/preparation/preparation.component';
+import TripDateLocation from './dates-location/dates-location.component';
 
-export { MyFavorites, MyTrips, Trips, TripSummary, TripSummarySkeleton, Activity, Preparation };
+export { MyFavorites, MyTrips, Trips, TripSummary, TripSummarySkeleton, Activity, Preparation, TripDateLocation };

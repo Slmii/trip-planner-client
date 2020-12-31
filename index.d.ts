@@ -14,9 +14,11 @@ declare module '@material-ui/core/styles/createPalette' {
 	interface Palette {
 		borderColor: React.CSSProperties['color'];
 		borderHover: React.CSSProperties['color'];
+		monochromatic: React.CSSProperties['color'];
 	}
 	interface PaletteOptions {
 		borderColor: React.CSSProperties['color'];
 		borderHover: React.CSSProperties['color'];
+		monochromatic: React.CSSProperties['color'];
 	}
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 const MuiMenu = require('@material-ui/core/Menu').default;
 const ListSubheader = require('@material-ui/core/ListSubheader').default;
 const MuiMenuItem = require('@material-ui/core/MenuItem').default;
@@ -16,6 +17,9 @@ const Menu = ({ anchorEl, onClose, type, menu, multiple = false }: MenuProps) =>
 			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			transformOrigin={{ vertical: 'top', horizontal: 'left' }}
 			getContentAnchorEl={null}
+			style={{
+				marginTop: 5
+			}}
 		>
 			{multiple
 				? (menu as MultipleMenuItem[]).map(({ subHeader, type, menuItems }) => {
@@ -49,4 +53,6 @@ const Menu = ({ anchorEl, onClose, type, menu, multiple = false }: MenuProps) =>
 	);
 };
 
-export default Menu;
+Menu.whyDidYouRender = true;
+
+export default React.memo(Menu);

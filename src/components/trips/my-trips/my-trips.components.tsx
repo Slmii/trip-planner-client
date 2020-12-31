@@ -10,29 +10,11 @@ const MyTrips = () => {
 	const router = useRouter();
 	const { rows } = useSelector(selectFilters);
 
-	const { search, activityType, transportationType, sort, order } = helpers.getQueryStringFilters(router.query);
+	const queryStringFilters = helpers.getQueryStringFilters(router.query);
+	const queryVariables = helpers.tripsQueryVariables(queryStringFilters, rows);
 
 	const { data, loading } = useMyTripsQuery({
-		variables: {
-			orderBy: {
-				[sort]: order
-			},
-			pagination: {
-				skip: (helpers.getCurrentPage(router.query) - 1) * Number(rows),
-				take: Number(rows)
-			},
-			where: {
-				search: {
-					contains: search
-				},
-				activityType: {
-					equals: activityType
-				},
-				transportationType: {
-					equals: transportationType
-				}
-			}
-		}
+		...queryVariables
 	});
 
 	return (

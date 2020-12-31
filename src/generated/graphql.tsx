@@ -210,8 +210,10 @@ export type PaginationInput = {
 
 export type TripWhereInput = {
   search?: Maybe<StringFilter>;
+  searchIn: Array<Scalars['String']>;
   from?: Maybe<DateFilter>;
   to?: Maybe<DateFilter>;
+  activityDate?: Maybe<DateFilter>;
   activityType?: Maybe<StringFilter>;
   transportationType?: Maybe<StringFilter>;
 };

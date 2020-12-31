@@ -74,7 +74,11 @@ export default function InputField({
 									onClick={() => setShowPassword(prevState => !prevState)}
 									onMouseDown={handleMouseDownPassword}
 								>
-									{showPassword ? <Visibility /> : <VisibilityOff />}
+									{showPassword ? (
+										<Visibility fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''} />
+									) : (
+										<VisibilityOff fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''} />
+									)}
 								</IconButton>
 							</InputAdornment>
 						) : (

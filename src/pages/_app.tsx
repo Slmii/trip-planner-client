@@ -7,9 +7,21 @@ import { StylesProvider } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 import { wrapper } from '@lib/redux';
+import '@lib/dayjs';
 
 import theme from '@theme/index';
 import '../styles/global.scss';
+
+if (process.env.NODE_ENV === 'development') {
+	if (typeof window !== 'undefined') {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const whyDidYouRender = require('@welldone-software/why-did-you-render');
+
+		whyDidYouRender(React, {
+			trackAllPureComponents: true
+		});
+	}
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
 	useEffect(() => {

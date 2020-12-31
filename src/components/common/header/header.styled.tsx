@@ -2,7 +2,9 @@ const MuiBadge = require('@material-ui/core/Badge').default;
 import { styled, Theme as MuiTheme, createStyles, withStyles } from '@material-ui/core/styles';
 
 export const NavbarItem = styled('div')({
-	padding: 12
+	padding: 12,
+	cursor: 'pointer',
+	position: 'relative'
 });
 
 export const ProfileMenu = styled('div')(({ theme }) => ({

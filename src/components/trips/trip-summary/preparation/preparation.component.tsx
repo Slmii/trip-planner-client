@@ -14,39 +14,27 @@ import { PreparationProps } from '@lib/types';
 import { activityStyles } from './preparation.styled';
 
 const Preparation = ({ preparation, onDelete, onStatusChange }: PreparationProps) => {
+	const { id, name, status, description } = preparation;
 	const { preparationHeading, preparationComplete } = activityStyles();
 
 	const labelId = `checkbox-list-label-${preparation.id}`;
 
 	return (
-		<ListItem
-			role={undefined}
-			dense
-			button
-			onClick={() => {
-				onStatusChange(preparation.id);
-			}}
-		>
+		<ListItem role={undefined} dense button onClick={() => onStatusChange(id)}>
 			<ListItemIcon>
-				<Checkbox
-					edge='start'
-					checked={preparation.status}
-					tabIndex={-1}
-					disableRipple
-					inputProps={{ 'aria-labelledby': labelId }}
-				/>
+				<Checkbox edge='start' checked={status} tabIndex={-1} disableRipple inputProps={{ 'aria-labelledby': labelId }} />
 			</ListItemIcon>
 			<ListItemText
 				disableTypography={true}
 				id={labelId}
 				className={cn({
-					[preparationComplete]: preparation.status
+					[preparationComplete]: status
 				})}
-				primary={<Typography className={preparationHeading}>{preparation.name}</Typography>}
+				primary={<Typography className={preparationHeading}>{name}</Typography>}
 				secondary={
-					preparation.description ? (
+					description ? (
 						<Typography variant='subtitle1' color='textSecondary'>
-							{preparation.description}
+							{description}
 						</Typography>
 					) : null
 				}
@@ -58,7 +46,7 @@ const Preparation = ({ preparation, onDelete, onStatusChange }: PreparationProps
 					tooltip={true}
 					icon={<DeleteIcon fontSize='small' />}
 					title='Delete'
-					onClick={() => onDelete(preparation.id)}
+					onClick={() => onDelete(id)}
 				/>
 			</ListItemSecondaryAction>
 		</ListItem>

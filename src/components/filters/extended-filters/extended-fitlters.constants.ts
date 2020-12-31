@@ -1,8 +1,10 @@
 import { SortOrder } from '@generated/graphql';
 
-import { ArrayValues, ChipsPrefixMapping, FiltersState } from '@components/filters';
+import { IArrayValues, ChipsPrefixMapping, ISearchInCheckboxes } from '@components/filters';
 
-export const SORT_BY_VALUES: ArrayValues[] = [
+type POPOVER_FILTER_DATES = 'dateFrom' | 'dateTo' | 'activityDate';
+
+export const SORT_BY_VALUES: IArrayValues[] = [
 	{
 		value: 'dateFrom',
 		label: 'Departure date'
@@ -17,7 +19,7 @@ export const SORT_BY_VALUES: ArrayValues[] = [
 	}
 ];
 
-export const ORDER_BY_VALUES: ArrayValues[] = [
+export const ORDER_BY_VALUES: IArrayValues[] = [
 	{
 		value: SortOrder.Asc,
 		label: 'Asc'
@@ -30,8 +32,9 @@ export const ORDER_BY_VALUES: ArrayValues[] = [
 
 export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
 	search: 'Search',
-	departureDate: 'Departure date',
-	returnDate: 'Return date',
+	searchIn: 'Search in',
+	dateFrom: 'Date from',
+	dateTo: 'Date to',
 	activityDate: 'Activity date',
 	activityType: 'Activity',
 	transportationType: 'Transportation',
@@ -39,4 +42,19 @@ export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
 	order: 'Order by'
 };
 
-export const QUERY_STRINGS = ['search', 'departureDate', 'returnDate', 'activityDate', 'activityType', 'transportationType'];
+export const SEARCH_IN: ISearchInCheckboxes[] = [
+	{
+		label: 'Trips',
+		value: 'trips'
+	},
+	{
+		label: 'Activities',
+		value: 'activities'
+	},
+	{
+		label: 'Preparations',
+		value: 'preparations'
+	}
+];
+
+export const POPOVER_FILTER_DATES: POPOVER_FILTER_DATES[] = ['dateFrom', 'dateTo', 'activityDate'];

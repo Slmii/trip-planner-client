@@ -38,6 +38,28 @@ export const globalStyles = makeStyles((theme: Theme) =>
 				borderColor: theme.palette.error.main
 			}
 		},
+		errorButtonContained: {
+			backgroundColor: theme.palette.error.main,
+			borderColor: theme.palette.error.main,
+			color: 'white',
+			'&:hover': {
+				borderColor: theme.palette.error.dark,
+				backgroundColor: theme.palette.error.dark
+			}
+		},
+		errorChipContained: {
+			backgroundColor: theme.palette.error.main,
+			borderColor: theme.palette.error.main,
+			color: 'white',
+			'&:hover': {
+				borderColor: theme.palette.error.dark,
+				backgroundColor: theme.palette.error.dark
+			},
+			'&:focus': {
+				borderColor: theme.palette.error.dark,
+				backgroundColor: theme.palette.error.dark
+			}
+		},
 		iconMr: {
 			marginRight: 8
 		},
@@ -46,6 +68,9 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		},
 		buttonMr: {
 			marginRight: 8
+		},
+		buttonMt: {
+			marginTop: 8
 		},
 		buttonMb: {
 			marginBottom: 8
@@ -90,6 +115,9 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		},
 		activeButton: {
 			borderColor: theme.palette.text.primary
+		},
+		noPadding: {
+			padding: 0
 		}
 	})
 );

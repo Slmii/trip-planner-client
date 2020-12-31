@@ -3,22 +3,26 @@ import { SortOrder, TripSortByInput } from '@generated/graphql';
 
 import { ActivityType, KeyOf, TransportationType, ValueOf } from '@lib/types';
 
-export type SortBy = keyof TripSortByInput;
-export type OrderBy = SortOrder;
+export type ISortBy = keyof TripSortByInput;
+export type IOrderBy = SortOrder;
 
-export interface FiltersState {
+export type SearchIn = 'trips' | 'activities' | 'preparations';
+
+export interface IFiltersState {
 	search?: string;
-	departureDate?: MaterialUiPickersDate;
-	returnDate?: MaterialUiPickersDate;
-	activityDate?: MaterialUiPickersDate;
+	searchIn: SearchIn[];
+	dateFrom: MaterialUiPickersDate;
+	dateTo: MaterialUiPickersDate;
+	activityDate: MaterialUiPickersDate;
 	activityType?: ActivityType;
 	transportationType?: TransportationType;
-	sort: SortBy;
-	order: OrderBy;
+	sort: ISortBy;
+	order: IOrderBy;
 }
-export interface AnchorElementState {
-	departureDate: null | HTMLElement;
-	returnDate: null | HTMLElement;
+export interface IAnchorElementState {
+	quickFilters: null | HTMLElement;
+	dateFrom: null | HTMLElement;
+	dateTo: null | HTMLElement;
 	activityDate: null | HTMLElement;
 	filters: null | HTMLElement;
 	activityType: null | HTMLElement;
@@ -26,15 +30,21 @@ export interface AnchorElementState {
 	sort: null | HTMLElement;
 }
 
-export interface ArrayValues {
-	value: SortBy | OrderBy;
+export interface IArrayValues {
+	value: ISortBy | IOrderBy;
 	label: string;
 }
 
-export interface FilterChange {
-	queryString: KeyOf<FiltersState>;
-	value: ValueOf<FiltersState>;
+export interface IFilterChange {
+	queryString: KeyOf<IFiltersState>;
+	value: ValueOf<IFiltersState>;
 	closeMenu?: boolean;
+	otherMenus?: KeyOf<IAnchorElementState>[];
 }
 
-export type ChipsPrefixMapping = FiltersState & { sort: string; order: string };
+export interface ISearchInCheckboxes {
+	label: string;
+	value: SearchIn;
+}
+
+export type ChipsPrefixMapping = IFiltersState & { sort: string; order: string };

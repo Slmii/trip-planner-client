@@ -18,3 +18,9 @@ export const CHIPS_PREFIX_MAPPING: Record<string, string> = {
 	activityType: 'Activity',
 	transportationType: 'Transportation'
 };
+
+export const EU_DATE_FORMAT_SLASHES = 'DD/MM/YYYY';
+export const EU_DATE_FORMAT_DASHES = 'DD-MM-YYYY';
+export const US_DATE_FORMAT_SLASHES = 'MM/DD/YYYY';
+export const US_DATE_FORMAT_DASHES = 'MM-DD-YYYY';
+export const SERVER_DATE_FORMAT = 'YYYY-MM-DD';

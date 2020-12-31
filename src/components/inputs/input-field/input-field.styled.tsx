@@ -1,4 +1,4 @@
-const MuiTextField = require('@material-ui/core/TextField').default;
+import MuiTextField from '@material-ui/core/TextField';
 const { withStyles, createStyles } = require('@material-ui/core');
 
 import { Theme } from '@theme/index';

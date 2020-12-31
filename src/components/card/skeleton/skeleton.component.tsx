@@ -23,9 +23,17 @@ const Skeleton = ({ number = 10 }: { number?: number }) => {
 							<Typography variant='subtitle1'>
 								<MuiSkeleton animation='wave' width='30%' />
 							</Typography>
-							<Typography variant='body2'>
-								<MuiSkeleton animation='wave' height={96} />
-							</Typography>
+							<Box mb={1} mt={1}>
+								<Typography variant='body2'>
+									<MuiSkeleton animation='wave' />
+								</Typography>
+								<Typography variant='body2'>
+									<MuiSkeleton animation='wave' />
+								</Typography>
+								<Typography variant='body2'>
+									<MuiSkeleton animation='wave' />
+								</Typography>
+							</Box>
 							<Box display='flex' justifyContent='space-between'>
 								<Box display='flex'>
 									<MuiSkeleton style={{ marginRight: 8 }} animation='wave' variant='rect' width={100} height={50} />

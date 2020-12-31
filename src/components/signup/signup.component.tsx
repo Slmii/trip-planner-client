@@ -96,7 +96,7 @@ export default function SignIn() {
 						<FormGroup>
 							<FormInputField name='confirmPassword' label='Confirm Password' type='password' />
 						</FormGroup>
-						<Button type='submit' size='large' color='secondary' loading={submitState.isSubmitted}>
+						<Button type='submit' size='large' color='primary' loading={submitState.isSubmitted}>
 							Sign Up
 						</Button>
 						<Box textAlign='center' mt={3}>

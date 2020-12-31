@@ -90,7 +90,7 @@ const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete
 							{helpers.formatDate({
 								date,
 								timezone,
-								format: 'DD MMM, HH:mm'
+								format: helpers.isCurrentYear(date as Date) ? 'DD MMM, HH:mm' : 'DD MMM YYYY, HH:mm'
 							})}
 						</Typography>
 					</Box>

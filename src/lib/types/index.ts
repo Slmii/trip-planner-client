@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import { FieldInputProps } from 'formik';
 
-import { FiltersState } from '@components/filters';
+import { IFiltersState } from '@components/filters';
 import { filters } from '@lib/redux';
 import { MeFragment, PreparationFragment, Trip } from '@generated/graphql';
 
-type WithChildren<T = Record<string, unknown>> = T & { children?: ReactNode };
+export type WithChildren<T = Record<string, unknown>> = T & { children?: ReactNode };
 
 // Component Types
 export interface DropdownProps {
@@ -167,7 +167,7 @@ export interface MenuItemOnClick<T> {
 export interface MenuProps {
 	anchorEl: HTMLElement | null;
 	type: string;
-	menu: MultipleMenuItem[] | MenuItem[];
+	menu?: MultipleMenuItem[] | MenuItem[];
 	onClose?: () => void;
 	multiple?: boolean;
 }
@@ -192,10 +192,10 @@ export interface SignUpInitialValues {
 // Rest
 
 export interface FiltersRouterQueryObject {
-	filters: FiltersState;
-	queryString?: KeyOf<FiltersState>;
-	value?: ValueOf<FiltersState>;
-	removeQueryStrings?: Array<KeyOf<FiltersState>>;
+	filters: IFiltersState;
+	queryString?: KeyOf<IFiltersState>;
+	value?: ValueOf<IFiltersState>;
+	removeQueryStrings?: Array<KeyOf<IFiltersState>>;
 }
 
 // End Rest

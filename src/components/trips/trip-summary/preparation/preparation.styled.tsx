@@ -1,4 +1,4 @@
-const { createStyles, withStyles, makeStyles } = require('@material-ui/core/styles');
+const { createStyles, makeStyles } = require('@material-ui/core/styles');
 
 import { Theme } from '@theme/index';
 

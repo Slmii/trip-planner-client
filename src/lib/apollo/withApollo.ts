@@ -24,6 +24,14 @@ const createClient = (ctx: NextPageContext) =>
 				cookie: (IS_SERVER ? ctx?.req?.headers.cookie : undefined) || ''
 			}
 		}),
+		defaultOptions: {
+			mutate: {
+				errorPolicy: 'all'
+			},
+			query: {
+				errorPolicy: 'all'
+			}
+		},
 		cache: new InMemoryCache()
 	});
 

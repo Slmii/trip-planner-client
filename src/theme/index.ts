@@ -24,6 +24,7 @@ let theme = createMuiTheme({
 			disabled: '#AAA',
 			disabledBackground: '#EEE'
 		},
+		monochromatic: '#5EA7AA',
 		divider: '#DDD',
 		borderColor: '#DDD',
 		borderHover: '#BBB',
@@ -67,6 +68,10 @@ let theme = createMuiTheme({
 			},
 			sizeSmall: {
 				height: 28
+			},
+			labelSmall: {
+				paddingLeft: 10,
+				paddingRight: 10
 			}
 		},
 		MuiBreadcrumbs: {

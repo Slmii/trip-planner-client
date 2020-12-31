@@ -6,7 +6,7 @@ export const Dropdown = styled('div')(({ theme }) => ({
 	zIndex: 999,
 	marginTop: 35,
 	top: '50%',
-	right: 0,
+	right: 12,
 	width: 250,
 	maxHeight: 250,
 	backgroundColor: '#FFFFFF',

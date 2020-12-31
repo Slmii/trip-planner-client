@@ -7,8 +7,6 @@ const Typography = require('@material-ui/core/Typography').default;
 const Divider = require('@material-ui/core/Divider').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpen = require('@material-ui/icons/LockOpen').default;
-const DateRangeIcon = require('@material-ui/icons/DateRange').default;
-const PublicIcon = require('@material-ui/icons/Public').default;
 const FavoriteIcon = require('@material-ui/icons/Favorite').default;
 const FavoriteBorderIcon = require('@material-ui/icons/FavoriteBorder').default;
 const ShareIcon = require('@material-ui/icons/Share').default;
@@ -16,7 +14,7 @@ const DeleteIcon = require('@material-ui/icons/Delete').default;
 const { useTheme } = require('@material-ui/core/styles');
 
 import { Button, IconButton } from '@components/button';
-import { helpers } from '@lib/utils';
+import { TripDateLocation } from '@components/trips';
 import { CardProps } from '@lib/types';
 
 import * as S from './card.styled';
@@ -71,26 +69,7 @@ const Card = ({
 						</Typography>
 					</Box>
 					<Box display='flex' flexDirection='column' mb={1}>
-						<Box display='flex' alignItems='center'>
-							<DateRangeIcon className={iconMr} fontSize='inherit' />
-							<Typography variant='subtitle1' color='textSecondary'>
-								{helpers.formatDate({
-									date: trip.dateFrom,
-									format: 'DD MMM'
-								})}{' '}
-								-{' '}
-								{helpers.formatDate({
-									date: trip.dateTo,
-									format: 'DD MMM'
-								})}
-							</Typography>
-						</Box>
-						<Box display='flex' alignItems='center'>
-							<PublicIcon fontSize='inherit' className={iconMr} />
-							<Typography variant='subtitle1' color='textSecondary'>
-								{trip.locations.length ? trip.locations.map(location => location.name).join(' - ') : '-'}
-							</Typography>
-						</Box>
+						<TripDateLocation trip={trip} />
 					</Box>
 					<S.Description>
 						<Typography variant='body2'>{trip.description}</Typography>
