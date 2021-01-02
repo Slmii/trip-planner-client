@@ -8,14 +8,12 @@ const ListItemSecondaryAction = require('@material-ui/core/ListItemSecondaryActi
 const Checkbox = require('@material-ui/core/Checkbox').default;
 const DeleteIcon = require('@material-ui/icons/Delete').default;
 
-import { IconButton } from '@components/button';
-import { PreparationProps } from '@lib/types';
-
-import { activityStyles } from './preparation.styled';
+import IconButton from '@components/buttons/icon-button';
+import { PreparationProps, Styled } from '@components/trips/trip-summary/preparation';
 
 const Preparation = ({ preparation, onDelete, onStatusChange }: PreparationProps) => {
 	const { id, name, status, description } = preparation;
-	const { preparationHeading, preparationComplete } = activityStyles();
+	const { preparationHeading, preparationComplete } = Styled.activityStyles();
 
 	const labelId = `checkbox-list-label-${preparation.id}`;
 

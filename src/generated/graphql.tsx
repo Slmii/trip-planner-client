@@ -461,7 +461,7 @@ export type AddActivityInput = {
 export type AddPreparationInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  status: Scalars['Boolean'];
+  status?: Maybe<Scalars['Boolean']>;
 };
 
 export type AddActivityTypeInput = {

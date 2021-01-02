@@ -4,10 +4,8 @@ const InputAdornment = require('@material-ui/core/InputAdornment').default;
 const VisibilityOff = require('@material-ui/icons/VisibilityOff').default;
 const Visibility = require('@material-ui/icons/Visibility').default;
 
-import { PasswordMeter } from '@components/password-meter';
-import { InputFieldProps } from '@lib/types';
-
-import { TextField } from './input-field.styled';
+import PasswordMeter from '@components/password-meter';
+import { InputFieldProps, Styled } from '@components/inputs/input-field';
 
 export default function InputField({
 	field,
@@ -41,7 +39,7 @@ export default function InputField({
 
 	return (
 		<>
-			<TextField
+			<Styled.TextField
 				type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
 				error={touched && Boolean(error)}
 				label={label}

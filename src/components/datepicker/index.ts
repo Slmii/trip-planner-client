@@ -1,3 +1,4 @@
 import DatePicker from './datepicker.component';
 
-export { DatePicker };
+export type { DatePickerProps } from './datepicker.types';
+export default DatePicker;

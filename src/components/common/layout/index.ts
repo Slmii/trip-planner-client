@@ -1,4 +1,4 @@
 import Layout from './layout.component';
 
-export { Layout };
-export { HAS_EXTENDED_FILTERS } from './layout.constants';
+export default Layout;
+export * as constants from './layout.constants';

@@ -13,9 +13,13 @@ const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
 const ExpandMore = require('@material-ui/icons/ExpandMore').default;
 const ExpandLess = require('@material-ui/icons/ExpandLess').default;
 
-import { IconButton, Button } from '@components/button';
-import { TripSummarySkeleton, Activity, Preparation, TripDateLocation } from '@components/trips';
-import { TripSummaryProps } from '@lib/types';
+import Button from '@components/buttons/button';
+import IconButton from '@components/buttons/icon-button';
+import TripDateAndLocations from '@components/trips/dates-and-locations';
+import Activity from '@components/trips/trip-summary/activity';
+import Preparation from '@components/trips/trip-summary/preparation';
+import TripSummarySkeleton from '@components/trips/trip-summary/skeleton';
+import { TripSummaryProps } from '@components/trips/trip-summary';
 import { dialog, snackbar } from '@lib/redux';
 import {
 	useDeleteActivityMutation,
@@ -209,7 +213,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 							/>
 						</Box>
 						<Box mb={1}>
-							<TripDateLocation trip={tripData.trip} />
+							<TripDateAndLocations trip={tripData.trip} />
 						</Box>
 						<Typography variant='body2'>{description}</Typography>
 					</Box>

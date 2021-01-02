@@ -1,3 +1,5 @@
 import PasswordMeter from './password-meter.component';
 
-export { PasswordMeter };
+export * as Styled from './password-meter.styled';
+export * as constants from './password-meter.constants';
+export default PasswordMeter;

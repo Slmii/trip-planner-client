@@ -4,7 +4,7 @@ const ListSubheader = require('@material-ui/core/ListSubheader').default;
 const MuiMenuItem = require('@material-ui/core/MenuItem').default;
 const Typography = require('@material-ui/core/Typography').default;
 
-import { MenuItem, MenuProps, MultipleMenuItem } from '@lib/types';
+import { MenuItem, MenuProps, MultipleMenuItem } from '@components/menu';
 
 const Menu = ({ anchorEl, onClose, type, menu, multiple = false }: MenuProps) => {
 	return (

@@ -1,3 +1,4 @@
-import FormInputField from './form-input-field';
+import FormInputField from './form-input-field.component';
 
-export { FormInputField };
+export type { FormInputFieldProps, InputSize } from './form-input-field.types';
+export default FormInputField;

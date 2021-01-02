@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import { Layout } from '@components/common';
+import Layout from '@components/common/layout';
 import { withApollo } from '@lib/apollo';
 import { useMyTripsQuery } from '@generated/graphql';
 

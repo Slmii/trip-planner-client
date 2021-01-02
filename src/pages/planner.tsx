@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
+import Layout from '../components/common/layout';
 import { withApollo } from '@lib/apollo';
-import { Layout } from '../components/common';
 
 function PlannerPage() {
 	return (

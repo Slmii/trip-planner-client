@@ -1,49 +1,35 @@
-import React, { useCallback } from 'react';
-import dayjs from 'dayjs';
+import React from 'react';
 import cn from 'classnames';
+import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
+import Chip from '@material-ui/core/Chip';
+import FormControl from '@material-ui/core/FormControl';
+import Typography from '@material-ui/core/Typography';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import SearchIcon from '@material-ui/icons/Search';
+import TuneIcon from '@material-ui/icons/Tune';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ClearIcon from '@material-ui/icons/Clear';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-const Container = require('@material-ui/core/Container').default;
-const Box = require('@material-ui/core/Box').default;
-const Divider = require('@material-ui/core/Divider').default;
-const Typography = require('@material-ui/core/Typography').default;
-const Chip = require('@material-ui/core/Chip').default;
-const FormControl = require('@material-ui/core/FormControl').default;
-const FormControlLabel = require('@material-ui/core/FormControlLabel').default;
-const FormGroup = require('@material-ui/core/FormGroup').default;
-const FormHelperText = require('@material-ui/core/FormHelperText').default;
-const Checkbox = require('@material-ui/core/Checkbox').default;
-const InputAdornment = require('@material-ui/core/InputAdornment').default;
-const IconButton = require('@material-ui/core/IconButton').default;
-const SearchIcon = require('@material-ui/icons/Search').default;
-const TuneIcon = require('@material-ui/icons/Tune').default;
-const ExpandMoreIcon = require('@material-ui/icons/ExpandMore').default;
-const ExpandLessIcon = require('@material-ui/icons/ExpandLess').default;
-const ClearIcon = require('@material-ui/icons/Clear').default;
 
-import {
-	ORDER_BY_VALUES,
-	SORT_BY_VALUES,
-	SEARCH_IN,
-	POPOVER_FILTER_DATES,
-	IAnchorElementState,
-	IFiltersState,
-	IFilterChange
-} from '@components/filters';
-import { InputField } from '@components/inputs';
-import { Button } from '@components/button';
-import { Menu } from '@components/menu';
-import { Popover } from '@components/popover';
-import { DatePicker } from '@components/datepicker';
+import InputField from '@components/inputs/input-field';
+import Button from '@components/buttons/button';
+import Menu from '@components/menu';
+import Popover from '@components/popover';
+import DatePicker from '@components/datepicker';
+import { constants, AnchorElementState, QueryStringFilters, QueryStringFilterChange } from '@components/filters/extended-filters';
 import { helpers } from '@lib/utils';
 import { KeyOf } from '@lib/types';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
 
 import theme from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
-import { ParsableDate } from '@material-ui/pickers/constants/prop-types';
-import { DateTimePicker } from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const ExtendedFilters = () => {
 	const router = useRouter();
@@ -52,7 +38,7 @@ const ExtendedFilters = () => {
 	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order } = queryStringsAsFilters;
 
 	const [showFiltersSection, setShowFiltersSection] = useState(false);
-	const [anchorEls, setAnchorEls] = useState<IAnchorElementState>({
+	const [anchorEls, setAnchorEls] = useState<AnchorElementState>({
 		quickFilters: null,
 		dateFrom: null,
 		dateTo: null,
@@ -71,7 +57,7 @@ const ExtendedFilters = () => {
 	const { buttonMr, buttonMl, buttonMt, buttonMb, activeButton, errorChipContained, divider, bold } = globalStyles();
 
 	useEffect(() => {
-		const canShowFiltersSection = helpers.hasQueryStrings<IFiltersState>(queryStringsAsFilters, [
+		const canShowFiltersSection = helpers.hasQueryStrings<QueryStringFilters>(queryStringsAsFilters, [
 			'search',
 			'dateFrom',
 			'dateTo',
@@ -85,11 +71,11 @@ const ExtendedFilters = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleOnMenuOpen = useCallback((e: React.MouseEvent, type: KeyOf<IAnchorElementState>) => {
+	const handleOnMenuOpen = (e: React.MouseEvent, type: KeyOf<AnchorElementState>) => {
 		setAnchorEls(prevState => ({ ...prevState, [type]: e.currentTarget }));
-	}, []);
+	};
 
-	const handleOnChipDelete = useCallback((type: KeyOf<IFiltersState>) => {
+	const handleOnChipDelete = (type: KeyOf<QueryStringFilters>) => {
 		if (type === 'search') {
 			setSearchInput('');
 		}
@@ -106,29 +92,30 @@ const ExtendedFilters = () => {
 				...queryStrings
 			}
 		});
-	}, []);
+	};
 
-	const handleOnSubmitSearchInput = useCallback((e: React.FormEvent) => {
+	const handleOnSubmitSearch = (e: React.FormEvent) => {
 		e.preventDefault();
+		console.log('dadada');
 		handleOnFilterChange({
 			queryString: 'search',
 			value: searchInput,
 			closeMenu: false
 		});
-	}, []);
+	};
 
-	const handleOnMenuClose = (type: KeyOf<IAnchorElementState>) => {
+	const handleOnMenuClose = (type: KeyOf<AnchorElementState>) => {
 		setAnchorEls(prevState => ({ ...prevState, [type]: null }));
 	};
 
-	const handleOnClearFilters = useCallback(() => {
+	const handleOnClearFilters = () => {
 		setSearchInput('');
 		router.push(`/trips/${router.query.trips}`);
-	}, []);
+	};
 
-	const handleOnFilterChange = useCallback(({ queryString, value, closeMenu = true, otherMenus }: IFilterChange) => {
+	const handleOnFilterChange = ({ queryString, value, closeMenu = true, otherMenus }: QueryStringFilterChange) => {
 		if (closeMenu) {
-			handleOnMenuClose(queryString as KeyOf<IAnchorElementState>);
+			handleOnMenuClose(queryString as KeyOf<AnchorElementState>);
 
 			if (otherMenus) {
 				otherMenus.forEach(menu => handleOnMenuClose(menu));
@@ -146,7 +133,7 @@ const ExtendedFilters = () => {
 				...queryStrings
 			}
 		});
-	}, []);
+	};
 
 	const handleOnSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchInput(e.target.value);
@@ -156,19 +143,9 @@ const ExtendedFilters = () => {
 		setShowFiltersSection(prevState => !prevState);
 	};
 
-	const handleOnDatePickerChange = useCallback(
-		(queryString: KeyOf<IFiltersState>) => (date: MaterialUiPickersDate) => {
-			handleOnFilterChange({
-				value: date,
-				queryString
-			});
-		},
-		[]
-	);
-
-	const handleOnPopoverClose = useCallback((type: string) => {
-		handleOnMenuClose(type as KeyOf<IAnchorElementState>);
-	}, []);
+	const handleOnPopoverClose = (type: string) => {
+		handleOnMenuClose(type as KeyOf<AnchorElementState>);
+	};
 
 	return (
 		<Box
@@ -182,7 +159,7 @@ const ExtendedFilters = () => {
 				<Box p={1.5} display='flex' flexDirection='column'>
 					<Box display='flex' flexDirection='column'>
 						<Box display='flex'>
-							<Box component='form' onSubmit={handleOnSubmitSearchInput} width='100%' display='flex'>
+							<Box component='form' onSubmit={handleOnSubmitSearch} width='100%' display='flex'>
 								<InputField
 									label='Search'
 									placeholder='Search in trips, activities or preparations'
@@ -219,64 +196,7 @@ const ExtendedFilters = () => {
 							<>
 								<Divider className={divider} />
 								<Box display='flex' justifyContent='space-between'>
-									{/*<Chip
-										aria-controls='date-from-menu'
-										aria-haspopup='true'
-										className={cn(buttonMr, buttonMb)}
-										clickable={true}
-										deleteIcon={!dateFrom ? anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined}
-										onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateFrom')}
-										onDelete={() => handleOnChipDelete('dateFrom')}
-										label={`Date from${dateFrom ? `: ${helpers.formatDate({ date: dateFrom })}` : ''}`}
-										color='primary'
-										variant={dateFrom ? 'default' : 'outlined'}
-										size='small'
-									/>
-									<Chip
-										aria-controls='date-to-popover'
-										aria-haspopup='true'
-										className={cn(buttonMr, buttonMb)}
-										clickable={true}
-										deleteIcon={!dateTo ? anchorEls.dateTo ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined}
-										onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateTo')}
-										onDelete={() => handleOnChipDelete('dateTo')}
-										label={`Date to${dateTo ? `: ${helpers.formatDate({ date: dateTo })}` : ''}`}
-										color='primary'
-										variant={dateTo ? 'default' : 'outlined'}
-										size='small'
-									/>
-									<Chip
-										aria-controls='activity-date-popover'
-										aria-haspopup='true'
-										className={cn(buttonMr, buttonMb)}
-										clickable={true}
-										deleteIcon={
-											!activityDate ? anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined
-										}
-										onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityDate')}
-										onDelete={() => handleOnChipDelete('activityDate')}
-										label={`Activity date${activityDate ? `: ${helpers.formatDate({ date: activityDate })}` : ''}`}
-										color='primary'
-										variant={activityDate ? 'default' : 'outlined'}
-										size='small'
-									/>
-									{POPOVER_FILTER_DATES.map(value => {
-										return (
-											<Popover
-												key={value}
-												type={value}
-												anchorEl={anchorEls[value as KeyOf<IAnchorElementState>]}
-												onClose={handleOnPopoverClose}
-											>
-												<DatePicker
-													date={queryStringsAsFilters[value]}
-													onChange={handleOnDatePickerChange(value)}
-												/>
-											</Popover>
-										);
-									})}
-
-									 <Box display='flex' mb={1} flexWrap='wrap' width='100%'>
+									<Box display='flex' mb={1} flexWrap='wrap' width='100%'>
 										<Chip
 											aria-controls='quick-filters-popover'
 											aria-haspopup='true'
@@ -307,9 +227,9 @@ const ExtendedFilters = () => {
 											clickable={true}
 											deleteIcon={anchorEls.sort ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'sort')}
-											label={`Sort: ${SORT_BY_VALUES.find(
+											label={`Sort: ${constants.SORT_BY_VALUES.find(
 												item => item.value === sort
-											)?.label.toLowerCase()}, ${ORDER_BY_VALUES.find(
+											)?.label.toLowerCase()}, ${constants.ORDER_BY_VALUES.find(
 												item => item.value === order
 											)?.label.toLowerCase()}`}
 											// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -322,9 +242,7 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={
-												!dateFrom ? anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined
-											}
+											deleteIcon={anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateFrom')}
 											onDelete={() => handleOnChipDelete('dateFrom')}
 											label={`Date from${dateFrom ? `: ${helpers.formatDate({ date: dateFrom })}` : ''}`}
@@ -337,7 +255,7 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={!dateTo ? anchorEls.dateTo ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined}
+											deleteIcon={anchorEls.dateTo ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateTo')}
 											onDelete={() => handleOnChipDelete('dateTo')}
 											label={`Date to${dateTo ? `: ${helpers.formatDate({ date: dateTo })}` : ''}`}
@@ -350,9 +268,7 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={
-												!activityDate ? anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined
-											}
+											deleteIcon={anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityDate')}
 											onDelete={() => handleOnChipDelete('activityDate')}
 											label={`Activity date${activityDate ? `: ${helpers.formatDate({ date: activityDate })}` : ''}`}
@@ -365,9 +281,7 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={
-												!activityType ? anchorEls.activityType ? <ExpandLessIcon /> : <ExpandMoreIcon /> : undefined
-											}
+											deleteIcon={anchorEls.activityType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityType')}
 											onDelete={() => handleOnChipDelete('activityType')}
 											label={`Activity${
@@ -389,15 +303,7 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={
-												!transportationType ? (
-													anchorEls.transportationType ? (
-														<ExpandLessIcon />
-													) : (
-														<ExpandMoreIcon />
-													)
-												) : undefined
-											}
+											deleteIcon={anchorEls.transportationType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'transportationType')}
 											onDelete={() => handleOnChipDelete('transportationType')}
 											label={`Transportation${
@@ -418,7 +324,7 @@ const ExtendedFilters = () => {
 										<Popover
 											type='quickFilters'
 											anchorEl={anchorEls.quickFilters}
-											onClose={type => handleOnMenuClose(type as KeyOf<IAnchorElementState>)}
+											onClose={type => handleOnMenuClose(type as KeyOf<AnchorElementState>)}
 										>
 											<Box display='flex' width='450px'>
 												<Box width='50%' display='flex' flexDirection='column' margin='20px 15px 20px 20px'>
@@ -428,7 +334,7 @@ const ExtendedFilters = () => {
 														</Typography>
 														<Divider />
 														<FormGroup>
-															{SEARCH_IN.map(({ label, value }) => {
+															{constants.SEARCH_IN.map(({ label, value }) => {
 																const isDisabled = searchIn.length === 1 && searchIn[0] === value;
 																const isChecked = searchIn.includes(value);
 
@@ -523,15 +429,15 @@ const ExtendedFilters = () => {
 												</Box>
 											</Box>
 										</Popover>
-										{POPOVER_FILTER_DATES.map(value => {
+										{constants.POPOVER_FILTER_DATES.map(value => {
 											return (
 												<Popover
 													key={value}
 													type={value}
-													anchorEl={anchorEls[value as KeyOf<IAnchorElementState>]}
-													onClose={type => handleOnMenuClose(type as KeyOf<IAnchorElementState>)}
+													anchorEl={anchorEls[value as KeyOf<AnchorElementState>]}
+													onClose={type => handleOnMenuClose(type as KeyOf<AnchorElementState>)}
 												>
-													<FiltersDatePicker
+													<DatePicker
 														date={queryStringsAsFilters[value]}
 														onChange={date => handleOnFilterChange({ queryString: value, value: date })}
 													/>
@@ -581,7 +487,7 @@ const ExtendedFilters = () => {
 												{
 													subHeader: 'Sort by',
 													type: 'sort',
-													menuItems: SORT_BY_VALUES.map(({ label, value }) => ({
+													menuItems: constants.SORT_BY_VALUES.map(({ label, value }) => ({
 														label,
 														value,
 														onMenuItemClick: value =>
@@ -596,7 +502,7 @@ const ExtendedFilters = () => {
 												{
 													subHeader: 'Order by',
 													type: 'order',
-													menuItems: ORDER_BY_VALUES.map(({ label, value }) => ({
+													menuItems: constants.ORDER_BY_VALUES.map(({ label, value }) => ({
 														label,
 														value,
 														onMenuItemClick: value =>
@@ -619,7 +525,7 @@ const ExtendedFilters = () => {
 										onDelete={handleOnClearFilters}
 										label='Clear filters'
 										size='small'
-									/>*/}
+									/>
 								</Box>
 							</>
 						)}

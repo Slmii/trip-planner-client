@@ -1,3 +1,4 @@
 import Breadcrumbs from './breadcrumbs.component';
 
-export { Breadcrumbs };
+export * as Styled from './breadcrumbs.styled';
+export default Breadcrumbs;

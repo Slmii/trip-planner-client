@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
 const MuiPagination = require('@material-ui/lab/Pagination').default;
 
+import { PaginationProps } from '@components/pagination';
 import { helpers } from '@lib/utils';
-
-import { PaginationProps } from './pagination.types';
 
 const Pagination = ({ count }: PaginationProps) => {
 	const router = useRouter();

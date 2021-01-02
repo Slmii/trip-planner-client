@@ -2,7 +2,7 @@ import dayjs, { Dayjs, OpUnitType } from 'dayjs';
 import { BaseQueryOptions } from '@apollo/client';
 import { ParsedUrlQuery } from 'querystring';
 
-import { IFiltersState, IOrderBy, SearchIn, ISortBy } from '@components/filters';
+import { QueryStringFilters, OrderBy, SearchIn, SortBy } from '@components/filters/extended-filters';
 import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
 import { KeyOf, ValueOf, FiltersRouterQueryObject, ActivityType, TransportationType } from '@lib/types';
 import { Exact, PaginationInput, PreparationFragment, SortOrder, TripSortByInput, TripWhereInput } from '@generated/graphql';
@@ -66,7 +66,7 @@ export const getCurrentPage = (query: ParsedUrlQuery) => {
 /**
  * Return the current existing query strings (filters) in the URL to the type of FiltersState.
  */
-export const getQueryStringFilters = (query: ParsedUrlQuery): Readonly<IFiltersState & { page: number }> => {
+export const getQueryStringFilters = (query: ParsedUrlQuery): Readonly<QueryStringFilters & { page: number }> => {
 	const dateFrom = query.dateFrom ? dayjs(query.dateFrom as string, EU_DATE_FORMAT_SLASHES) : null;
 	const dateTo = query.dateTo ? dayjs(query.dateTo as string, EU_DATE_FORMAT_SLASHES) : null;
 	const activityDate = query.activityDate ? dayjs(query.activityDate as string, EU_DATE_FORMAT_SLASHES) : null;
@@ -76,8 +76,8 @@ export const getQueryStringFilters = (query: ParsedUrlQuery): Readonly<IFiltersS
 		searchIn: query.searchIn
 			? ((query.searchIn as string).split(',') as SearchIn[])
 			: (['trips', 'activities', 'preparations'] as SearchIn[]),
-		sort: (query.sort as ISortBy) ?? 'dateFrom',
-		order: (query.order as IOrderBy) ?? SortOrder.Asc,
+		sort: (query.sort as SortBy) ?? 'dateFrom',
+		order: (query.order as OrderBy) ?? SortOrder.Asc,
 		dateFrom,
 		dateTo,
 		activityDate,
@@ -100,8 +100,13 @@ export const hasQueryStrings = <T>(object: Partial<Record<KeyOf<T>, ValueOf<T>>>
  * If `queryString` is defined then so should `value` be. This then will replace the existing query string (filter) with the new chosen value.
  * `filter` will then be a fallback if a query string (filter) is already present in the URL. This way we dont lose the state of all chosen filters.
  */
-export const convertFiltersToRouterQueryObject = ({ filters, queryString, value, removeQueryStrings }: FiltersRouterQueryObject) => {
-	const filtersRouterObject: Partial<Record<KeyOf<IFiltersState>, string>> = {};
+export const convertFiltersToRouterQueryObject = ({
+	filters,
+	queryString,
+	value,
+	removeQueryStrings
+}: Readonly<FiltersRouterQueryObject>) => {
+	const filtersRouterObject: Partial<Record<KeyOf<QueryStringFilters>, string>> = {};
 	const valueToString = value as string;
 
 	// All current query strings in the URL
@@ -184,16 +189,18 @@ export const convertFiltersToRouterQueryObject = ({ filters, queryString, value,
 	}
 
 	if (removeQueryStrings) {
-		return Object.entries(filtersRouterObject).reduce((accum, [key, value]) => {
-			if (!removeQueryStrings.includes(key as KeyOf<IFiltersState>)) {
-				accum[key as KeyOf<IFiltersState>] = value;
+		const filteredFiltersRouterObject = Object.entries(filtersRouterObject).reduce((accum, [key, value]) => {
+			if (!removeQueryStrings.includes(key as KeyOf<QueryStringFilters>)) {
+				accum[key as KeyOf<QueryStringFilters>] = value;
 			}
 
 			return accum;
-		}, {} as Partial<Record<KeyOf<IFiltersState>, string>>);
+		}, {} as Partial<Record<KeyOf<QueryStringFilters>, string>>);
+
+		return Object.freeze(filteredFiltersRouterObject);
 	}
 
-	return filtersRouterObject;
+	return Object.freeze(filtersRouterObject);
 };
 
 export const hasNotProperties = <T>(object: Record<KeyOf<T>, ValueOf<T>>, properties: Array<KeyOf<T>>) => {
@@ -201,7 +208,7 @@ export const hasNotProperties = <T>(object: Record<KeyOf<T>, ValueOf<T>>, proper
 };
 
 export const tripsQueryVariables = (
-	filters: IFiltersState & { page: number },
+	filters: QueryStringFilters & { page: number },
 	rows: string
 ): BaseQueryOptions<Exact<{ where?: TripWhereInput; pagination: PaginationInput; orderBy?: TripSortByInput }>> => {
 	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order, page } = filters;

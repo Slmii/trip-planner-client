@@ -1,3 +1,4 @@
 import Divider from './divider.component';
 
-export { Divider };
+export * as Styled from './divider.styled';
+export default Divider;

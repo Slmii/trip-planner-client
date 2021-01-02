@@ -1,3 +1,4 @@
 import Snackbar from './snackbar.component';
 
-export { Snackbar };
+export default Snackbar;
+export * as Styled from './snackbar.styled';

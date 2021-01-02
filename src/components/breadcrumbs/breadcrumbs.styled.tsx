@@ -1,5 +1,4 @@
-const MuiBreadcrumbs = require('@material-ui/core/Breadcrumbs').default;
-const { createStyles, makeStyles } = require('@material-ui/core/styles');
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import { Theme } from '@theme/index';
 

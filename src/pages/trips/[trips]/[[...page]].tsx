@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 
-import { MyTrips, MyFavorites } from '@components/trips';
-import { Layout } from '@components/common';
+import MyTrips from '@components/trips/my-trips';
+import MyFavorites from '@components/trips/my-favorites';
+import Layout from '@components/common/layout';
 import { withApollo } from '@lib/apollo';
 
 function TripsPage() {

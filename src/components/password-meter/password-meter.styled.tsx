@@ -32,24 +32,3 @@ export const StrengthMeter = styled('span')(({ theme }) => ({
 		width: '100%'
 	}
 }));
-
-// export const StrengthLabel = styled.div<{ value: string }>`
-// 	position: absolute;
-// 	right: 0px;
-// 	font-size: 12px;
-// 	font-weight: 550;
-// 	margin-top: 5px;
-// 	&[value='1'],
-// 	&[value='2'] {
-// 		color: ${({ theme }: Theme) => theme.palette.error.main};
-// 	}
-// 	&[value='3'] {
-// 		color: ${({ theme }: Theme) => theme.palette.warning.main};
-// 	}
-// 	&[value='4'] {
-// 		color: ${({ theme }: Theme) => theme.palette.warning.main};
-// 	}
-// 	&[value='5'] {
-// 		color: ${({ theme }: Theme) => theme.palette.success.main};
-// 	}
-// `;

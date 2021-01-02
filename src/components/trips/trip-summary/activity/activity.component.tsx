@@ -22,18 +22,11 @@ const BusIcon = require('@material-ui/icons/DirectionsBus').default;
 const WalkIcon = require('@material-ui/icons/DirectionsWalk').default;
 const MotorcycleIcon = require('@material-ui/icons/Motorcycle').default;
 
-import { IconButton } from '@components/button';
+import IconButton from '@components/buttons/icon-button';
+import { TypeMapping, Styled, ActivityProps } from '@components/trips/trip-summary/activity';
 import { helpers } from '@lib/utils';
-import { ActivityType, TransportationType } from '@lib/types';
-import { ActivityFragment } from '@generated/graphql';
 
-import * as S from './activity.styled';
 import { globalStyles } from '@styles/global-styled';
-
-type TypeMapping = {
-	type: ActivityType | TransportationType;
-	icon: JSX.Element;
-};
 
 export const activityTypeIconMapping: TypeMapping[] = [
 	{ type: 'hiking', icon: <FaHiking size='1rem' /> },
@@ -45,10 +38,10 @@ export const transportationTypeIconMapping: TypeMapping[] = [
 	{ type: 'taxi', icon: <TaxiIcon fontSize='inherit' /> },
 	{ type: 'bus', icon: <BusIcon fontSize='inherit' /> },
 	{ type: 'foot', icon: <WalkIcon fontSize='inherit' /> },
-	{ type: 'motorcycle', icon: <MotorcycleIcon fontSize='inherit' /> }
+	{ type: 'motorbike', icon: <MotorcycleIcon fontSize='inherit' /> }
 ];
 
-const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete: (activityId: number) => void }) => {
+const Activity = ({ activity, onDelete }: ActivityProps) => {
 	const {
 		id,
 		name,
@@ -63,13 +56,13 @@ const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete
 		transportationType
 	} = activity;
 
-	const { accordionHeading, accordionDetails } = S.activityStyles();
+	const { accordionHeading, accordionDetails } = Styled.activityStyles();
 
 	const { iconMr, iconMl, divider } = globalStyles();
 
 	return (
-		<S.Accordion>
-			<S.AccordionSummary
+		<Styled.Accordion>
+			<Styled.AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls='my-trip-activities-content'
 				id='my-trip-activities-header'
@@ -77,11 +70,11 @@ const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete
 			>
 				<Box display='flex' alignItems='flex-end'>
 					{publicActivity ? <LockOpenIcon className={iconMr} /> : <LockIcon className={iconMr} />}
-					<S.AccordionTitle>
+					<Styled.AccordionTitle>
 						<Typography className={accordionHeading}>{name}</Typography>
-					</S.AccordionTitle>
+					</Styled.AccordionTitle>
 				</Box>
-			</S.AccordionSummary>
+			</Styled.AccordionSummary>
 			<AccordionDetails className={accordionDetails}>
 				<Box mb={1}>
 					<Box display='flex' alignItems='center'>
@@ -165,7 +158,7 @@ const Activity = ({ activity, onDelete }: { activity: ActivityFragment; onDelete
 					</Box>
 				</Box>
 			</AccordionDetails>
-		</S.Accordion>
+		</Styled.Accordion>
 	);
 };
 

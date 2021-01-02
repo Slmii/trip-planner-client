@@ -1,9 +1,9 @@
-import * as S from './footer.styled';
+import { Styled } from '@components/common/footer';
 
 export default function Footer() {
 	return (
-		<S.Footer>
-			<S.FooterContent>Footer</S.FooterContent>
-		</S.Footer>
+		<Styled.Footer>
+			<Styled.FooterContent>Footer</Styled.FooterContent>
+		</Styled.Footer>
 	);
 }

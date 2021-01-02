@@ -4,13 +4,8 @@ const MuiMenuItem = require('@material-ui/core/MenuItem').default;
 const Typography = require('@material-ui/core/Typography').default;
 const ListSubheader = require('@material-ui/core/ListSubheader').default;
 
-import { InputSelectProps, MenuItem, MultipleMenuItem } from '@lib/types';
-
-import { Select } from './input-select.styled';
-
-interface OptionalChipsProps {
-	onDelete?: (type: string) => void;
-}
+import { InputSelectProps, Styled } from '@components/inputs/input-select';
+import { MenuItem, MultipleMenuItem } from '@components/menu';
 
 const InputSelect = ({
 	value,
@@ -32,7 +27,7 @@ const InputSelect = ({
 	return (
 		<FormControl variant={variant} style={{ minWidth }} size={size} fullWidth={fullWidth} required={required}>
 			<InputLabel id={labelId}>{label}</InputLabel>
-			<Select
+			<Styled.Select
 				labelId={labelId}
 				id={id}
 				value={value}
@@ -127,7 +122,7 @@ const InputSelect = ({
 							</MuiMenuItem>
 							// eslint-disable-next-line no-mixed-spaces-and-tabs
 					  ))}
-			</Select>
+			</Styled.Select>
 		</FormControl>
 	);
 };

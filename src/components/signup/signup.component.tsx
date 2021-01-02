@@ -7,13 +7,15 @@ const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const Alert = require('@material-ui/lab/Alert').default;
 
-import { FormGroup, FormInputField } from '@components/form';
-import { Button } from '@components/button';
+import FormGroup from '@components/form/form-group';
+import FormInputField from '@components/form/form-input-field';
+import Button from '@components/buttons/button';
+import { SignUpInitialValues } from '@components/signup';
+import { SubmitState } from '@components/signin';
 import { signUpSchema } from '@lib/validations';
-import { SignUpInitialValues } from '@lib/types';
 import { MeDocument, MeQuery, useSignUpMutation } from '@generated/graphql';
 
-import { Content } from '../../styles/global-styled';
+import { Content } from '@styles/global-styled';
 
 const initialValues: SignUpInitialValues = {
 	email: '',
@@ -25,7 +27,7 @@ const initialValues: SignUpInitialValues = {
 
 export default function SignIn() {
 	const router = useRouter();
-	const [submitState, setSubmitState] = useState<{ formError: string; isSubmitted: boolean }>({ formError: '', isSubmitted: false });
+	const [submitState, setSubmitState] = useState<SubmitState>({ formError: '', isSubmitted: false });
 
 	const [signUp] = useSignUpMutation();
 

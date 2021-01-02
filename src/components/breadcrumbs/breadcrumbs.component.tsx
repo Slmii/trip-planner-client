@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link';
+import MuiBreadcrumbs from '@material-ui/core/Breadcrumbs';
+import Box from '@material-ui/core/Box';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import HomeIcon from '@material-ui/icons/Home';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-const MuiBreadcrumbs = require('@material-ui/core/Breadcrumbs').default;
-const Box = require('@material-ui/core/Box').default;
-const NavigateNextIcon = require('@material-ui/icons/NavigateNext').default;
-const HomeIcon = require('@material-ui/icons/Home').default;
 
-import { breadcrumbsStyles } from './breadcrumbs.styled';
+import { Styled } from '@components/breadcrumbs';
 
 const convertBreadcrumb = (string: string) => {
 	const [convertedBreadcrumb] = string
@@ -25,7 +25,7 @@ const Breadcrumbs = () => {
 	const router = useRouter();
 	const [breadcrumbs, setBreadcrumbs] = useState<{ breadcrumb: string; href: string }[]>([]);
 
-	const { inactive, hoverOnBreadcrumb, separator } = breadcrumbsStyles();
+	const { inactive, hoverOnBreadcrumb, separator } = Styled.breadcrumbsStyles();
 
 	useEffect(() => {
 		if (router) {

@@ -1,18 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Formik, Form, FormikProps } from 'formik';
+import { Formik, Form } from 'formik';
 import Link from 'next/link';
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const Alert = require('@material-ui/lab/Alert').default;
 
-import { FormGroup, FormInputField } from '@components/form';
-import { Button } from '@components/button';
-import { SignInInitialValues } from '@lib/types';
+import FormGroup from '@components/form/form-group';
+import FormInputField from '@components/form/form-input-field';
+import Button from '@components/buttons/button';
+import { SignInInitialValues, SubmitState } from '@components/signin';
 import { MeDocument, MeQuery, useSignInMutation } from '@generated/graphql';
 
-import { Content } from '../../styles/global-styled';
+import { Content } from '@styles/global-styled';
 
 const initialValues: SignInInitialValues = {
 	email: '',
@@ -21,7 +22,7 @@ const initialValues: SignInInitialValues = {
 
 export default function SignIn() {
 	const router = useRouter();
-	const [submitState, setSubmitState] = useState<{ formError: string; isSubmitted: boolean }>({ formError: '', isSubmitted: false });
+	const [submitState, setSubmitState] = useState<SubmitState>({ formError: '', isSubmitted: false });
 
 	const [signIn] = useSignInMutation();
 

@@ -1,27 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link';
+import Box from '@material-ui/core/Box';
+import Avatar from '@material-ui/core/Avatar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
-const Box = require('@material-ui/core/Box').default;
-const Avatar = require('@material-ui/core/Avatar').default;
-const CircularProgress = require('@material-ui/core/CircularProgress').default;
-const Menu = require('@material-ui/icons/Menu').default;
-const { useTheme } = require('@material-ui/core/styles');
+import { useTheme } from '@material-ui/core/styles';
 
-import { Button } from '@components/button';
-import { Dropdown } from '@components/dropdown';
+import Button from '@components/buttons/button';
+import Dropdown from '@components/dropdown';
+import { Styled } from '@components/common/header';
 import { useOutsideClick } from '@lib/hooks';
 import { useMeQuery, useSignOutMutation } from '@generated/graphql';
 
-import { NavbarItem, ProfileMenu, Badge, PulseBadge } from './header.styled';
 import { Theme } from '@theme/index';
-import { globalStyles } from '@styles/global-styled';
 
 function Header() {
 	const profileMenuRef = useRef<HTMLDivElement | null>(null);
 	const [visible, setVisible] = useState<boolean>(false);
-	const { iconMr } = globalStyles();
 
 	const apolloClient = useApolloClient();
 	const router = useRouter();
@@ -67,27 +64,27 @@ function Header() {
 					</Link>
 				</Box>
 				<Box display='flex' alignItems='center'>
-					<NavbarItem>
+					<Styled.NavbarItem>
 						<Link href='/search'>
 							<a className='bold white' title='Look for trips'>
 								Look for trips
 							</a>
 						</Link>
-					</NavbarItem>
-					<NavbarItem>
+					</Styled.NavbarItem>
+					<Styled.NavbarItem>
 						<Link href='/planner'>
 							<a className='bold white' title='Planner'>
 								Plan a trip
 							</a>
 						</Link>
-					</NavbarItem>
+					</Styled.NavbarItem>
 					{meLoading || signOutLoading ? (
 						<Box display='flex' justifyContent='center' alignItems='center' width='100px' ml={0.75}>
 							<CircularProgress size='1.5rem' color='secondary' />
 						</Box>
 					) : data?.me ? (
-						<NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
-							<PulseBadge
+						<Styled.NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
+							<Styled.PulseBadge
 								overlap='circle'
 								anchorOrigin={{
 									vertical: 'bottom',
@@ -101,7 +98,7 @@ function Header() {
 										.map(n => n[0])
 										.join('')}
 								</Avatar>
-							</PulseBadge>
+							</Styled.PulseBadge>
 							<Dropdown
 								visible={visible}
 								items={[
@@ -110,7 +107,7 @@ function Header() {
 										element: (
 											<Box display='flex'>
 												<Box fontWeight='bold'>Notifications</Box>
-												<Badge color='secondary' badgeContent={badgeCount} max={99} />
+												<Styled.Badge color='secondary' badgeContent={badgeCount} max={99} />
 											</Box>
 										)
 									},
@@ -133,15 +130,15 @@ function Header() {
 									}
 								]}
 							/>
-						</NavbarItem>
+						</Styled.NavbarItem>
 					) : (
 						<>
-							<NavbarItem>
+							<Styled.NavbarItem>
 								<Button variant='outlined' color='secondary' size='large' className='bold' onClick={handleOnSignInClick}>
 									Sign in
 								</Button>
-							</NavbarItem>
-							<NavbarItem>
+							</Styled.NavbarItem>
+							<Styled.NavbarItem>
 								<Button
 									variant='contained'
 									color='secondary'
@@ -151,7 +148,7 @@ function Header() {
 								>
 									Sign up
 								</Button>
-							</NavbarItem>
+							</Styled.NavbarItem>
 						</>
 					)}
 				</Box>

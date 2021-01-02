@@ -1,3 +1,4 @@
 import Header from './header.component';
 
-export { Header };
+export * as Styled from './header.styled';
+export default Header;

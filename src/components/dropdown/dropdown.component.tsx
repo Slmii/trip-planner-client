@@ -2,21 +2,19 @@ import Link from 'next/link';
 // import classNames from 'classnames';
 import { Fragment } from 'react';
 
-import { Divider } from '@components/divider';
-import { DropdownProps, DropDownItemProps } from '@lib/types';
-
-import * as S from './dropdown.styled';
+import Divider from '@components/divider';
+import { DropdownProps, DropDownItemProps, Styled } from '@components/dropdown';
 
 const renderDropdownItem = ({ name, element, action }: DropDownItemProps) => {
-	return <S.DropdownItem onClick={action}>{element ?? name}</S.DropdownItem>;
+	return <Styled.DropdownItem onClick={action}>{element ?? name}</Styled.DropdownItem>;
 };
 
 export default function Dropdown({ className, visible, items }: DropdownProps) {
 	return (
 		<>
 			{visible && (
-				<S.Dropdown className={className}>
-					<S.DropdownItems>
+				<Styled.Dropdown className={className}>
+					<Styled.DropdownItems>
 						{items.map(({ href, name, element, divider, action }, idx) => {
 							return (
 								<Fragment key={idx}>
@@ -31,8 +29,8 @@ export default function Dropdown({ className, visible, items }: DropdownProps) {
 								</Fragment>
 							);
 						})}
-					</S.DropdownItems>
-				</S.Dropdown>
+					</Styled.DropdownItems>
+				</Styled.Dropdown>
 			)}
 		</>
 	);

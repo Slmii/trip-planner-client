@@ -1,8 +1,8 @@
 const MuiPopover = require('@material-ui/core/Popover').default;
 
-import { IPopoverProps } from '@components/popover';
+import { PopoverProps } from '@components/popover';
 
-const Popover = ({ type, anchorEl, onClose, children }: IPopoverProps) => {
+const Popover = ({ type, anchorEl, onClose, children }: PopoverProps) => {
 	const handleOnClose = () => {
 		onClose(type);
 	};
@@ -29,7 +29,5 @@ const Popover = ({ type, anchorEl, onClose, children }: IPopoverProps) => {
 		</MuiPopover>
 	);
 };
-
-Popover.whyDidYouRender = true;
 
 export default Popover;

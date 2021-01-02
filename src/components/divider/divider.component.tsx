@@ -1,5 +1,5 @@
-import * as S from './divider.styled';
+import { Styled } from '@components/divider';
 
 export default function Divider({ children }: { children?: React.ReactNode }) {
-	return <S.Divider>{children && <S.DividerWithText>{children}</S.DividerWithText>}</S.Divider>;
+	return <Styled.Divider>{children && <Styled.DividerWithText>{children}</Styled.DividerWithText>}</Styled.Divider>;
 }

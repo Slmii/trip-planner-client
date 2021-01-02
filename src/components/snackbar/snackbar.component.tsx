@@ -6,10 +6,9 @@ const Slide = require('@material-ui/core/Slide').default;
 const Alert = require('@material-ui/lab/Alert').default;
 const Close = require('@material-ui/icons/Close').default;
 
+import Button from '@components/buttons/button';
+import { Styled } from '@components/snackbar';
 import { selectSnackbar, setSnackbar } from '@lib/redux/snackbar';
-import { Button } from '@components/button';
-
-import * as S from './snackbar.styled';
 
 function SlideTransition(props: TransitionProps) {
 	return <Slide {...props} direction='left' />;
@@ -39,7 +38,7 @@ const Snackbar = () => {
 	};
 
 	return (
-		<S.Snackbar
+		<Styled.Snackbar
 			open={open}
 			autoHideDuration={6000}
 			onClose={(e: React.SyntheticEvent | React.MouseEvent, reason: string) => handleOnCloseSnackbar(e, reason, false)}
@@ -74,7 +73,7 @@ const Snackbar = () => {
 			>
 				{message}
 			</Alert>
-		</S.Snackbar>
+		</Styled.Snackbar>
 	);
 };
 

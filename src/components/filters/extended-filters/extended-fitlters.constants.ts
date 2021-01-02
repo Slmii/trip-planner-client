@@ -1,10 +1,10 @@
 import { SortOrder } from '@generated/graphql';
 
-import { IArrayValues, ChipsPrefixMapping, ISearchInCheckboxes } from '@components/filters';
+import { ArrayValues, ChipsPrefixMapping, SearchInCheckboxes } from '@components/filters/extended-filters';
 
 type POPOVER_FILTER_DATES = 'dateFrom' | 'dateTo' | 'activityDate';
 
-export const SORT_BY_VALUES: IArrayValues[] = [
+export const SORT_BY_VALUES: ArrayValues[] = [
 	{
 		value: 'dateFrom',
 		label: 'Departure date'
@@ -19,7 +19,7 @@ export const SORT_BY_VALUES: IArrayValues[] = [
 	}
 ];
 
-export const ORDER_BY_VALUES: IArrayValues[] = [
+export const ORDER_BY_VALUES: ArrayValues[] = [
 	{
 		value: SortOrder.Asc,
 		label: 'Asc'
@@ -42,7 +42,7 @@ export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
 	order: 'Order by'
 };
 
-export const SEARCH_IN: ISearchInCheckboxes[] = [
+export const SEARCH_IN: SearchInCheckboxes[] = [
 	{
 		label: 'Trips',
 		value: 'trips'
