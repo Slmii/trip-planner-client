@@ -1,5 +1,5 @@
+import MuiPagination from '@material-ui/lab/Pagination';
 import { useRouter } from 'next/router';
-const MuiPagination = require('@material-ui/lab/Pagination').default;
 
 import { PaginationProps } from '@components/pagination';
 import { helpers } from '@lib/utils';
@@ -29,7 +29,7 @@ const Pagination = ({ count }: PaginationProps) => {
 		<MuiPagination
 			page={filters.page}
 			count={count}
-			color='secondary'
+			color='standard'
 			shape='rounded'
 			showFirstButton
 			showLastButton

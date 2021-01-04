@@ -1,14 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link';
+import Image from 'next/image';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useTheme } from '@material-ui/core/styles';
 
 import Button from '@components/buttons/button';
+import IconButton from '@components/buttons/icon-button';
 import Dropdown from '@components/dropdown';
 import { Styled } from '@components/common/header';
 import { useOutsideClick } from '@lib/hooks';
@@ -25,7 +28,7 @@ function Header() {
 	const theme: Theme = useTheme();
 	useOutsideClick(profileMenuRef, () => setVisible(false));
 	const [signOut, { loading: signOutLoading }] = useSignOutMutation();
-	const { data, loading: meLoading } = useMeQuery();
+	const { data, loading: meLoading, error } = useMeQuery();
 
 	const badgeCount = 5;
 
@@ -45,7 +48,7 @@ function Header() {
 	};
 
 	return (
-		<Box component='header' width='100%' height='80px' bgcolor={theme.palette.text.primary} color='white' fontSize={14}>
+		<Box component='header' width='100%' bgcolor={theme.palette.primary.dark} fontSize={14}>
 			<Box
 				display='flex'
 				justifyContent='space-between'
@@ -54,28 +57,24 @@ function Header() {
 				maxWidth={1280}
 				marginLeft='auto'
 				marginRight='auto'
-				p={1.5}
+				px={1.5}
 			>
 				<Box>
 					<Link href='/'>
-						<a className='bold white' title='Home'>
-							Home
+						<a className='bold white'>
+							<Image src='/assets/logo.png' width={200} height={60} />
 						</a>
 					</Link>
 				</Box>
 				<Box display='flex' alignItems='center'>
 					<Styled.NavbarItem>
-						<Link href='/search'>
-							<a className='bold white' title='Look for trips'>
-								Look for trips
-							</a>
+						<Link href='/explore'>
+							<a className='bold white'>Explore community</a>
 						</Link>
 					</Styled.NavbarItem>
 					<Styled.NavbarItem>
 						<Link href='/planner'>
-							<a className='bold white' title='Planner'>
-								Plan a trip
-							</a>
+							<a className='bold white'>Plan a trip</a>
 						</Link>
 					</Styled.NavbarItem>
 					{meLoading || signOutLoading ? (
@@ -83,69 +82,74 @@ function Header() {
 							<CircularProgress size='1.5rem' color='secondary' />
 						</Box>
 					) : data?.me ? (
-						<Styled.NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
-							<Styled.PulseBadge
-								overlap='circle'
-								anchorOrigin={{
-									vertical: 'bottom',
-									horizontal: 'right'
-								}}
-								variant='dot'
-							>
+						<>
+							<Styled.NavbarItem>
+								<IconButton
+									icon={
+										<Styled.PulseBadge
+											overlap='circle'
+											anchorOrigin={{
+												vertical: 'top',
+												horizontal: 'right'
+											}}
+											variant='dot'
+										>
+											<NotificationsActiveIcon className='white' />
+										</Styled.PulseBadge>
+									}
+									title='Notifications'
+									tooltip={true}
+								/>
+							</Styled.NavbarItem>
+							<Styled.NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
 								<Avatar style={{ width: 44, height: 44 }}>
 									{data.me.name
 										.split(' ')
 										.map(n => n[0])
 										.join('')}
 								</Avatar>
-							</Styled.PulseBadge>
-							<Dropdown
-								visible={visible}
-								items={[
-									{
-										href: '/notifications',
-										element: (
-											<Box display='flex'>
-												<Box fontWeight='bold'>Notifications</Box>
-												<Styled.Badge color='secondary' badgeContent={badgeCount} max={99} />
-											</Box>
-										)
-									},
-									{
-										href: '/trips/my-trips',
-										element: <Box fontWeight='bold'>My trips</Box>
-									},
-									{
-										href: '/trips/favorites',
-										element: <Box fontWeight='bold'>My favorites</Box>,
-										divider: true
-									},
-									{
-										href: '/account',
-										element: <Box>{data.me.name}</Box>
-									},
-									{
-										action: handleOnSignOut,
-										element: <Box>Sign out</Box>
-									}
-								]}
-							/>
-						</Styled.NavbarItem>
+								<Dropdown
+									visible={visible}
+									items={[
+										// {
+										// 	href: '/notifications',
+										// 	element: (
+										// 		<Box display='flex'>
+										// 			<Box fontWeight='bold'>Notifications</Box>
+										// 			<Styled.Badge color='secondary' badgeContent={badgeCount} max={99} />
+										// 		</Box>
+										// 	)
+										// },
+										{
+											href: '/account',
+											element: <Box fontWeight='bold'>My account</Box>
+										},
+										{
+											href: '/trips/my-trips',
+											element: <Box fontWeight='bold'>My trips</Box>
+										},
+										{
+											href: '/trips/favorites',
+											element: <Box fontWeight='bold'>My favorites</Box>,
+											divider: true
+										},
+										{
+											action: handleOnSignOut,
+											element: <Box>Sign out</Box>
+										}
+									]}
+								/>
+							</Styled.NavbarItem>
+						</>
 					) : (
 						<>
 							<Styled.NavbarItem>
-								<Button variant='outlined' color='secondary' size='large' className='bold' onClick={handleOnSignInClick}>
+								<Button variant='outlined' color='secondary' className='bold' onClick={handleOnSignInClick}>
 									Sign in
 								</Button>
 							</Styled.NavbarItem>
 							<Styled.NavbarItem>
-								<Button
-									variant='contained'
-									color='secondary'
-									size='large'
-									className='bold white'
-									onClick={handleOnSignUpClick}
-								>
+								<Button variant='contained' color='secondary' className='bold' onClick={handleOnSignUpClick}>
 									Sign up
 								</Button>
 							</Styled.NavbarItem>

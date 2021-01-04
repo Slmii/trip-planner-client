@@ -55,10 +55,11 @@ export const PulseBadge = withStyles(theme =>
 	})
 )(MuiBadge);
 
-export const Badge = withStyles((_theme: MuiTheme) =>
+export const Badge = withStyles((theme: MuiTheme) =>
 	createStyles({
 		badge: {
-			right: -10
+			right: -10,
+			color: theme.palette.secondary.contrastText
 		}
 	})
 )(MuiBadge);

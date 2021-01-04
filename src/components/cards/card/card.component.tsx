@@ -70,7 +70,11 @@ const Card = ({
 						</Typography>
 					</Box>
 					<Box display='flex' flexDirection='column' mb={1}>
-						<TripDateAndLocations trip={trip} />
+						<TripDateAndLocations
+							dateFrom={trip.dateFrom}
+							dateTo={trip.dateTo}
+							locations={trip.locations.map(location => location.name)}
+						/>
 					</Box>
 					<Styled.Description>
 						<Typography variant='body2'>{trip.description}</Typography>

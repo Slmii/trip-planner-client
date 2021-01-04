@@ -507,10 +507,10 @@ export type ActivityFragment = (
   & Pick<Activity, 'id' | 'uuid' | 'name' | 'description' | 'location' | 'date' | 'timezone' | 'public' | 'maxPeople'>
   & { activityType: (
     { __typename?: 'ActivityType' }
-    & Pick<ActivityType, 'id' | 'name' | 'type'>
+    & ActivityTypeFragment
   ), transportationType: (
     { __typename?: 'TransportationType' }
-    & Pick<TransportationType, 'id' | 'name' | 'type'>
+    & TransportationTypeFragment
   ), users: Array<(
     { __typename?: 'User' }
     & Pick<User, 'name'>
@@ -775,32 +775,6 @@ export type MeQuery = (
   )> }
 );
 
-export const ActivityFragmentDoc = gql`
-    fragment Activity on Activity {
-  id
-  uuid
-  name
-  description
-  location
-  date
-  timezone
-  public
-  maxPeople
-  activityType {
-    id
-    name
-    type
-  }
-  transportationType {
-    id
-    name
-    type
-  }
-  users {
-    name
-  }
-}
-    `;
 export const ActivityTypeFragmentDoc = gql`
     fragment ActivityType on ActivityType {
   id
@@ -815,6 +789,29 @@ export const TransportationTypeFragmentDoc = gql`
   type
 }
     `;
+export const ActivityFragmentDoc = gql`
+    fragment Activity on Activity {
+  id
+  uuid
+  name
+  description
+  location
+  date
+  timezone
+  public
+  maxPeople
+  activityType {
+    ...ActivityType
+  }
+  transportationType {
+    ...TransportationType
+  }
+  users {
+    name
+  }
+}
+    ${ActivityTypeFragmentDoc}
+${TransportationTypeFragmentDoc}`;
 export const LocationFragmentDoc = gql`
     fragment Location on Location {
   id

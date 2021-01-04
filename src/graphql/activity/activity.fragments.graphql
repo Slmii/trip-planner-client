@@ -9,14 +9,10 @@ fragment Activity on Activity {
 	public
 	maxPeople
 	activityType {
-		id
-		name
-		type
+		...ActivityType
 	}
 	transportationType {
-		id
-		name
-		type
+		...TransportationType
 	}
 	users {
 		name

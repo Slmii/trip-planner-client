@@ -23,8 +23,8 @@ const WalkIcon = require('@material-ui/icons/DirectionsWalk').default;
 const MotorcycleIcon = require('@material-ui/icons/Motorcycle').default;
 
 import IconButton from '@components/buttons/icon-button';
+import TripDateAndLocations from '@components/trips/dates-and-locations';
 import { TypeMapping, Styled, ActivityProps } from '@components/trips/trip-summary/activity';
-import { helpers } from '@lib/utils';
 
 import { globalStyles } from '@styles/global-styled';
 
@@ -77,22 +77,7 @@ const Activity = ({ activity, onDelete }: ActivityProps) => {
 			</Styled.AccordionSummary>
 			<AccordionDetails className={accordionDetails}>
 				<Box mb={1}>
-					<Box display='flex' alignItems='center'>
-						<DateRangeIcon className={iconMr} fontSize='inherit' />
-						<Typography variant='subtitle1' color='textSecondary'>
-							{helpers.formatDate({
-								date,
-								timezone,
-								format: helpers.isCurrentYear(date as Date) ? 'DD MMM, HH:mm' : 'DD MMM YYYY, HH:mm'
-							})}
-						</Typography>
-					</Box>
-					<Box display='flex' alignItems='center'>
-						<PublicIcon className={iconMr} fontSize='inherit' />
-						<Typography variant='subtitle1' color='textSecondary'>
-							{location}
-						</Typography>
-					</Box>
+					<TripDateAndLocations dateFrom={date} timezone={timezone} locations={[location]} />
 				</Box>
 				<Typography variant='body2'>{description}</Typography>
 				<Divider className={divider} variant='fullWidth' />

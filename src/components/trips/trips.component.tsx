@@ -32,14 +32,7 @@ const Trips = ({ pageName, trips, loading, totalCount }: TripsProps) => {
 				</Typography>
 				<Box display='flex'>
 					<FormControlLabel
-						control={
-							<Switch
-								checked={checked}
-								onChange={() => setChecked(prevState => !prevState)}
-								name='checkedB'
-								color='primary'
-							/>
-						}
+						control={<Switch checked={checked} onChange={() => setChecked(prevState => !prevState)} name='pastTrips' />}
 						labelPlacement='start'
 						label={<Typography variant='subtitle1'>Show past trips</Typography>}
 						className={buttonMr}

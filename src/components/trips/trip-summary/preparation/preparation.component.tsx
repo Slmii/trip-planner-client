@@ -1,11 +1,11 @@
 import React from 'react';
 import cn from 'classnames';
+import Checkbox from '@material-ui/core/Checkbox';
 const Typography = require('@material-ui/core/Typography').default;
 const ListItem = require('@material-ui/core/ListItem').default;
 const ListItemIcon = require('@material-ui/core/ListItemIcon').default;
 const ListItemText = require('@material-ui/core/ListItemText').default;
 const ListItemSecondaryAction = require('@material-ui/core/ListItemSecondaryAction').default;
-const Checkbox = require('@material-ui/core/Checkbox').default;
 const DeleteIcon = require('@material-ui/icons/Delete').default;
 
 import IconButton from '@components/buttons/icon-button';
@@ -20,7 +20,15 @@ const Preparation = ({ preparation, onDelete, onStatusChange }: PreparationProps
 	return (
 		<ListItem role={undefined} dense button onClick={() => onStatusChange(id)}>
 			<ListItemIcon>
-				<Checkbox edge='start' checked={status} tabIndex={-1} disableRipple inputProps={{ 'aria-labelledby': labelId }} />
+				<Checkbox
+					edge='start'
+					color='primary'
+					size='small'
+					checked={status}
+					tabIndex={-1}
+					disableRipple
+					inputProps={{ 'aria-labelledby': labelId }}
+				/>
 			</ListItemIcon>
 			<ListItemText
 				disableTypography={true}

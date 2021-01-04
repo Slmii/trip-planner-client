@@ -1,5 +1,5 @@
 const MuiSnackbar = require('@material-ui/core/Snackbar').default;
-const { withStyles, createStyles } = require('@material-ui/core');
+import { withStyles, createStyles, makeStyles } from '@material-ui/core';
 
 import { Theme } from '@theme/index';
 
@@ -10,3 +10,11 @@ export const Snackbar = withStyles((_theme: Theme) =>
 		}
 	})
 )(MuiSnackbar);
+
+export const snackbarStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		undoErrorColor: {
+			color: 'rgb(94, 29, 29)'
+		}
+	})
+);

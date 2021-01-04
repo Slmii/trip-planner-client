@@ -2,12 +2,16 @@
 import Link from 'next/link';
 import MuiBreadcrumbs from '@material-ui/core/Breadcrumbs';
 import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import HomeIcon from '@material-ui/icons/Home';
+import cn from 'classnames';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Styled } from '@components/breadcrumbs';
+
+import theme from '@theme/index';
 
 const convertBreadcrumb = (string: string) => {
 	const [convertedBreadcrumb] = string
@@ -45,17 +49,21 @@ const Breadcrumbs = () => {
 	}
 
 	return (
-		<MuiBreadcrumbs separator={<NavigateNextIcon fontSize='small' className={`${separator} ${inactive}`} />} aria-label='breadcrumbs'>
+		<MuiBreadcrumbs separator={<NavigateNextIcon fontSize='small' className={cn(separator, inactive)} />} aria-label='breadcrumbs'>
 			<Link href='/'>
 				<a title='Home'>
 					<Box display='flex' alignItems='center'>
-						<HomeIcon fontSize='small' color='secondary' />
+						<HomeIcon fontSize='small' style={{ color: theme.palette.primary.dark }} />
 					</Box>
 				</a>
 			</Link>
 			{breadcrumbs.map(({ breadcrumb, href }, i) => (
 				<Link key={i} href={href}>
-					<a className={`${hoverOnBreadcrumb} ${i + 1 === breadcrumbs.length ? '' : inactive}`}>
+					<a
+						className={cn(hoverOnBreadcrumb, {
+							[inactive]: i + 1 !== breadcrumbs.length
+						})}
+					>
 						{convertBreadcrumb(breadcrumb)}
 					</a>
 				</Link>

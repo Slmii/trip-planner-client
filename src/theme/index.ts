@@ -6,7 +6,7 @@ let theme = createMuiTheme({
 			main: '#4A898B'
 		},
 		secondary: {
-			main: '#3885E9'
+			main: '#EEC218'
 		},
 		error: {
 			main: '#ED4949'
@@ -59,7 +59,7 @@ let theme = createMuiTheme({
 	shape: {
 		borderRadius: 4
 	},
-	boxShadow: '0 2px 4px 0 rgba(17,34,68,0.4)',
+	boxShadow: '0 2px 4px 1px rgba(17,34,68,0.4)',
 	spacing: 16,
 	overrides: {
 		MuiChip: {

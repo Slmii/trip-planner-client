@@ -5,11 +5,20 @@ const DateRangeIcon = require('@material-ui/icons/DateRange').default;
 const PublicIcon = require('@material-ui/icons/Public').default;
 
 import { helpers } from '@lib/utils';
-import { TripFragment } from '@generated/graphql';
 
 import { globalStyles } from '@styles/global-styled';
 
-const TripDatesAndLocations = ({ trip }: { trip: TripFragment }) => {
+const TripDatesAndLocations = ({
+	dateFrom,
+	dateTo,
+	timezone,
+	locations
+}: {
+	dateFrom: Date;
+	dateTo?: Date;
+	timezone?: string;
+	locations: string[];
+}) => {
 	const { iconMr } = globalStyles();
 
 	return (
@@ -18,20 +27,24 @@ const TripDatesAndLocations = ({ trip }: { trip: TripFragment }) => {
 				<DateRangeIcon className={iconMr} fontSize='inherit' />
 				<Typography variant='subtitle1' color='textSecondary'>
 					{helpers.formatDate({
-						date: trip.dateFrom,
-						format: helpers.isCurrentYear(trip.dateFrom as Date) ? 'DD MMM' : 'DD MMM YYYY'
+						date: dateFrom,
+						format: helpers.isCurrentYear(dateFrom as Date) ? 'DD MMM' : 'DD MMM YYYY',
+						timezone
 					})}{' '}
-					-{' '}
-					{helpers.formatDate({
-						date: trip.dateTo,
-						format: helpers.isCurrentYear(trip.dateTo as Date) ? 'DD MMM' : 'DD MMM YYYY'
-					})}
+					{dateTo
+						? `- ${helpers.formatDate({
+								date: dateTo,
+								format: helpers.isCurrentYear(dateTo as Date) ? 'DD MMM' : 'DD MMM YYYY',
+								timezone
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  })}`
+						: null}
 				</Typography>
 			</Box>
 			<Box display='flex' alignItems='center'>
 				<PublicIcon fontSize='inherit' className={iconMr} />
 				<Typography variant='subtitle1' color='textSecondary'>
-					{trip.locations.length ? trip.locations.map(location => location.name).join(' - ') : '-'}
+					{locations.length ? locations.join(' - ') : '-'}
 				</Typography>
 			</Box>
 		</>

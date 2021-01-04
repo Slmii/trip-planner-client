@@ -10,6 +10,8 @@ import Button from '@components/buttons/button';
 import { Styled } from '@components/snackbar';
 import { selectSnackbar, setSnackbar } from '@lib/redux/snackbar';
 
+import theme from '@theme/index';
+
 function SlideTransition(props: TransitionProps) {
 	return <Slide {...props} direction='left' />;
 }
@@ -19,6 +21,8 @@ const Snackbar = () => {
 
 	const snackbar = useSelector(selectSnackbar);
 	const { open, message, severity, onUndo } = snackbar;
+
+	const { undoErrorColor } = Styled.snackbarStyles();
 
 	const handleOnCloseSnackbar = (_event?: React.SyntheticEvent | React.MouseEvent, reason?: string, undo?: boolean) => {
 		if (reason === 'clickaway') {
@@ -52,9 +56,10 @@ const Snackbar = () => {
 						{severity === 'error' && onUndo ? (
 							<Button
 								aria-label='undo'
-								color='inherit'
+								color='default'
 								size='small'
 								variant='text'
+								className={undoErrorColor}
 								onClick={() => handleOnCloseSnackbar(undefined, undefined, true)}
 							>
 								UNDO

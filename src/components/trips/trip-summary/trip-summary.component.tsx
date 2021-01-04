@@ -213,7 +213,11 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 							/>
 						</Box>
 						<Box mb={1}>
-							<TripDateAndLocations trip={tripData.trip} />
+							<TripDateAndLocations
+								dateFrom={dateFrom}
+								dateTo={dateTo}
+								locations={locations.map(location => location.name)}
+							/>
 						</Box>
 						<Typography variant='body2'>{description}</Typography>
 					</Box>
@@ -234,12 +238,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 						{preparations.length ? (
 							<Box display='flex' alignItems='center'>
 								<Box width='82.5%'>
-									<LinearProgress
-										className={iconMr}
-										variant='determinate'
-										value={preperationCompletionPercentage}
-										color='secondary'
-									/>
+									<LinearProgress className={iconMr} variant='determinate' value={preperationCompletionPercentage} />
 								</Box>
 								<Typography
 									variant='subtitle2'

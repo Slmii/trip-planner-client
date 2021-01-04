@@ -33,6 +33,11 @@ import { globalStyles } from '@styles/global-styled';
 
 const ExtendedFilters = () => {
 	const router = useRouter();
+	const currentRoute = Object.entries(router.query)
+		.map(([key, value]) => {
+			return `${key}/${Array.isArray(value) ? value[0] : value}`;
+		})
+		.join();
 
 	const queryStringsAsFilters = useMemo(() => helpers.getQueryStringFilters(router.query), [router.query]);
 	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order } = queryStringsAsFilters;
@@ -86,7 +91,7 @@ const ExtendedFilters = () => {
 		});
 
 		router.push({
-			pathname: `/trips/${router.query.trips}`,
+			pathname: `/${currentRoute}`,
 			query: {
 				page: 1,
 				...queryStrings
@@ -110,7 +115,7 @@ const ExtendedFilters = () => {
 
 	const handleOnClearFilters = () => {
 		setSearchInput('');
-		router.push(`/trips/${router.query.trips}`);
+		router.push(`/${currentRoute}`);
 	};
 
 	const handleOnFilterChange = ({ queryString, value, closeMenu = true, otherMenus }: QueryStringFilterChange) => {
@@ -127,7 +132,7 @@ const ExtendedFilters = () => {
 		const queryStrings = helpers.convertFiltersToRouterQueryObject({ filters: queryStringsAsFilters, queryString, value });
 
 		router.push({
-			pathname: `/trips/${router.query.trips}`,
+			pathname: `/${currentRoute}`,
 			query: {
 				page: 1,
 				...queryStrings
