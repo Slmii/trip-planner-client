@@ -42,7 +42,9 @@ const MyTrips = () => {
 				<Button fullWidth={false} onClick={() => router.push('/planner')} color='secondary'>
 					Plan a trip
 				</Button>
-				<Image src='/assets/illustrations/no-data.jpg' width={500} height={450} />
+				<Box mt={0.5}>
+					<Image src='/assets/illustrations/no-data.jpg' width={500} height={450} />
+				</Box>
 			</Box>
 		);
 	} else {

@@ -61,9 +61,7 @@ function Header() {
 			>
 				<Box>
 					<Link href='/'>
-						<a className='bold white'>
-							<Image src='/assets/logo.png' width={200} height={60} />
-						</a>
+						<a className='bold white'>Home</a>
 					</Link>
 				</Box>
 				<Box display='flex' alignItems='center'>
@@ -83,24 +81,22 @@ function Header() {
 						</Box>
 					) : data?.me ? (
 						<>
-							<Styled.NavbarItem>
-								<IconButton
-									icon={
-										<Styled.PulseBadge
-											overlap='circle'
-											anchorOrigin={{
-												vertical: 'top',
-												horizontal: 'right'
-											}}
-											variant='dot'
-										>
-											<NotificationsActiveIcon className='white' />
-										</Styled.PulseBadge>
-									}
-									title='Notifications'
-									tooltip={true}
-								/>
-							</Styled.NavbarItem>
+							<IconButton
+								icon={
+									<Styled.PulseBadge
+										overlap='circle'
+										anchorOrigin={{
+											vertical: 'top',
+											horizontal: 'right'
+										}}
+										variant='dot'
+									>
+										<NotificationsActiveIcon className='white' />
+									</Styled.PulseBadge>
+								}
+								title='Notifications'
+								tooltip={true}
+							/>
 							<Styled.NavbarItem ref={profileMenuRef} onClick={() => setVisible(!visible)}>
 								<Avatar style={{ width: 44, height: 44 }}>
 									{data.me.name

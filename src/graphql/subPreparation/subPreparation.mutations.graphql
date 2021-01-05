@@ -1,0 +1,11 @@
+mutation EditSubPreparationStatus($subPreparationId: Int!) {
+	editSubPreparationStatus(subPreparationId: $subPreparationId) {
+		...SubPreparation
+	}
+}
+
+mutation DeleteSubPreparation($subPreparationId: Int!) {
+	deleteSubPreparation(subPreparationId: $subPreparationId) {
+		...SubPreparation
+	}
+}

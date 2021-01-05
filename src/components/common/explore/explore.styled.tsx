@@ -9,14 +9,15 @@ export const ExploreItem = styled(ButtonBase)(({ theme }) => ({
 	fontFamily: theme.typography.fontFamily,
 	fontSize: theme.typography.fontSize,
 	'&:hover': {
-		backgroundColor: theme.palette.primary.main
+		color: theme.palette.secondary.main
 	}
 }));
 
 export const layoutStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		active: {
-			borderBottomColor: 'white'
+			borderBottomColor: 'white',
+			color: theme.palette.secondary.main
 		}
 	})
 );

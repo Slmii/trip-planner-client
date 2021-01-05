@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 import Cards from '@components/cards/cards';
 import CardsSkeleton from '@components/cards/skeleton';
-import Breadcrumbs from '@components/breadcrumbs';
 import RowsView from '@components/trips/rows-view';
 import Pagination from '@components/pagination';
 import { TripsProps } from '@components/trips';
@@ -23,9 +22,6 @@ const Trips = ({ pageName, trips, loading, totalCount }: TripsProps) => {
 
 	return (
 		<>
-			<Box mb={1}>
-				<Breadcrumbs />
-			</Box>
 			<Box display='flex' justifyContent='space-between' alignItems='center' mb={1}>
 				<Typography variant='h5' component='h1'>
 					{pageName} <Typography variant='overline'>({totalCount} results)</Typography>

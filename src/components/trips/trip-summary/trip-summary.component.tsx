@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import cn from 'classnames';
 import { useDispatch } from 'react-redux';
 const Drawer = require('@material-ui/core/Drawer').default;
@@ -10,8 +10,6 @@ const LinearProgress = require('@material-ui/core/LinearProgress').default;
 const Cancel = require('@material-ui/icons/Cancel').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
-const ExpandMore = require('@material-ui/icons/ExpandMore').default;
-const ExpandLess = require('@material-ui/icons/ExpandLess').default;
 
 import Button from '@components/buttons/button';
 import IconButton from '@components/buttons/icon-button';
@@ -20,21 +18,19 @@ import Activity from '@components/trips/trip-summary/activity';
 import Preparation from '@components/trips/trip-summary/preparation';
 import TripSummarySkeleton from '@components/trips/trip-summary/skeleton';
 import { TripSummaryProps } from '@components/trips/trip-summary';
-import { dialog, snackbar } from '@lib/redux';
+import { dialog, snackbar, activityInvitation } from '@lib/redux';
 import {
 	useDeleteActivityMutation,
-	useDeletePreparationMutation,
-	useEditPreparationStatusMutation,
+	useDeleteSubPreparationMutation,
+	useEditSubPreparationStatusMutation,
 	useTripActivitiesQuery,
 	useTripQuery
 } from '@generated/graphql';
 
 import { globalStyles } from '@styles/global-styled';
-
-const COLLAPSED_PREPS = 3;
+import { helpers } from '@lib/utils';
 
 const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
-	const [showAllPreps, setShowAllPreps] = useState(false);
 	const dispatch = useDispatch();
 
 	const { iconMr, buttonMr, bold } = globalStyles();
@@ -56,14 +52,12 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 
 	const [deleteActivity] = useDeleteActivityMutation();
 
-	const [editPreparationStatus] = useEditPreparationStatusMutation();
+	const [editSubPreparationStatus] = useEditSubPreparationStatusMutation();
 
-	const [deletePreparation] = useDeletePreparationMutation();
+	const [deleteSubPreparation] = useDeleteSubPreparationMutation();
 
-	const preperationCompletionPercentage = Math.round(
-		((tripData?.trip.preparations.filter(preparation => preparation.status).length || 0) /
-			(tripData?.trip.preparations ? tripData?.trip.preparations.length : 0)) *
-			100
+	const preperationCompletionPercentage = helpers.calculatePreperationsCompletionPercentage(
+		tripData?.trip ? tripData.trip.preparations.map(prep => prep.subPreparations).flat() : []
 	);
 
 	const handleOnDrawerClose = (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -80,7 +74,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 				open: true,
 				severity: 'error',
 				title: 'Delete activity',
-				description: 'Deleting an activity will permanently remove it from your trip.',
+				body: 'Deleting an activity will permanently remove it from your trip.',
 				onConfirm: async () => {
 					const response = await deleteActivity({
 						variables: {
@@ -110,20 +104,20 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		[deleteActivity, dispatch]
 	);
 
-	const handleOnDeletePreparation = useCallback(
-		async (preparationId: number) => {
+	const handleOnDeleteSubPreparation = useCallback(
+		async (subPreparationId: number) => {
 			const options: dialog.DialogProps = {
 				open: true,
 				severity: 'error',
 				title: 'Delete preperation',
-				description: 'Deleting a preperation will permanently remove it from your trip.',
+				body: 'Deleting a preperation will permanently remove it from your trip.',
 				onConfirm: async () => {
-					const response = await deletePreparation({
+					const response = await deleteSubPreparation({
 						variables: {
-							preparationId
+							subPreparationId
 						},
 						update: cache => {
-							cache.evict({ id: `Preparation:${preparationId}` });
+							cache.evict({ id: `SubPreparation:${subPreparationId}` });
 						}
 					});
 
@@ -143,21 +137,21 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 
 			dispatch(dialog.setDialog(options));
 		},
-		[deletePreparation, dispatch]
+		[deleteSubPreparation, dispatch]
 	);
 
 	const handleOnStatusChange = useCallback(
-		async (preparationId: number) => {
-			const response = await editPreparationStatus({
+		async (subPreparationId: number) => {
+			const response = await editSubPreparationStatus({
 				variables: {
-					preparationId
+					subPreparationId
 				},
 				update: (cache, { data }) => {
 					cache.modify({
-						id: `Preparation:${preparationId}`,
+						id: `SubPreparation:${subPreparationId}`,
 						fields: {
 							status() {
-								return data?.editPreparationStatus.status;
+								return data?.editSubPreparationStatus.status;
 							}
 						}
 					});
@@ -165,7 +159,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 			});
 
 			if (response.data) {
-				const complete = response.data.editPreparationStatus.status;
+				const complete = response.data.editSubPreparationStatus.status;
 				dispatch(
 					snackbar.setSnackbar({
 						open: true,
@@ -177,8 +171,17 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 				console.error(response.errors);
 			}
 		},
-		[dispatch, editPreparationStatus]
+		[dispatch, editSubPreparationStatus]
 	);
+
+	const handeOnAcvitityInvitation = (maxInvitations: number) => {
+		const options: activityInvitation.ActivityInvitationProps = {
+			open: true,
+			maxInvitations
+		};
+
+		dispatch(activityInvitation.setActivityInivitation(options));
+	};
 
 	let body: JSX.Element = <></>;
 
@@ -227,13 +230,18 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 						</Typography>
 						<Box>
 							{activitiesData?.tripActivities.map((activity, idx) => (
-								<Activity key={idx} activity={activity} onDelete={handleOnDeleteActivity} />
+								<Activity
+									key={idx}
+									activity={activity}
+									onDelete={handleOnDeleteActivity}
+									onInvitation={handeOnAcvitityInvitation}
+								/>
 							))}
 						</Box>
 					</Box>
 					<Box>
 						<Typography variant='h6' component='h2' gutterBottom>
-							My preparations ({tripData.trip.preparations.length})
+							My preparations ({tripData.trip.preparations.map(prep => prep.subPreparations).flat().length})
 						</Typography>
 						{preparations.length ? (
 							<Box display='flex' alignItems='center'>
@@ -250,30 +258,19 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 								</Typography>
 							</Box>
 						) : null}
-						<Collapse collapsedHeight={COLLAPSED_PREPS * 68} in={showAllPreps}>
+						<Collapse in={true} timeout='auto' unmountOnExit>
 							<List>
 								{preparations.map((preparation, idx) => (
 									<Preparation
 										key={idx}
 										preparation={preparation}
-										onDelete={handleOnDeletePreparation}
+										onDelete={handleOnDeleteSubPreparation}
 										onStatusChange={handleOnStatusChange}
+										isLast={idx + 1 === preparations.length}
 									/>
 								))}
 							</List>
 						</Collapse>
-						{tripData.trip.preparations.length > 3 && (
-							<Button
-								variant='text'
-								size='small'
-								color='primary'
-								fullWidth={false}
-								onClick={() => setShowAllPreps(prevState => !prevState)}
-								endIcon={showAllPreps ? <ExpandLess /> : <ExpandMore />}
-							>
-								Show {showAllPreps ? 'less' : 'more'}
-							</Button>
-						)}
 					</Box>
 				</Box>
 				<Box padding='0 30px 30px 30px' display='flex' justifyContent='flex-end'>

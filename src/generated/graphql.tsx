@@ -184,6 +184,18 @@ export type Preparation = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   status: Scalars['Boolean'];
+  subPreparations: Array<SubPreparation>;
+};
+
+export type SubPreparation = {
+  __typename?: 'SubPreparation';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  preparationId: Scalars['Int'];
+  name: Scalars['String'];
+  status: Scalars['Boolean'];
 };
 
 export type TripSortByInput = {
@@ -315,7 +327,8 @@ export type Mutation = {
   /** Only add to Favorite if the Trip is publicly available. If current user is the creator of the Trip then its always allowed */
   addFavorite: Favorite;
   deleteFavorite: Favorite;
-  editPreparationStatus: Preparation;
+  editSubPreparationStatus: SubPreparation;
+  deleteSubPreparation: SubPreparation;
   deletePreparation: Preparation;
   addTrip: Trip;
   editTrip: Trip;
@@ -346,8 +359,13 @@ export type MutationDeleteFavoriteArgs = {
 };
 
 
-export type MutationEditPreparationStatusArgs = {
-  preparationId: Scalars['Int'];
+export type MutationEditSubPreparationStatusArgs = {
+  subPreparationId: Scalars['Int'];
+};
+
+
+export type MutationDeleteSubPreparationArgs = {
+  subPreparationId: Scalars['Int'];
 };
 
 
@@ -461,6 +479,11 @@ export type AddActivityInput = {
 export type AddPreparationInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  subPreparations: Array<AddSubPreparationInput>;
+};
+
+export type AddSubPreparationInput = {
+  name: Scalars['String'];
   status?: Maybe<Scalars['Boolean']>;
 };
 
@@ -612,20 +635,11 @@ export type LocationFragment = (
 
 export type PreparationFragment = (
   { __typename?: 'Preparation' }
-  & Pick<Preparation, 'id' | 'uuid' | 'name' | 'description' | 'status'>
-);
-
-export type EditPreparationStatusMutationVariables = Exact<{
-  preparationId: Scalars['Int'];
-}>;
-
-
-export type EditPreparationStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { editPreparationStatus: (
-    { __typename?: 'Preparation' }
-    & PreparationFragment
-  ) }
+  & Pick<Preparation, 'id' | 'uuid' | 'name' | 'description'>
+  & { subPreparations: Array<(
+    { __typename?: 'SubPreparation' }
+    & SubPreparationFragment
+  )> }
 );
 
 export type DeletePreparationMutationVariables = Exact<{
@@ -638,6 +652,37 @@ export type DeletePreparationMutation = (
   & { deletePreparation: (
     { __typename?: 'Preparation' }
     & PreparationFragment
+  ) }
+);
+
+export type SubPreparationFragment = (
+  { __typename?: 'SubPreparation' }
+  & Pick<SubPreparation, 'id' | 'uuid' | 'name' | 'status'>
+);
+
+export type EditSubPreparationStatusMutationVariables = Exact<{
+  subPreparationId: Scalars['Int'];
+}>;
+
+
+export type EditSubPreparationStatusMutation = (
+  { __typename?: 'Mutation' }
+  & { editSubPreparationStatus: (
+    { __typename?: 'SubPreparation' }
+    & SubPreparationFragment
+  ) }
+);
+
+export type DeleteSubPreparationMutationVariables = Exact<{
+  subPreparationId: Scalars['Int'];
+}>;
+
+
+export type DeleteSubPreparationMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteSubPreparation: (
+    { __typename?: 'SubPreparation' }
+    & SubPreparationFragment
   ) }
 );
 
@@ -820,15 +865,25 @@ export const LocationFragmentDoc = gql`
   name
 }
     `;
+export const SubPreparationFragmentDoc = gql`
+    fragment SubPreparation on SubPreparation {
+  id
+  uuid
+  name
+  status
+}
+    `;
 export const PreparationFragmentDoc = gql`
     fragment Preparation on Preparation {
   id
   uuid
   name
   description
-  status
+  subPreparations {
+    ...SubPreparation
+  }
 }
-    `;
+    ${SubPreparationFragmentDoc}`;
 export const TripFragmentDoc = gql`
     fragment Trip on Trip {
   id
@@ -1075,38 +1130,6 @@ export function useMyFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type MyFavoritesQueryHookResult = ReturnType<typeof useMyFavoritesQuery>;
 export type MyFavoritesLazyQueryHookResult = ReturnType<typeof useMyFavoritesLazyQuery>;
 export type MyFavoritesQueryResult = Apollo.QueryResult<MyFavoritesQuery, MyFavoritesQueryVariables>;
-export const EditPreparationStatusDocument = gql`
-    mutation EditPreparationStatus($preparationId: Int!) {
-  editPreparationStatus(preparationId: $preparationId) {
-    ...Preparation
-  }
-}
-    ${PreparationFragmentDoc}`;
-export type EditPreparationStatusMutationFn = Apollo.MutationFunction<EditPreparationStatusMutation, EditPreparationStatusMutationVariables>;
-
-/**
- * __useEditPreparationStatusMutation__
- *
- * To run a mutation, you first call `useEditPreparationStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditPreparationStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editPreparationStatusMutation, { data, loading, error }] = useEditPreparationStatusMutation({
- *   variables: {
- *      preparationId: // value for 'preparationId'
- *   },
- * });
- */
-export function useEditPreparationStatusMutation(baseOptions?: Apollo.MutationHookOptions<EditPreparationStatusMutation, EditPreparationStatusMutationVariables>) {
-        return Apollo.useMutation<EditPreparationStatusMutation, EditPreparationStatusMutationVariables>(EditPreparationStatusDocument, baseOptions);
-      }
-export type EditPreparationStatusMutationHookResult = ReturnType<typeof useEditPreparationStatusMutation>;
-export type EditPreparationStatusMutationResult = Apollo.MutationResult<EditPreparationStatusMutation>;
-export type EditPreparationStatusMutationOptions = Apollo.BaseMutationOptions<EditPreparationStatusMutation, EditPreparationStatusMutationVariables>;
 export const DeletePreparationDocument = gql`
     mutation DeletePreparation($preparationId: Int!) {
   deletePreparation(preparationId: $preparationId) {
@@ -1139,6 +1162,70 @@ export function useDeletePreparationMutation(baseOptions?: Apollo.MutationHookOp
 export type DeletePreparationMutationHookResult = ReturnType<typeof useDeletePreparationMutation>;
 export type DeletePreparationMutationResult = Apollo.MutationResult<DeletePreparationMutation>;
 export type DeletePreparationMutationOptions = Apollo.BaseMutationOptions<DeletePreparationMutation, DeletePreparationMutationVariables>;
+export const EditSubPreparationStatusDocument = gql`
+    mutation EditSubPreparationStatus($subPreparationId: Int!) {
+  editSubPreparationStatus(subPreparationId: $subPreparationId) {
+    ...SubPreparation
+  }
+}
+    ${SubPreparationFragmentDoc}`;
+export type EditSubPreparationStatusMutationFn = Apollo.MutationFunction<EditSubPreparationStatusMutation, EditSubPreparationStatusMutationVariables>;
+
+/**
+ * __useEditSubPreparationStatusMutation__
+ *
+ * To run a mutation, you first call `useEditSubPreparationStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditSubPreparationStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editSubPreparationStatusMutation, { data, loading, error }] = useEditSubPreparationStatusMutation({
+ *   variables: {
+ *      subPreparationId: // value for 'subPreparationId'
+ *   },
+ * });
+ */
+export function useEditSubPreparationStatusMutation(baseOptions?: Apollo.MutationHookOptions<EditSubPreparationStatusMutation, EditSubPreparationStatusMutationVariables>) {
+        return Apollo.useMutation<EditSubPreparationStatusMutation, EditSubPreparationStatusMutationVariables>(EditSubPreparationStatusDocument, baseOptions);
+      }
+export type EditSubPreparationStatusMutationHookResult = ReturnType<typeof useEditSubPreparationStatusMutation>;
+export type EditSubPreparationStatusMutationResult = Apollo.MutationResult<EditSubPreparationStatusMutation>;
+export type EditSubPreparationStatusMutationOptions = Apollo.BaseMutationOptions<EditSubPreparationStatusMutation, EditSubPreparationStatusMutationVariables>;
+export const DeleteSubPreparationDocument = gql`
+    mutation DeleteSubPreparation($subPreparationId: Int!) {
+  deleteSubPreparation(subPreparationId: $subPreparationId) {
+    ...SubPreparation
+  }
+}
+    ${SubPreparationFragmentDoc}`;
+export type DeleteSubPreparationMutationFn = Apollo.MutationFunction<DeleteSubPreparationMutation, DeleteSubPreparationMutationVariables>;
+
+/**
+ * __useDeleteSubPreparationMutation__
+ *
+ * To run a mutation, you first call `useDeleteSubPreparationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSubPreparationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSubPreparationMutation, { data, loading, error }] = useDeleteSubPreparationMutation({
+ *   variables: {
+ *      subPreparationId: // value for 'subPreparationId'
+ *   },
+ * });
+ */
+export function useDeleteSubPreparationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSubPreparationMutation, DeleteSubPreparationMutationVariables>) {
+        return Apollo.useMutation<DeleteSubPreparationMutation, DeleteSubPreparationMutationVariables>(DeleteSubPreparationDocument, baseOptions);
+      }
+export type DeleteSubPreparationMutationHookResult = ReturnType<typeof useDeleteSubPreparationMutation>;
+export type DeleteSubPreparationMutationResult = Apollo.MutationResult<DeleteSubPreparationMutation>;
+export type DeleteSubPreparationMutationOptions = Apollo.BaseMutationOptions<DeleteSubPreparationMutation, DeleteSubPreparationMutationVariables>;
 export const TransportationTypesDocument = gql`
     query TransportationTypes {
   transportationTypes {

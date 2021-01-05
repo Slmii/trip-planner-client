@@ -1,11 +1,13 @@
 import { useState } from 'react';
-const IconButton = require('@material-ui/core/IconButton').default;
+import cn from 'classnames';
+import IconButton from '@material-ui/core/IconButton';
+import MuiTextField from '@material-ui/core/TextField';
 const InputAdornment = require('@material-ui/core/InputAdornment').default;
 const VisibilityOff = require('@material-ui/icons/VisibilityOff').default;
 const Visibility = require('@material-ui/icons/Visibility').default;
 
 import PasswordMeter from '@components/password-meter';
-import { InputFieldProps, Styled } from '@components/inputs/input-field';
+import { InputFieldProps } from '@components/inputs/input-field';
 
 export default function InputField({
 	field,
@@ -20,6 +22,7 @@ export default function InputField({
 	optional = false,
 	multiline = false,
 	fullWidth = true,
+	autoFocus = false,
 	rows = 4,
 	placeholder = '',
 	size = 'medium',
@@ -29,7 +32,9 @@ export default function InputField({
 	endAdornment,
 	onChange,
 	onFocus,
-	onFocusOut
+	onFocusOut,
+	onIconClick,
+	onKeyDown
 }: InputFieldProps) {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -39,7 +44,7 @@ export default function InputField({
 
 	return (
 		<>
-			<Styled.TextField
+			<MuiTextField
 				type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
 				error={touched && Boolean(error)}
 				label={label}
@@ -51,6 +56,7 @@ export default function InputField({
 				onFocus={onFocus}
 				onBlur={onFocusOut}
 				onChange={onChange}
+				onKeyDown={onKeyDown}
 				{...field}
 				fullWidth={fullWidth}
 				variant={disabled ? 'filled' : 'outlined'}
@@ -59,6 +65,8 @@ export default function InputField({
 				rows={rows}
 				placeholder={placeholder}
 				size={size}
+				// eslint-disable-next-line jsx-a11y/no-autofocus
+				autoFocus={autoFocus}
 				style={{
 					background: 'white'
 				}}
@@ -79,9 +87,13 @@ export default function InputField({
 									)}
 								</IconButton>
 							</InputAdornment>
-						) : (
-							endAdornment
-						)
+						) : endAdornment ? (
+							<InputAdornment position='end'>
+								<IconButton onClick={() => onIconClick?.()} onMouseDown={handleMouseDownPassword}>
+									{endAdornment}
+								</IconButton>
+							</InputAdornment>
+						) : null
 				}}
 			/>
 			{strengthMeter && <PasswordMeter passwordStrength={passwordStrength} />}

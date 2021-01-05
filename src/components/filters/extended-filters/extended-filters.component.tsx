@@ -15,6 +15,7 @@ import TuneIcon from '@material-ui/icons/Tune';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ClearIcon from '@material-ui/icons/Clear';
+import CancelIcon from '@material-ui/icons/Cancel';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -33,12 +34,8 @@ import { globalStyles } from '@styles/global-styled';
 
 const ExtendedFilters = () => {
 	const router = useRouter();
-	const currentRoute = Object.entries(router.query)
-		.map(([key, value]) => {
-			return `${key}/${Array.isArray(value) ? value[0] : value}`;
-		})
-		.join();
 
+	const [path, subPath] = useMemo(() => helpers.getCurrentRoute(router), [router]);
 	const queryStringsAsFilters = useMemo(() => helpers.getQueryStringFilters(router.query), [router.query]);
 	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order } = queryStringsAsFilters;
 
@@ -91,7 +88,7 @@ const ExtendedFilters = () => {
 		});
 
 		router.push({
-			pathname: `/${currentRoute}`,
+			pathname: `/${path}/${subPath}`,
 			query: {
 				page: 1,
 				...queryStrings
@@ -101,7 +98,6 @@ const ExtendedFilters = () => {
 
 	const handleOnSubmitSearch = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('dadada');
 		handleOnFilterChange({
 			queryString: 'search',
 			value: searchInput,
@@ -115,7 +111,7 @@ const ExtendedFilters = () => {
 
 	const handleOnClearFilters = () => {
 		setSearchInput('');
-		router.push(`/${currentRoute}`);
+		router.push(`/${path}/${subPath}`);
 	};
 
 	const handleOnFilterChange = ({ queryString, value, closeMenu = true, otherMenus }: QueryStringFilterChange) => {
@@ -132,7 +128,7 @@ const ExtendedFilters = () => {
 		const queryStrings = helpers.convertFiltersToRouterQueryObject({ filters: queryStringsAsFilters, queryString, value });
 
 		router.push({
-			pathname: `/${currentRoute}`,
+			pathname: `/${path}/${subPath}`,
 			query: {
 				page: 1,
 				...queryStrings
@@ -148,8 +144,13 @@ const ExtendedFilters = () => {
 		setShowFiltersSection(prevState => !prevState);
 	};
 
-	const handleOnPopoverClose = (type: string) => {
-		handleOnMenuClose(type as KeyOf<AnchorElementState>);
+	const handleOnResetSearchInput = () => {
+		setSearchInput('');
+		handleOnFilterChange({
+			queryString: 'search',
+			value: '',
+			closeMenu: false
+		});
 	};
 
 	return (
@@ -173,6 +174,8 @@ const ExtendedFilters = () => {
 									size='small'
 									value={searchInput}
 									onChange={handleOnSearchInputChange}
+									endAdornment={<CancelIcon color='action' />}
+									onIconClick={handleOnResetSearchInput}
 								/>
 								<Button
 									variant='contained'

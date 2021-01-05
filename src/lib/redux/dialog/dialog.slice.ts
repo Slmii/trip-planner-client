@@ -10,9 +10,11 @@ export const initialState: DialogState = {
 	maxWidth: 'sm',
 	severity: 'error',
 	title: '',
-	description: '',
+	body: '',
 	onConfirm: () => {},
-	onCancel: () => {}
+	onConfirmText: 'Confirm',
+	onCancel: () => {},
+	onCancelText: 'Cancel'
 };
 
 const dialogSlice = createSlice({

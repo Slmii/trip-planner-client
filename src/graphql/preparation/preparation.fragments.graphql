@@ -3,5 +3,7 @@ fragment Preparation on Preparation {
 	uuid
 	name
 	description
-	status
+	subPreparations {
+		...SubPreparation
+	}
 }

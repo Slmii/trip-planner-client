@@ -24,6 +24,7 @@ import { createWrapper } from 'next-redux-wrapper';
 import filtersReducer from './filters/filters.slice';
 import dialogReducer from './dialog/dialog.slice';
 import snackbarReducer from './snackbar/snackbar.slice';
+import activityInvitationReducer from './activityInvitation/activityInvitation.slice';
 import { IS_DEVELOPMENT } from '@lib/constants';
 
 export const makeStore = () =>
@@ -31,7 +32,8 @@ export const makeStore = () =>
 		reducer: {
 			filters: filtersReducer,
 			dialog: dialogReducer,
-			snackbar: snackbarReducer
+			snackbar: snackbarReducer,
+			activityInvitation: activityInvitationReducer
 		},
 		middleware: new MiddlewareArray().concat(logger),
 		devTools: IS_DEVELOPMENT

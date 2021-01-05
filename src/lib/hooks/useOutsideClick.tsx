@@ -1,6 +1,6 @@
 import { MutableRefObject, useEffect } from 'react';
 
-export default function useOutsideClick(ref: MutableRefObject<HTMLDivElement | null>, cb: () => void) {
+export default function useOutsideClick(ref: MutableRefObject<HTMLElement | null>, cb: () => void) {
 	useEffect(() => {
 		// Hide ProfileDropdown when clicked outside of element
 		function handleClickOutside(event: MouseEvent) {

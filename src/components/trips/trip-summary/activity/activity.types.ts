@@ -4,6 +4,7 @@ import { ActivityFragment } from '@generated/graphql';
 export interface ActivityProps {
 	activity: ActivityFragment;
 	onDelete: (activityId: number) => void;
+	onInvitation: (maxInvitations: number) => void;
 }
 
 export interface TypeMapping {

@@ -1,11 +1,15 @@
 import dayjs, { Dayjs, OpUnitType } from 'dayjs';
+import isEmail from 'validator/lib/isEmail';
+import isIn from 'validator/lib/isIn';
+import trim from 'validator/lib/trim';
+import { NextRouter } from 'next/router';
 import { BaseQueryOptions } from '@apollo/client';
 import { ParsedUrlQuery } from 'querystring';
 
 import { QueryStringFilters, OrderBy, SearchIn, SortBy } from '@components/filters/extended-filters';
 import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
 import { KeyOf, ValueOf, FiltersRouterQueryObject, ActivityType, TransportationType } from '@lib/types';
-import { Exact, PaginationInput, PreparationFragment, SortOrder, TripSortByInput, TripWhereInput } from '@generated/graphql';
+import { Exact, PaginationInput, SortOrder, SubPreparationFragment, TripSortByInput, TripWhereInput } from '@generated/graphql';
 
 export const formatDate = ({
 	date,
@@ -53,10 +57,6 @@ export const getEndOfMonth = (date?: Dayjs) => {
 	}
 
 	return dayjs().endOf('month');
-};
-
-export const calculatePreperationsCompletionPercentage = (preparations: PreparationFragment[]) => {
-	return Math.round((preparations.filter(preparation => preparation.status).length / preparations.length) * 100);
 };
 
 export const getCurrentPage = (query: ParsedUrlQuery) => {
@@ -263,4 +263,35 @@ export const tripsQueryVariables = (
 			}
 		}
 	};
+};
+
+export const getCurrentRoute = (router: NextRouter) => {
+	const [pathWithoutQueryStrings] = router.asPath ? router.asPath.split('?') : [];
+
+	return pathWithoutQueryStrings ? pathWithoutQueryStrings.split('/').filter(Boolean) : [];
+};
+
+export const calculatePreperationsCompletionPercentage = (subPreparations: SubPreparationFragment[]) => {
+	const completedSubPreparations = subPreparations.filter(({ status }) => status).length;
+	const percentageCompletion = (completedSubPreparations / subPreparations.length) * 100;
+
+	return Math.round(percentageCompletion);
+};
+
+export const isInvitationEmailValid = (email: string, emailInvitations: string[]) => {
+	const trimmedEmail = trim(email);
+
+	if (!trimmedEmail.length) {
+		return 'Provide an email address';
+	}
+
+	if (!isEmail(trimmedEmail)) {
+		return `${trimmedEmail} is not a valid email address`;
+	}
+
+	if (isIn(trimmedEmail, emailInvitations)) {
+		return `${trimmedEmail} has already been added`;
+	}
+
+	return null;
 };

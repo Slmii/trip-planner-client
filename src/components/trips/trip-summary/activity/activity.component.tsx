@@ -12,8 +12,6 @@ const DeleteIcon = require('@material-ui/icons/Delete').default;
 const ShareIcon = require('@material-ui/icons/Share').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
-const DateRangeIcon = require('@material-ui/icons/DateRange').default;
-const PublicIcon = require('@material-ui/icons/Public').default;
 const BeachIcon = require('@material-ui/icons/BeachAccess').default;
 const LocationCityIcon = require('@material-ui/icons/LocationCity').default;
 const NaturePeopleIcon = require('@material-ui/icons/NaturePeople').default;
@@ -41,7 +39,7 @@ export const transportationTypeIconMapping: TypeMapping[] = [
 	{ type: 'motorbike', icon: <MotorcycleIcon fontSize='inherit' /> }
 ];
 
-const Activity = ({ activity, onDelete }: ActivityProps) => {
+const Activity = ({ activity, onDelete, onInvitation }: ActivityProps) => {
 	const {
 		id,
 		name,
@@ -97,19 +95,21 @@ const Activity = ({ activity, onDelete }: ActivityProps) => {
 							arrow
 							placement='left'
 						>
-							{users.length ? (
-								<AvatarGroup max={3}>
-									{users.map((user, idx) => (
-										<Avatar key={idx}>
-											{user.name
-												.split(' ')
-												.map(n => n[0])
-												.join('')}
-										</Avatar>
-									))}
-								</AvatarGroup>
-							) : publicActivity ? (
-								<Typography variant='subtitle2'>No one has joined yet</Typography>
+							{publicActivity ? (
+								users.length ? (
+									<AvatarGroup max={3}>
+										{users.map((user, idx) => (
+											<Avatar key={idx}>
+												{user.name
+													.split(' ')
+													.map(n => n[0])
+													.join('')}
+											</Avatar>
+										))}
+									</AvatarGroup>
+								) : (
+									<Typography variant='subtitle2'>No one has joined yet</Typography>
+								)
 							) : (
 								<Typography variant='subtitle2'>It is not possible for others to join a private activity</Typography>
 							)}
@@ -139,7 +139,15 @@ const Activity = ({ activity, onDelete }: ActivityProps) => {
 							title='Delete'
 							onClick={() => onDelete(id)}
 						/>
-						<IconButton color='primary' tooltip={true} icon={<ShareIcon fontSize='small' />} title='Share' />
+						{publicActivity && (
+							<IconButton
+								color='primary'
+								tooltip={true}
+								icon={<ShareIcon fontSize='small' />}
+								title='Invite others'
+								onClick={() => onInvitation(maxPeople)}
+							/>
+						)}
 					</Box>
 				</Box>
 			</AccordionDetails>

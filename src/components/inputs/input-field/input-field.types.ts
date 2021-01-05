@@ -18,6 +18,7 @@ export interface InputFieldProps {
 	optional?: boolean;
 	multiline?: boolean;
 	fullWidth?: boolean;
+	autoFocus?: boolean;
 	rows?: number;
 	placeholder?: string;
 	size?: InputSize;
@@ -26,4 +27,6 @@ export interface InputFieldProps {
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	onFocus?: (event: React.FocusEvent) => void;
 	onFocusOut?: (event: React.FocusEvent) => void;
+	onIconClick?: () => void;
+	onKeyDown?: (event: React.KeyboardEvent) => void;
 }

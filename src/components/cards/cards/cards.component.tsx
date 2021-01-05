@@ -40,7 +40,7 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 			open: true,
 			severity: 'error',
 			title: 'Delete trip',
-			description: 'Deleting a trip will permanently remove it from your account.',
+			body: 'Deleting a trip will permanently remove it from your account.',
 			onConfirm: async () => {
 				const response = await deleteTrip({
 					variables: {

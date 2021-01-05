@@ -2,6 +2,7 @@ import { PreparationFragment } from '@generated/graphql';
 
 export interface PreparationProps {
 	preparation: PreparationFragment;
-	onDelete: (preparationId: number) => void;
-	onStatusChange: (preparationId: number) => void;
+	onDelete: (subPreparationId: number) => void;
+	onStatusChange: (subPreparationId: number) => void;
+	isLast: boolean;
 }

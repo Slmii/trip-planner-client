@@ -42,7 +42,7 @@ export const Transition = forwardRef(function Transition(
 export default function Dialog() {
 	const dispatch = useDispatch();
 	const dialog = useSelector(selectDialog);
-	const { open, severity, description, title, fullWidth, maxWidth, onCancel, onConfirm } = dialog;
+	const { open, severity, body, title, fullWidth, maxWidth, onCancel, onConfirm } = dialog;
 	const theme: Theme = useTheme();
 
 	const handleOnClose = () => {
@@ -53,9 +53,9 @@ export default function Dialog() {
 		closeDialog();
 	};
 
-	const handleOnConfirm = () => {
+	const handleOnConfirm = async () => {
 		if (onConfirm) {
-			onConfirm();
+			await onConfirm();
 		}
 
 		closeDialog();
@@ -82,9 +82,11 @@ export default function Dialog() {
 		>
 			<Box bgcolor={theme.palette[severity].main} height='5px' />
 			<DialogTitle id='dialog-title'>{title}</DialogTitle>
-			<DialogContent>
-				<DialogContentText id='dialog-description'>{description}</DialogContentText>
-			</DialogContent>
+			{body ? (
+				<DialogContent>
+					<DialogContentText id='dialog-description'>{body}</DialogContentText>
+				</DialogContent>
+			) : null}
 			<Box padding='8px 16px 8px 16px'>
 				<DialogActions>
 					<Button onClick={handleOnClose} variant='outlined' color='default' fullWidth={false}>

@@ -38,6 +38,7 @@
 		"reselect": "^4.0.0",
 		"sass": "^1.26.11",
 		"use-deep-compare-effect": "^1.6.1",
+		"validator": "^13.5.2",
 		"yup": "^0.29.3",
 		"zxcvbn": "^4.4.2"
 	},
@@ -53,6 +54,7 @@
 		"@types/react-dom": "^16.9.8",
 		"@types/react-redux": "^7.1.11",
 		"@types/redux-logger": "^3.0.8",
+		"@types/validator": "^13.1.2",
 		"@types/yup": "^0.29.7",
 		"@types/zxcvbn": "^4.4.0",
 		"@typescript-eslint/eslint-plugin": "^4.2.0",
