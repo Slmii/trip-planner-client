@@ -1,6 +1,6 @@
 export interface DropdownProps {
-	className?: string;
-	visible: boolean;
+	anchor: HTMLElement | null;
+	onClose: () => void;
 	items: DropdownItems[];
 }
 

@@ -2,7 +2,7 @@ const MuiPopover = require('@material-ui/core/Popover').default;
 
 import { PopoverProps } from '@components/popover';
 
-const Popover = ({ type, anchorEl, onClose, children }: PopoverProps) => {
+const Popover = ({ type, anchorEl, onClose, children, position = 'left' }: PopoverProps) => {
 	const handleOnClose = () => {
 		onClose(type);
 	};
@@ -15,11 +15,11 @@ const Popover = ({ type, anchorEl, onClose, children }: PopoverProps) => {
 			onClose={handleOnClose}
 			anchorOrigin={{
 				vertical: 'bottom',
-				horizontal: 'left'
+				horizontal: position
 			}}
 			transformOrigin={{
 				vertical: 'top',
-				horizontal: 'left'
+				horizontal: position
 			}}
 			style={{
 				marginTop: 5

@@ -4,7 +4,7 @@ const Typography = require('@material-ui/core/Typography').default;
 const DateRangeIcon = require('@material-ui/icons/DateRange').default;
 const PublicIcon = require('@material-ui/icons/Public').default;
 
-import { helpers } from '@lib/utils';
+import { date } from '@lib/utils';
 
 import { globalStyles } from '@styles/global-styled';
 
@@ -26,15 +26,15 @@ const TripDatesAndLocations = ({
 			<Box display='flex' alignItems='center'>
 				<DateRangeIcon className={iconMr} fontSize='inherit' />
 				<Typography variant='subtitle1' color='textSecondary'>
-					{helpers.formatDate({
+					{date.formatDate({
 						date: dateFrom,
-						format: helpers.isCurrentYear(dateFrom as Date) ? 'DD MMM' : 'DD MMM YYYY',
+						format: date.isCurrentYear(dateFrom as Date) ? 'DD MMM' : 'DD MMM YYYY',
 						timezone
 					})}{' '}
 					{dateTo
-						? `- ${helpers.formatDate({
+						? `- ${date.formatDate({
 								date: dateTo,
-								format: helpers.isCurrentYear(dateTo as Date) ? 'DD MMM' : 'DD MMM YYYY',
+								format: date.isCurrentYear(dateTo as Date) ? 'DD MMM' : 'DD MMM YYYY',
 								timezone
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  })}`

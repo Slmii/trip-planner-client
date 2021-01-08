@@ -7,62 +7,16 @@ import { BaseQueryOptions } from '@apollo/client';
 import { ParsedUrlQuery } from 'querystring';
 
 import { QueryStringFilters, OrderBy, SearchIn, SortBy } from '@components/filters/extended-filters';
+import { date } from '@lib/utils';
 import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
 import { KeyOf, ValueOf, FiltersRouterQueryObject, ActivityType, TransportationType } from '@lib/types';
 import { Exact, PaginationInput, SortOrder, SubPreparationFragment, TripSortByInput, TripWhereInput } from '@generated/graphql';
-
-export const formatDate = ({
-	date,
-	timezone,
-	format = EU_DATE_FORMAT_SLASHES
-}: {
-	date: Date | Dayjs;
-	timezone?: string;
-	format?: string;
-}) => {
-	if (!date) {
-		return;
-	}
-
-	if (timezone) {
-		return dayjs(date).tz(timezone).format(format);
-	}
-
-	return dayjs(date).format(format);
-};
-
-export const isCurrentYear = (date: Date | Dayjs) => {
-	if (!date) {
-		return;
-	}
-
-	return dayjs(date).year() === dayjs().year();
-};
-
-export const addUnitToCurrentDate = (value: number, unit: OpUnitType = 'day') => {
-	return dayjs().add(value, unit);
-};
-
-export const getEndOfWeek = (date?: Dayjs) => {
-	if (date) {
-		return dayjs(date).endOf('week');
-	}
-
-	return dayjs().endOf('week');
-};
-
-export const getEndOfMonth = (date?: Dayjs) => {
-	if (date) {
-		return dayjs(date).endOf('month');
-	}
-
-	return dayjs().endOf('month');
-};
 
 export const getCurrentPage = (query: ParsedUrlQuery) => {
 	const page = Number(query.page) || 1;
 	return page;
 };
+
 /**
  * Return the current existing query strings (filters) in the URL to the type of FiltersState.
  */
@@ -147,21 +101,21 @@ export const convertFiltersToRouterQueryObject = ({
 	}
 
 	if (queryString === 'dateFrom') {
-		filtersRouterObject[queryString] = formatDate({ date: value as Dayjs });
+		filtersRouterObject[queryString] = date.formatDate({ date: value as Dayjs });
 	} else if (qsDateFrom) {
-		filtersRouterObject.dateFrom = formatDate({ date: qsDateFrom as Dayjs });
+		filtersRouterObject.dateFrom = date.formatDate({ date: qsDateFrom as Dayjs });
 	}
 
 	if (queryString === 'dateTo') {
-		filtersRouterObject[queryString] = formatDate({ date: value as Dayjs });
+		filtersRouterObject[queryString] = date.formatDate({ date: value as Dayjs });
 	} else if (qsDateTo) {
-		filtersRouterObject.dateTo = formatDate({ date: qsDateTo as Dayjs });
+		filtersRouterObject.dateTo = date.formatDate({ date: qsDateTo as Dayjs });
 	}
 
 	if (queryString === 'activityDate') {
-		filtersRouterObject[queryString] = formatDate({ date: value as Dayjs });
+		filtersRouterObject[queryString] = date.formatDate({ date: value as Dayjs });
 	} else if (qsActivityDate) {
-		filtersRouterObject.activityDate = formatDate({ date: qsActivityDate as Dayjs });
+		filtersRouterObject.activityDate = date.formatDate({ date: qsActivityDate as Dayjs });
 	}
 
 	if (queryString === 'activityType') {
@@ -235,7 +189,7 @@ export const tripsQueryVariables = (
 				},
 				from: {
 					gte: dateFrom
-						? formatDate({
+						? date.formatDate({
 								date: dateFrom,
 								format: SERVER_DATE_FORMAT
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -244,7 +198,7 @@ export const tripsQueryVariables = (
 				},
 				to: {
 					lte: dateTo
-						? formatDate({
+						? date.formatDate({
 								date: dateTo,
 								format: SERVER_DATE_FORMAT
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -253,7 +207,7 @@ export const tripsQueryVariables = (
 				},
 				activityDate: {
 					equals: activityDate
-						? formatDate({
+						? date.formatDate({
 								date: activityDate,
 								format: SERVER_DATE_FORMAT
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -294,4 +248,11 @@ export const isInvitationEmailValid = (email: string, emailInvitations: string[]
 	}
 
 	return null;
+};
+
+export const transformToAvatarInitials = (name: string) => {
+	return name
+		.split(' ')
+		.map(n => n[0])
+		.join('');
 };

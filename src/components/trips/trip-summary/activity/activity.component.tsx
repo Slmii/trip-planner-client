@@ -23,6 +23,7 @@ const MotorcycleIcon = require('@material-ui/icons/Motorcycle').default;
 import IconButton from '@components/buttons/icon-button';
 import TripDateAndLocations from '@components/trips/dates-and-locations';
 import { TypeMapping, Styled, ActivityProps } from '@components/trips/trip-summary/activity';
+import { helpers } from '@lib/utils';
 
 import { globalStyles } from '@styles/global-styled';
 
@@ -99,12 +100,7 @@ const Activity = ({ activity, onDelete, onInvitation }: ActivityProps) => {
 								users.length ? (
 									<AvatarGroup max={3}>
 										{users.map((user, idx) => (
-											<Avatar key={idx}>
-												{user.name
-													.split(' ')
-													.map(n => n[0])
-													.join('')}
-											</Avatar>
+											<Avatar key={idx}>{helpers.transformToAvatarInitials(user.name)}</Avatar>
 										))}
 									</AvatarGroup>
 								) : (

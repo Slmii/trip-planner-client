@@ -35,12 +35,16 @@ export type Query = {
   myTripActivities: Array<Activity>;
   /** Fetch trip activities. If current user is the creator of the trip then it includes both publicly and non-publicly available activities. If current user is not the creator of the trip then it will only include publicly available activities. */
   tripActivities: Array<Activity>;
+  /** Fetch a list of publicly available Activities */
+  publicActivities: Array<Activity>;
   /** Fetch the current user that is logged in. This can never be null because we use the @Authorized decorator, if not authorized then it'll throw an error */
   me?: Maybe<User>;
   /** Fetch a User */
   user: Array<User>;
   /** Fetch a list of Users, only for Admins/Dashboard */
   users: Array<User>;
+  /** Fetch current user's notifictaions */
+  notifications: Array<Notification>;
 };
 
 
@@ -322,6 +326,31 @@ export type BoolFilter = {
   not?: Maybe<Scalars['Boolean']>;
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  receiverUserId: Scalars['Int'];
+  senderUserId: Scalars['Int'];
+  activityId: Scalars['Int'];
+  type: NotificationType;
+  read: Scalars['Boolean'];
+  sender?: Maybe<User>;
+  activity?: Maybe<Activity>;
+  /** Fetch the User who receives the notification */
+  receiver: User;
+};
+
+/** Type of the notification */
+export enum NotificationType {
+  ActivityInvitationReceived = 'ACTIVITY_INVITATION_RECEIVED',
+  ActivityJoinRequest = 'ACTIVITY_JOIN_REQUEST',
+  UpcomingTrip = 'UPCOMING_TRIP',
+  UpcomingActivity = 'UPCOMING_ACTIVITY'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Only add to Favorite if the Trip is publicly available. If current user is the creator of the Trip then its always allowed */
@@ -346,6 +375,12 @@ export type Mutation = {
   forgottenPassword: Scalars['String'];
   changeForgottenPassword: Scalars['Boolean'];
   deleteUser: User;
+  /** Add a notification for the receiver. */
+  addNotification: Notification;
+  /** Set current user's notification as read */
+  setNotificationAsRead: Notification;
+  /** Set all current user's notifications as read */
+  setAllNotificationAsRead: UpdateManyResponse;
 };
 
 
@@ -445,6 +480,16 @@ export type MutationDeleteUserArgs = {
   userId: Scalars['Int'];
 };
 
+
+export type MutationAddNotificationArgs = {
+  data: AddNotificationInput;
+};
+
+
+export type MutationSetNotificationAsReadArgs = {
+  notificationId: Scalars['Int'];
+};
+
 export type AddTripInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -523,6 +568,18 @@ export type ChangeForgottenPasswordInput = {
   token: Scalars['String'];
   password: Scalars['String'];
   confirmPassword: Scalars['String'];
+};
+
+export type AddNotificationInput = {
+  receiverUserId: Scalars['Int'];
+  activityId: Scalars['Int'];
+  type: NotificationType;
+  read?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateManyResponse = {
+  __typename?: 'UpdateManyResponse';
+  count: Scalars['Int'];
 };
 
 export type ActivityFragment = (
@@ -631,6 +688,62 @@ export type MyFavoritesQuery = (
 export type LocationFragment = (
   { __typename?: 'Location' }
   & Pick<Location, 'id' | 'uuid' | 'tripId' | 'name'>
+);
+
+export type HeaderNotificationFragment = (
+  { __typename?: 'Notification' }
+  & Pick<Notification, 'id' | 'uuid' | 'type' | 'read' | 'createdAt'>
+  & { sender?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'name'>
+  )> }
+);
+
+export type NotificationFragment = (
+  { __typename?: 'Notification' }
+  & Pick<Notification, 'id' | 'type' | 'read' | 'createdAt'>
+  & { sender?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'name'>
+  )>, activity?: Maybe<(
+    { __typename?: 'Activity' }
+    & ActivityFragment
+  )> }
+);
+
+export type MarkAllHeaderNotificationsAsReadMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MarkAllHeaderNotificationsAsReadMutation = (
+  { __typename?: 'Mutation' }
+  & { setAllNotificationAsRead: (
+    { __typename?: 'UpdateManyResponse' }
+    & Pick<UpdateManyResponse, 'count'>
+  ) }
+);
+
+export type MarkHeaderNotificationAsReadMutationVariables = Exact<{
+  notificationId: Scalars['Int'];
+}>;
+
+
+export type MarkHeaderNotificationAsReadMutation = (
+  { __typename?: 'Mutation' }
+  & { setNotificationAsRead: (
+    { __typename?: 'Notification' }
+    & HeaderNotificationFragment
+  ) }
+);
+
+export type HeaderNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HeaderNotificationsQuery = (
+  { __typename?: 'Query' }
+  & { notifications: Array<(
+    { __typename?: 'Notification' }
+    & HeaderNotificationFragment
+  )> }
 );
 
 export type PreparationFragment = (
@@ -820,6 +933,18 @@ export type MeQuery = (
   )> }
 );
 
+export const HeaderNotificationFragmentDoc = gql`
+    fragment HeaderNotification on Notification {
+  id
+  uuid
+  type
+  read
+  sender {
+    name
+  }
+  createdAt
+}
+    `;
 export const ActivityTypeFragmentDoc = gql`
     fragment ActivityType on ActivityType {
   id
@@ -857,6 +982,20 @@ export const ActivityFragmentDoc = gql`
 }
     ${ActivityTypeFragmentDoc}
 ${TransportationTypeFragmentDoc}`;
+export const NotificationFragmentDoc = gql`
+    fragment Notification on Notification {
+  id
+  type
+  read
+  sender {
+    name
+  }
+  activity {
+    ...Activity
+  }
+  createdAt
+}
+    ${ActivityFragmentDoc}`;
 export const LocationFragmentDoc = gql`
     fragment Location on Location {
   id
@@ -1130,6 +1269,101 @@ export function useMyFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type MyFavoritesQueryHookResult = ReturnType<typeof useMyFavoritesQuery>;
 export type MyFavoritesLazyQueryHookResult = ReturnType<typeof useMyFavoritesLazyQuery>;
 export type MyFavoritesQueryResult = Apollo.QueryResult<MyFavoritesQuery, MyFavoritesQueryVariables>;
+export const MarkAllHeaderNotificationsAsReadDocument = gql`
+    mutation MarkAllHeaderNotificationsAsRead {
+  setAllNotificationAsRead {
+    count
+  }
+}
+    `;
+export type MarkAllHeaderNotificationsAsReadMutationFn = Apollo.MutationFunction<MarkAllHeaderNotificationsAsReadMutation, MarkAllHeaderNotificationsAsReadMutationVariables>;
+
+/**
+ * __useMarkAllHeaderNotificationsAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAllHeaderNotificationsAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAllHeaderNotificationsAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAllHeaderNotificationsAsReadMutation, { data, loading, error }] = useMarkAllHeaderNotificationsAsReadMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMarkAllHeaderNotificationsAsReadMutation(baseOptions?: Apollo.MutationHookOptions<MarkAllHeaderNotificationsAsReadMutation, MarkAllHeaderNotificationsAsReadMutationVariables>) {
+        return Apollo.useMutation<MarkAllHeaderNotificationsAsReadMutation, MarkAllHeaderNotificationsAsReadMutationVariables>(MarkAllHeaderNotificationsAsReadDocument, baseOptions);
+      }
+export type MarkAllHeaderNotificationsAsReadMutationHookResult = ReturnType<typeof useMarkAllHeaderNotificationsAsReadMutation>;
+export type MarkAllHeaderNotificationsAsReadMutationResult = Apollo.MutationResult<MarkAllHeaderNotificationsAsReadMutation>;
+export type MarkAllHeaderNotificationsAsReadMutationOptions = Apollo.BaseMutationOptions<MarkAllHeaderNotificationsAsReadMutation, MarkAllHeaderNotificationsAsReadMutationVariables>;
+export const MarkHeaderNotificationAsReadDocument = gql`
+    mutation MarkHeaderNotificationAsRead($notificationId: Int!) {
+  setNotificationAsRead(notificationId: $notificationId) {
+    ...HeaderNotification
+  }
+}
+    ${HeaderNotificationFragmentDoc}`;
+export type MarkHeaderNotificationAsReadMutationFn = Apollo.MutationFunction<MarkHeaderNotificationAsReadMutation, MarkHeaderNotificationAsReadMutationVariables>;
+
+/**
+ * __useMarkHeaderNotificationAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkHeaderNotificationAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkHeaderNotificationAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markHeaderNotificationAsReadMutation, { data, loading, error }] = useMarkHeaderNotificationAsReadMutation({
+ *   variables: {
+ *      notificationId: // value for 'notificationId'
+ *   },
+ * });
+ */
+export function useMarkHeaderNotificationAsReadMutation(baseOptions?: Apollo.MutationHookOptions<MarkHeaderNotificationAsReadMutation, MarkHeaderNotificationAsReadMutationVariables>) {
+        return Apollo.useMutation<MarkHeaderNotificationAsReadMutation, MarkHeaderNotificationAsReadMutationVariables>(MarkHeaderNotificationAsReadDocument, baseOptions);
+      }
+export type MarkHeaderNotificationAsReadMutationHookResult = ReturnType<typeof useMarkHeaderNotificationAsReadMutation>;
+export type MarkHeaderNotificationAsReadMutationResult = Apollo.MutationResult<MarkHeaderNotificationAsReadMutation>;
+export type MarkHeaderNotificationAsReadMutationOptions = Apollo.BaseMutationOptions<MarkHeaderNotificationAsReadMutation, MarkHeaderNotificationAsReadMutationVariables>;
+export const HeaderNotificationsDocument = gql`
+    query HeaderNotifications {
+  notifications {
+    ...HeaderNotification
+  }
+}
+    ${HeaderNotificationFragmentDoc}`;
+
+/**
+ * __useHeaderNotificationsQuery__
+ *
+ * To run a query within a React component, call `useHeaderNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHeaderNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHeaderNotificationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHeaderNotificationsQuery(baseOptions?: Apollo.QueryHookOptions<HeaderNotificationsQuery, HeaderNotificationsQueryVariables>) {
+        return Apollo.useQuery<HeaderNotificationsQuery, HeaderNotificationsQueryVariables>(HeaderNotificationsDocument, baseOptions);
+      }
+export function useHeaderNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HeaderNotificationsQuery, HeaderNotificationsQueryVariables>) {
+          return Apollo.useLazyQuery<HeaderNotificationsQuery, HeaderNotificationsQueryVariables>(HeaderNotificationsDocument, baseOptions);
+        }
+export type HeaderNotificationsQueryHookResult = ReturnType<typeof useHeaderNotificationsQuery>;
+export type HeaderNotificationsLazyQueryHookResult = ReturnType<typeof useHeaderNotificationsLazyQuery>;
+export type HeaderNotificationsQueryResult = Apollo.QueryResult<HeaderNotificationsQuery, HeaderNotificationsQueryVariables>;
 export const DeletePreparationDocument = gql`
     mutation DeletePreparation($preparationId: Int!) {
   deletePreparation(preparationId: $preparationId) {

@@ -25,7 +25,7 @@ import Menu from '@components/menu';
 import Popover from '@components/popover';
 import DatePicker from '@components/datepicker';
 import { constants, AnchorElementState, QueryStringFilters, QueryStringFilterChange } from '@components/filters/extended-filters';
-import { helpers } from '@lib/utils';
+import { helpers, date } from '@lib/utils';
 import { KeyOf } from '@lib/types';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
 
@@ -253,7 +253,7 @@ const ExtendedFilters = () => {
 											deleteIcon={anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateFrom')}
 											onDelete={() => handleOnChipDelete('dateFrom')}
-											label={`Date from${dateFrom ? `: ${helpers.formatDate({ date: dateFrom })}` : ''}`}
+											label={`Date from${dateFrom ? `: ${date.formatDate({ date: dateFrom })}` : ''}`}
 											color='primary'
 											variant={dateFrom ? 'default' : 'outlined'}
 											size='small'
@@ -266,7 +266,7 @@ const ExtendedFilters = () => {
 											deleteIcon={anchorEls.dateTo ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateTo')}
 											onDelete={() => handleOnChipDelete('dateTo')}
-											label={`Date to${dateTo ? `: ${helpers.formatDate({ date: dateTo })}` : ''}`}
+											label={`Date to${dateTo ? `: ${date.formatDate({ date: dateTo })}` : ''}`}
 											color='primary'
 											variant={dateTo ? 'default' : 'outlined'}
 											size='small'
@@ -279,7 +279,7 @@ const ExtendedFilters = () => {
 											deleteIcon={anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityDate')}
 											onDelete={() => handleOnChipDelete('activityDate')}
-											label={`Activity date${activityDate ? `: ${helpers.formatDate({ date: activityDate })}` : ''}`}
+											label={`Activity date${activityDate ? `: ${date.formatDate({ date: activityDate })}` : ''}`}
 											color='primary'
 											variant={activityDate ? 'default' : 'outlined'}
 											size='small'
@@ -384,7 +384,7 @@ const ExtendedFilters = () => {
 														onClick={() =>
 															handleOnFilterChange({
 																queryString: 'dateTo',
-																value: helpers.getEndOfWeek(),
+																value: date.getEndOfWeek(),
 																otherMenus: ['quickFilters']
 															})
 														}
@@ -397,7 +397,7 @@ const ExtendedFilters = () => {
 														onClick={() =>
 															handleOnFilterChange({
 																queryString: 'dateTo',
-																value: helpers.getEndOfMonth(),
+																value: date.getEndOfMonth(),
 																otherMenus: ['quickFilters']
 															})
 														}
@@ -408,11 +408,11 @@ const ExtendedFilters = () => {
 														variant='outlined'
 														className={buttonMb}
 														onClick={() => {
-															const upcomingMonth = helpers.addUnitToCurrentDate(1, 'month');
+															const upcomingMonth = date.addUnitToCurrentDate(1, 'month');
 
 															handleOnFilterChange({
 																queryString: 'dateTo',
-																value: helpers.getEndOfMonth(upcomingMonth),
+																value: date.getEndOfMonth(upcomingMonth),
 																otherMenus: ['quickFilters']
 															});
 														}}
@@ -423,11 +423,11 @@ const ExtendedFilters = () => {
 														variant='outlined'
 														className={buttonMb}
 														onClick={() => {
-															const upcomingMonths = helpers.addUnitToCurrentDate(3, 'month');
+															const upcomingMonths = date.addUnitToCurrentDate(3, 'month');
 
 															handleOnFilterChange({
 																queryString: 'dateTo',
-																value: helpers.getEndOfMonth(upcomingMonths),
+																value: date.getEndOfMonth(upcomingMonths),
 																otherMenus: ['quickFilters']
 															});
 														}}

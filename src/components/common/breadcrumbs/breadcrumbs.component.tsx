@@ -22,7 +22,9 @@ const convertBreadcrumb = (string: string) => {
 		.toLowerCase()
 		.split('?');
 
-	return convertedBreadcrumb.charAt(0).toUpperCase() + convertedBreadcrumb.slice(1);
+	const [breadcrumb] = convertedBreadcrumb.split('#');
+
+	return breadcrumb.charAt(0).toUpperCase() + breadcrumb.slice(1);
 };
 
 const Breadcrumbs = () => {

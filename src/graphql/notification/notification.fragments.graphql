@@ -1,0 +1,23 @@
+fragment HeaderNotification on Notification {
+	id
+	uuid
+	type
+	read
+	sender {
+		name
+	}
+	createdAt
+}
+
+fragment Notification on Notification {
+	id
+	type
+	read
+	sender {
+		name
+	}
+	activity {
+		...Activity
+	}
+	createdAt
+}

@@ -1,0 +1,11 @@
+mutation MarkAllHeaderNotificationsAsRead {
+	setAllNotificationAsRead {
+		count
+	}
+}
+
+mutation MarkHeaderNotificationAsRead($notificationId: Int!) {
+	setNotificationAsRead(notificationId: $notificationId) {
+		...HeaderNotification
+	}
+}
