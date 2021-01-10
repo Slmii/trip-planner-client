@@ -5,7 +5,6 @@ const MuiDialog = require('@material-ui/core/Dialog').default;
 import { EmailForm, Successful } from '@components/dialogs/activity-invitation';
 import { Transition } from '@components/dialogs/dialog';
 import { selectActivityInvitation, setActivityInivitation } from '@lib/redux/activityInvitation';
-
 import { helpers } from '@lib/utils';
 
 const ActivityInvitation = () => {
@@ -17,10 +16,6 @@ const ActivityInvitation = () => {
 	const [inputField, setInputField] = useState('');
 	const [inputFieldError, setInputFieldError] = useState('');
 	const [emailsSent, setEmailsSent] = useState(false);
-
-	const handleOnClose = () => {
-		closeDialog();
-	};
 
 	const closeDialog = () => {
 		dispatch(
@@ -59,7 +54,7 @@ const ActivityInvitation = () => {
 		}
 	};
 
-	const handleOnSendInvitations = () => {
+	const handleOnSendInvitations = async () => {
 		// Sent invite to user, insert into prisma Model
 		// userId of the invited user
 		// activityId of the activity
@@ -78,7 +73,7 @@ const ActivityInvitation = () => {
 	return (
 		<MuiDialog
 			open={open}
-			onClose={handleOnClose}
+			onClose={closeDialog}
 			aria-labelledby='activity-invitation-title'
 			aria-describedby='activity-invitation-description'
 			fullWidth={fullWidth}
@@ -91,14 +86,14 @@ const ActivityInvitation = () => {
 					emailInvitations={emailInvitations}
 					maxInvitations={maxInvitations}
 					error={inputFieldError}
-					onClose={handleOnClose}
+					onClose={closeDialog}
 					onInputChange={handleOnInputChange}
 					onInputKeyDown={handleOnInputKeyDown}
 					onChipDelete={handleOnDeleteChip}
 					onConfirm={handleOnSendInvitations}
 				/>
 			) : (
-				<Successful onClose={handleOnClose} />
+				<Successful onClose={closeDialog} />
 			)}
 		</MuiDialog>
 	);

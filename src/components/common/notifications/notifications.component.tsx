@@ -14,7 +14,7 @@ import theme from '@theme/index';
 const Notifications = ({ anchor, onClose, onMarkAllAsRead, notifications }: NotificationsProps) => {
 	const router = useRouter();
 
-	const [markAsRead, { loading, called }] = useMarkHeaderNotificationAsReadMutation();
+	const [markAsRead] = useMarkHeaderNotificationAsReadMutation();
 
 	const handleOnNotificationClick = async (notificationId: number) => {
 		const response = await markAsRead({
@@ -74,14 +74,22 @@ const Notifications = ({ anchor, onClose, onMarkAllAsRead, notifications }: Noti
 						</Styled.MarkAllAsRead>
 					</ButtonBase>
 				</Box>
-				<Box display='flex' flexDirection='column'>
-					{notifications.map(notification => (
-						<Notification key={notification.id} notification={notification} onClick={handleOnNotificationClick} />
-					))}
-				</Box>
-				<ButtonBase>
-					<Styled.SeeAllNotifications>See all notifications</Styled.SeeAllNotifications>
-				</ButtonBase>
+				{notifications.length ? (
+					<>
+						<Box display='flex' flexDirection='column'>
+							{notifications.map(notification => (
+								<Notification key={notification.id} notification={notification} onClick={handleOnNotificationClick} />
+							))}
+						</Box>
+						<ButtonBase>
+							<Styled.SeeAllNotifications>See all notifications</Styled.SeeAllNotifications>
+						</ButtonBase>
+					</>
+				) : (
+					<Box height='50px' display='flex' justifyContent='center' alignItems='center'>
+						No notifications
+					</Box>
+				)}
 			</Box>
 		</Popover>
 	);

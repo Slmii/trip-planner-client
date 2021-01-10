@@ -19,32 +19,30 @@ export type Query = {
   __typename?: 'Query';
   /** Fetch the current user's favorites */
   myFavorites: TripsResponse;
-  /** Fetch a Trip. If current user has 'User' role then return a Trip if current user is the creator of the Trip. If not, then only return if Trip is publicly available */
-  trip: Trip;
+  /** Fetch a trip. Return a user's trip if current user is the creator of the trip. If not, then only return if trip is publicly available */
+  trip?: Maybe<Trip>;
   /** Fetch the current user's Trips */
   myTrips: TripsResponse;
   /** Fetch upcoming Trip */
-  myUpcomingTrip: Trip;
-  /** Fetch a list of both publicly and non-publicly available Trips, only for Admins/Dashboard */
-  trips: TripsResponse;
+  myUpcomingTrip?: Maybe<Trip>;
   /** Fetch a list of publicly available Trips */
   publicTrips: TripsResponse;
+  /** Fetch the current user that is logged in. This can never be null because we use the @Authorized decorator, if not authorized then it'll throw an error */
+  me?: Maybe<User>;
+  /** Fetch a list of Users, only for Admins/Dashboard */
+  users: Array<User>;
   activityTypes: Array<ActivityType>;
   transportationTypes: Array<TransportationType>;
   /** Fetch current user's trip activities, this includes both publicly and non-publicly available activities */
   myTripActivities: Array<Activity>;
-  /** Fetch trip activities. If current user is the creator of the trip then it includes both publicly and non-publicly available activities. If current user is not the creator of the trip then it will only include publicly available activities. */
+  /** Fetch trip activities. If current user is the creator of the trip then it includes both public and private activities. If current user is not the creator of the trip then it will only include public activities. */
   tripActivities: Array<Activity>;
-  /** Fetch a list of publicly available Activities */
+  /** Fetch a list of public activities */
   publicActivities: Array<Activity>;
-  /** Fetch the current user that is logged in. This can never be null because we use the @Authorized decorator, if not authorized then it'll throw an error */
-  me?: Maybe<User>;
-  /** Fetch a User */
-  user: Array<User>;
-  /** Fetch a list of Users, only for Admins/Dashboard */
-  users: Array<User>;
   /** Fetch current user's notifictaions */
-  notifications: Array<Notification>;
+  headerNotifications: Array<Notification>;
+  receivedInvitations: Array<ActivityInvitation>;
+  sendInvitations: Array<ActivityInvitation>;
 };
 
 
@@ -56,18 +54,12 @@ export type QueryMyFavoritesArgs = {
 
 
 export type QueryTripArgs = {
+  isCreator?: Maybe<Scalars['Boolean']>;
   tripId: Scalars['Int'];
 };
 
 
 export type QueryMyTripsArgs = {
-  orderBy?: Maybe<TripSortByInput>;
-  pagination: PaginationInput;
-  where?: Maybe<TripWhereInput>;
-};
-
-
-export type QueryTripsArgs = {
   orderBy?: Maybe<TripSortByInput>;
   pagination: PaginationInput;
   where?: Maybe<TripWhereInput>;
@@ -81,6 +73,13 @@ export type QueryPublicTripsArgs = {
 };
 
 
+export type QueryUsersArgs = {
+  pagination: PaginationInput;
+  orderBy?: Maybe<UserOrderByInput>;
+  where?: Maybe<UserWhereInput>;
+};
+
+
 export type QueryMyTripActivitiesArgs = {
   tripId: Scalars['Int'];
 };
@@ -89,18 +88,6 @@ export type QueryMyTripActivitiesArgs = {
 export type QueryTripActivitiesArgs = {
   isCreator?: Maybe<Scalars['Boolean']>;
   tripId: Scalars['Int'];
-};
-
-
-export type QueryUserArgs = {
-  userId: Scalars['Int'];
-};
-
-
-export type QueryUsersArgs = {
-  pagination: PaginationInput;
-  orderBy?: Maybe<UserOrderByInput>;
-  where?: Maybe<UserWhereInput>;
 };
 
 export type TripsResponse = {
@@ -147,7 +134,6 @@ export type User = {
   role: Role;
   public: Scalars['Boolean'];
   trips: Array<Trip>;
-  favorites: Array<Favorite>;
 };
 
 /** Role of the User */
@@ -155,18 +141,6 @@ export enum Role {
   Admin = 'ADMIN',
   User = 'USER'
 }
-
-export type Favorite = {
-  __typename?: 'Favorite';
-  id: Scalars['Int'];
-  uuid: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  userId: Scalars['Int'];
-  tripId: Scalars['Int'];
-  user: User;
-  trip: Trip;
-};
 
 export type Location = {
   __typename?: 'Location';
@@ -184,7 +158,6 @@ export type Preparation = {
   uuid: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  tripId: Scalars['Int'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   status: Scalars['Boolean'];
@@ -259,6 +232,33 @@ export type DateFilter = {
   not?: Maybe<Scalars['DateTime']>;
 };
 
+export type UserOrderByInput = {
+  id?: Maybe<SortOrder>;
+  email?: Maybe<SortOrder>;
+  firstName?: Maybe<SortOrder>;
+  lastName?: Maybe<SortOrder>;
+  status?: Maybe<SortOrder>;
+  locked?: Maybe<SortOrder>;
+  role?: Maybe<SortOrder>;
+  createdAt?: Maybe<SortOrder>;
+};
+
+export type UserWhereInput = {
+  email?: Maybe<StringFilter>;
+  firstName?: Maybe<StringFilter>;
+  lastName?: Maybe<StringFilter>;
+  status?: Maybe<BoolFilter>;
+  locked?: Maybe<BoolFilter>;
+  role?: Maybe<Role>;
+  from?: Maybe<DateFilter>;
+  to?: Maybe<DateFilter>;
+};
+
+export type BoolFilter = {
+  equals?: Maybe<Scalars['Boolean']>;
+  not?: Maybe<Scalars['Boolean']>;
+};
+
 export type ActivityType = {
   __typename?: 'ActivityType';
   id: Scalars['Int'];
@@ -299,33 +299,6 @@ export type Activity = {
   users: Array<User>;
 };
 
-export type UserOrderByInput = {
-  id?: Maybe<SortOrder>;
-  email?: Maybe<SortOrder>;
-  firstName?: Maybe<SortOrder>;
-  lastName?: Maybe<SortOrder>;
-  status?: Maybe<SortOrder>;
-  locked?: Maybe<SortOrder>;
-  role?: Maybe<SortOrder>;
-  createdAt?: Maybe<SortOrder>;
-};
-
-export type UserWhereInput = {
-  email?: Maybe<StringFilter>;
-  firstName?: Maybe<StringFilter>;
-  lastName?: Maybe<StringFilter>;
-  status?: Maybe<BoolFilter>;
-  locked?: Maybe<BoolFilter>;
-  role?: Maybe<Role>;
-  from?: Maybe<DateFilter>;
-  to?: Maybe<DateFilter>;
-};
-
-export type BoolFilter = {
-  equals?: Maybe<Scalars['Boolean']>;
-  not?: Maybe<Scalars['Boolean']>;
-};
-
 export type Notification = {
   __typename?: 'Notification';
   id: Scalars['Int'];
@@ -334,13 +307,12 @@ export type Notification = {
   updatedAt: Scalars['DateTime'];
   receiverUserId: Scalars['Int'];
   senderUserId: Scalars['Int'];
-  activityId: Scalars['Int'];
+  resourceId: Scalars['Int'];
   type: NotificationType;
   read: Scalars['Boolean'];
   sender?: Maybe<User>;
   activity?: Maybe<Activity>;
-  /** Fetch the User who receives the notification */
-  receiver: User;
+  trip?: Maybe<Trip>;
 };
 
 /** Type of the notification */
@@ -349,6 +321,34 @@ export enum NotificationType {
   ActivityJoinRequest = 'ACTIVITY_JOIN_REQUEST',
   UpcomingTrip = 'UPCOMING_TRIP',
   UpcomingActivity = 'UPCOMING_ACTIVITY'
+}
+
+export type ActivityInvitation = {
+  __typename?: 'ActivityInvitation';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  activityId: Scalars['Int'];
+  email: Scalars['String'];
+  token: Scalars['String'];
+  status: ActivityInvitationStatus;
+  type: ActivityInvitationType;
+  expiresAt: Scalars['DateTime'];
+  activity?: Maybe<Activity>;
+};
+
+/** Status of the activity invitation */
+export enum ActivityInvitationStatus {
+  Pending = 'PENDING',
+  Accepted = 'ACCEPTED',
+  Rejetced = 'REJETCED'
+}
+
+/** Sender or receiver of the activity invitation */
+export enum ActivityInvitationType {
+  Sender = 'SENDER',
+  Receiver = 'RECEIVER'
 }
 
 export type Mutation = {
@@ -362,11 +362,6 @@ export type Mutation = {
   addTrip: Trip;
   editTrip: Trip;
   deleteTrip: Trip;
-  addActivityType: ActivityType;
-  addTransportationType: TransportationType;
-  /** Link a user to an activity */
-  addUserToActivity: Scalars['Boolean'];
-  deleteActivity: Activity;
   signIn: User;
   signOut: Scalars['Boolean'];
   signUp: User;
@@ -375,8 +370,11 @@ export type Mutation = {
   forgottenPassword: Scalars['String'];
   changeForgottenPassword: Scalars['Boolean'];
   deleteUser: User;
-  /** Add a notification for the receiver. */
-  addNotification: Notification;
+  addActivityType: ActivityType;
+  addTransportationType: TransportationType;
+  /** Link a user to an activity */
+  addUserToActivity: Scalars['Boolean'];
+  deleteActivity: Activity;
   /** Set current user's notification as read */
   setNotificationAsRead: Notification;
   /** Set all current user's notifications as read */
@@ -425,27 +423,6 @@ export type MutationDeleteTripArgs = {
 };
 
 
-export type MutationAddActivityTypeArgs = {
-  data: AddActivityTypeInput;
-};
-
-
-export type MutationAddTransportationTypeArgs = {
-  data: AddTransportationTypeInput;
-};
-
-
-export type MutationAddUserToActivityArgs = {
-  userId: Scalars['Float'];
-  activityId: Scalars['Float'];
-};
-
-
-export type MutationDeleteActivityArgs = {
-  activityId: Scalars['Int'];
-};
-
-
 export type MutationSignInArgs = {
   data: SignInInput;
 };
@@ -481,13 +458,41 @@ export type MutationDeleteUserArgs = {
 };
 
 
-export type MutationAddNotificationArgs = {
-  data: AddNotificationInput;
+export type MutationAddActivityTypeArgs = {
+  data: AddActivityTypeInput;
+};
+
+
+export type MutationAddTransportationTypeArgs = {
+  data: AddTransportationTypeInput;
+};
+
+
+export type MutationAddUserToActivityArgs = {
+  userId: Scalars['Float'];
+  activityId: Scalars['Float'];
+};
+
+
+export type MutationDeleteActivityArgs = {
+  activityId: Scalars['Int'];
 };
 
 
 export type MutationSetNotificationAsReadArgs = {
   notificationId: Scalars['Int'];
+};
+
+export type Favorite = {
+  __typename?: 'Favorite';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  userId: Scalars['Int'];
+  tripId: Scalars['Int'];
+  user?: Maybe<User>;
+  trip?: Maybe<Trip>;
 };
 
 export type AddTripInput = {
@@ -532,16 +537,6 @@ export type AddSubPreparationInput = {
   status?: Maybe<Scalars['Boolean']>;
 };
 
-export type AddActivityTypeInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type AddTransportationTypeInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type SignInInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -570,11 +565,14 @@ export type ChangeForgottenPasswordInput = {
   confirmPassword: Scalars['String'];
 };
 
-export type AddNotificationInput = {
-  receiverUserId: Scalars['Int'];
-  activityId: Scalars['Int'];
-  type: NotificationType;
-  read?: Maybe<Scalars['Boolean']>;
+export type AddActivityTypeInput = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type AddTransportationTypeInput = {
+  name: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type UpdateManyResponse = {
@@ -708,6 +706,9 @@ export type NotificationFragment = (
   )>, activity?: Maybe<(
     { __typename?: 'Activity' }
     & ActivityFragment
+  )>, trip?: Maybe<(
+    { __typename?: 'Trip' }
+    & TripFragment
   )> }
 );
 
@@ -740,7 +741,7 @@ export type HeaderNotificationsQueryVariables = Exact<{ [key: string]: never; }>
 
 export type HeaderNotificationsQuery = (
   { __typename?: 'Query' }
-  & { notifications: Array<(
+  & { headerNotifications: Array<(
     { __typename?: 'Notification' }
     & HeaderNotificationFragment
   )> }
@@ -866,10 +867,10 @@ export type TripQueryVariables = Exact<{
 
 export type TripQuery = (
   { __typename?: 'Query' }
-  & { trip: (
+  & { trip?: Maybe<(
     { __typename?: 'Trip' }
     & TripFragment
-  ) }
+  )> }
 );
 
 export type MyUpcomingTripQueryVariables = Exact<{ [key: string]: never; }>;
@@ -877,10 +878,10 @@ export type MyUpcomingTripQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MyUpcomingTripQuery = (
   { __typename?: 'Query' }
-  & { myUpcomingTrip: (
+  & { myUpcomingTrip?: Maybe<(
     { __typename?: 'Trip' }
     & TripFragment
-  ) }
+  )> }
 );
 
 export type MeFragment = (
@@ -982,20 +983,6 @@ export const ActivityFragmentDoc = gql`
 }
     ${ActivityTypeFragmentDoc}
 ${TransportationTypeFragmentDoc}`;
-export const NotificationFragmentDoc = gql`
-    fragment Notification on Notification {
-  id
-  type
-  read
-  sender {
-    name
-  }
-  activity {
-    ...Activity
-  }
-  createdAt
-}
-    ${ActivityFragmentDoc}`;
 export const LocationFragmentDoc = gql`
     fragment Location on Location {
   id
@@ -1049,6 +1036,24 @@ export const TripFragmentDoc = gql`
 }
     ${LocationFragmentDoc}
 ${PreparationFragmentDoc}`;
+export const NotificationFragmentDoc = gql`
+    fragment Notification on Notification {
+  id
+  type
+  read
+  sender {
+    name
+  }
+  activity {
+    ...Activity
+  }
+  trip {
+    ...Trip
+  }
+  createdAt
+}
+    ${ActivityFragmentDoc}
+${TripFragmentDoc}`;
 export const MeFragmentDoc = gql`
     fragment Me on User {
   id
@@ -1334,7 +1339,7 @@ export type MarkHeaderNotificationAsReadMutationResult = Apollo.MutationResult<M
 export type MarkHeaderNotificationAsReadMutationOptions = Apollo.BaseMutationOptions<MarkHeaderNotificationAsReadMutation, MarkHeaderNotificationAsReadMutationVariables>;
 export const HeaderNotificationsDocument = gql`
     query HeaderNotifications {
-  notifications {
+  headerNotifications {
     ...HeaderNotification
   }
 }

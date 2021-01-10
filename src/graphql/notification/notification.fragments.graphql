@@ -19,5 +19,8 @@ fragment Notification on Notification {
 	activity {
 		...Activity
 	}
+	trip {
+		...Trip
+	}
 	createdAt
 }

@@ -45,7 +45,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 	const { data: activitiesData, loading: activitiesLoading } = useTripActivitiesQuery({
 		variables: {
 			tripId,
-			isCreator: tripData?.trip.userId === me?.id
+			isCreator: tripData?.trip?.userId === me?.id
 		},
 		skip: tripLoading || !tripData
 	});

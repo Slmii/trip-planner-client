@@ -66,7 +66,7 @@ function Header() {
 					return;
 				}
 
-				const modifiedNotifications = cacheNotifications.notifications.map(notification => ({
+				const modifiedNotifications = cacheNotifications.headerNotifications.map(notification => ({
 					...notification,
 					read: true
 				}));
@@ -74,14 +74,14 @@ function Header() {
 				cache.writeQuery<HeaderNotificationsQuery>({
 					query: HeaderNotificationsDocument,
 					data: {
-						notifications: modifiedNotifications
+						headerNotifications: modifiedNotifications
 					}
 				});
 			}
 		});
 	};
 
-	const unreadNotifications = notificationsData?.notifications.filter(notification => !notification.read).length;
+	const unreadNotifications = notificationsData?.headerNotifications.filter(notification => !notification.read).length;
 
 	return (
 		<Box component='header' width='100%' bgcolor={theme.palette.primary.dark} fontSize={14}>
@@ -155,7 +155,7 @@ function Header() {
 				anchor={notificationsAnchorEl}
 				onClose={() => setNotificationsAnchorEl(null)}
 				onMarkAllAsRead={handleOnMarkAllAsRead}
-				notifications={notificationsData?.notifications ?? []}
+				notifications={notificationsData?.headerNotifications ?? []}
 			/>
 			<Dropdown
 				anchor={profileAnchorEl}
