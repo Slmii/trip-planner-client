@@ -1,75 +1,73 @@
-import React from 'react';
-import cn from 'classnames';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
+import ChipInput from 'material-ui-chip-input';
 
-import InputField from '@components/inputs/input-field';
 import Button from '@components/buttons/button';
 import { EmailFormProps } from '@components/dialogs/activity-invitation';
 
-import { globalStyles } from '@styles/global-styled';
-
 const EmailForm = ({
-	email,
 	emailInvitations,
 	maxInvitations,
 	error,
+	loading,
 	onClose,
-	onInputChange,
+	onChipAdd,
 	onChipDelete,
-	onInputKeyDown,
 	onConfirm
 }: EmailFormProps) => {
-	const { buttonMr, buttonMb } = globalStyles();
-
-	const hasMaximumInvitations = emailInvitations.length === maxInvitations;
+	const hasMaximumInvitations = emailInvitations.length > maxInvitations;
 
 	return (
 		<>
 			<DialogTitle id='activity-invitation-title'>
 				Invite people to join your activity
-				<Typography variant='subtitle1'>People who join can see your activity in their upcoming activities list.</Typography>
+				<Typography variant='subtitle1'>
+					People who join can see your activity in their upcoming activities list.
+				</Typography>
 			</DialogTitle>
-			<DialogContent>
+			<DialogContent style={{ overflowY: 'unset' }}>
 				<Box display='flex' flexDirection='column'>
-					<InputField
-						label='Email address'
-						name='emailAdress'
-						type='text'
-						onChange={onInputChange}
-						onKeyDown={onInputKeyDown}
-						value={email}
-						error={error}
-						touched={true}
-						disabled={hasMaximumInvitations}
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus={true}
+					<ChipInput
+						value={emailInvitations}
+						onAdd={onChipAdd}
+						onDelete={onChipDelete}
+						newChipKeyCodes={[32, 13, 188, 9]}
+						helperText={error ? error : ''}
+						error={Boolean(error)}
+						variant='outlined'
+						label='Email address(es)'
+						fullWidth={true}
+						blurBehavior='ignore'
+						allowDuplicates={true}
+						chipRenderer={({ value, text, handleDelete, className }, _key) => (
+							<Chip
+								key={value}
+								label={text}
+								color='secondary'
+								className={className}
+								size='small'
+								onDelete={handleDelete}
+							/>
+						)}
 					/>
 					{emailInvitations.length ? (
-						<>
-							<Box mt={1.5}>
-								{emailInvitations.map(email => (
-									<Chip
-										key={email}
-										label={email}
-										color='secondary'
-										className={cn(buttonMr, buttonMb)}
-										size='small'
-										onDelete={() => onChipDelete(email)}
-									/>
-								))}
-							</Box>
-							<Box mt={0.5} display='flex' alignItems='center'>
-								<Typography variant='body1'>
-									Invite <Chip label={`${emailInvitations.length}/${maxInvitations}`} color='secondary' size='small' />{' '}
-									people.
+						<Box mt={1.5} display='flex' flexDirection='column'>
+							<Typography variant='body1' gutterBottom={hasMaximumInvitations}>
+								Invite <Chip label={emailInvitations.length} color='secondary' size='small' />{' '}
+								{emailInvitations.length > 1 ? 'people' : 'person'}.{' '}
+							</Typography>
+							{hasMaximumInvitations && (
+								<Typography variant='subtitle1' color='error'>
+									Please note that a maximum of {maxInvitations} people can join. If you sent out more
+									than {maxInvitations} invitations it will be dealt with on a first come, first
+									served basis.
 								</Typography>
-							</Box>
-						</>
+							)}
+						</Box>
 					) : null}
 				</Box>
 			</DialogContent>
@@ -78,7 +76,13 @@ const EmailForm = ({
 					<Button onClick={onClose} variant='outlined' color='default' fullWidth={false}>
 						Cancel
 					</Button>
-					<Button variant='contained' fullWidth={false} disabled={!emailInvitations.length} onClick={onConfirm}>
+					<Button
+						variant='contained'
+						fullWidth={false}
+						onClick={onConfirm}
+						loading={loading}
+						disabled={!emailInvitations.length}
+					>
 						Send invitations
 					</Button>
 				</DialogActions>

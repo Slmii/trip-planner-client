@@ -1,6 +1,26 @@
-import React, { useCallback } from 'react';
 import cn from 'classnames';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+
+import Button from '@components/buttons/button';
+import IconButton from '@components/buttons/icon-button';
+import TripDateAndLocations from '@components/trips/dates-and-locations';
+import { TripSummaryProps } from '@components/trips/trip-summary';
+import Activity from '@components/trips/trip-summary/activity';
+import Preparation from '@components/trips/trip-summary/preparation';
+import TripSummarySkeleton from '@components/trips/trip-summary/skeleton';
+import {
+    useDeleteActivityMutation,
+    useDeleteSubPreparationMutation,
+    useEditSubPreparationStatusMutation,
+    useTripActivitiesQuery,
+    useTripQuery
+} from '@generated/graphql';
+import { activityInvitation, dialog, snackbar } from '@lib/redux';
+import { helpers } from '@lib/utils';
+
+import { globalStyles } from '@styles/global-styled';
+
 const Drawer = require('@material-ui/core/Drawer').default;
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
@@ -10,25 +30,6 @@ const LinearProgress = require('@material-ui/core/LinearProgress').default;
 const Cancel = require('@material-ui/icons/Cancel').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
-
-import Button from '@components/buttons/button';
-import IconButton from '@components/buttons/icon-button';
-import TripDateAndLocations from '@components/trips/dates-and-locations';
-import Activity from '@components/trips/trip-summary/activity';
-import Preparation from '@components/trips/trip-summary/preparation';
-import TripSummarySkeleton from '@components/trips/trip-summary/skeleton';
-import { TripSummaryProps } from '@components/trips/trip-summary';
-import { dialog, snackbar, activityInvitation } from '@lib/redux';
-import {
-	useDeleteActivityMutation,
-	useDeleteSubPreparationMutation,
-	useEditSubPreparationStatusMutation,
-	useTripActivitiesQuery,
-	useTripQuery
-} from '@generated/graphql';
-
-import { globalStyles } from '@styles/global-styled';
-import { helpers } from '@lib/utils';
 
 const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 	const dispatch = useDispatch();
@@ -61,7 +62,10 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 	);
 
 	const handleOnDrawerClose = (event: React.KeyboardEvent | React.MouseEvent) => {
-		if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+		if (
+			event.type === 'keydown' &&
+			((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
+		) {
 			return;
 		}
 
@@ -235,18 +239,24 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 									activity={activity}
 									onDelete={handleOnDeleteActivity}
 									onInvitation={handeOnAcvitityInvitation}
+									isInvitationDisabled={activity.users.length >= activity.maxPeople}
 								/>
 							))}
 						</Box>
 					</Box>
 					<Box>
 						<Typography variant='h6' component='h2' gutterBottom>
-							My preparations ({tripData.trip.preparations.map(prep => prep.subPreparations).flat().length})
+							My preparations (
+							{tripData.trip.preparations.map(prep => prep.subPreparations).flat().length})
 						</Typography>
 						{preparations.length ? (
 							<Box display='flex' alignItems='center'>
 								<Box width='82.5%'>
-									<LinearProgress className={iconMr} variant='determinate' value={preperationCompletionPercentage} />
+									<LinearProgress
+										className={iconMr}
+										variant='determinate'
+										value={preperationCompletionPercentage}
+									/>
 								</Box>
 								<Typography
 									variant='subtitle2'
@@ -274,7 +284,13 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 					</Box>
 				</Box>
 				<Box padding='0 30px 30px 30px' display='flex' justifyContent='flex-end'>
-					<Button className={buttonMr} variant='outlined' fullWidth={false} type='button' onClick={handleOnDrawerClose}>
+					<Button
+						className={buttonMr}
+						variant='outlined'
+						fullWidth={false}
+						type='button'
+						onClick={handleOnDrawerClose}
+					>
 						Close
 					</Button>
 					<Button variant='contained' fullWidth={false} type='button'>

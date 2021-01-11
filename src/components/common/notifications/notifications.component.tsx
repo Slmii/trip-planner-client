@@ -1,12 +1,10 @@
-import React from 'react';
 import Box from '@material-ui/core/Box';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { useRouter } from 'next/router';
 
-import Popover from '@components/popover';
+import { NotificationsProps, Styled } from '@components/common/notifications';
 import Notification from '@components/common/notifications/notification';
-import { Styled, NotificationsProps } from '@components/common/notifications';
+import Popover from '@components/popover';
 import { NotificationType, useMarkHeaderNotificationAsReadMutation } from '@generated/graphql';
 
 import theme from '@theme/index';
@@ -39,7 +37,7 @@ const Notifications = ({ anchor, onClose, onMarkAllAsRead, notifications }: Noti
 			const type = response.data.setNotificationAsRead.type;
 			const uuid = response.data.setNotificationAsRead.uuid;
 
-			if (type === NotificationType.ActivityInvitationReceived) {
+			if (type === NotificationType.ActivityInvitationSent) {
 				url = `/account/invitations#${uuid}`;
 			} else if (type === NotificationType.ActivityJoinRequest) {
 				url = `/account/requests#${uuid}`;
@@ -51,7 +49,7 @@ const Notifications = ({ anchor, onClose, onMarkAllAsRead, notifications }: Noti
 
 			router.push(url);
 		} else {
-			console.log(response.errors);
+			console.error(response.errors);
 		}
 	};
 
@@ -78,7 +76,11 @@ const Notifications = ({ anchor, onClose, onMarkAllAsRead, notifications }: Noti
 					<>
 						<Box display='flex' flexDirection='column'>
 							{notifications.map(notification => (
-								<Notification key={notification.id} notification={notification} onClick={handleOnNotificationClick} />
+								<Notification
+									key={notification.id}
+									notification={notification}
+									onClick={handleOnNotificationClick}
+								/>
 							))}
 						</Box>
 						<ButtonBase>

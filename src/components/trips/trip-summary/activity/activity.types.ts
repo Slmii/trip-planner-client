@@ -1,8 +1,9 @@
-import { ActivityType, TransportationType } from '@lib/types';
 import { ActivityFragment } from '@generated/graphql';
+import { ActivityType, TransportationType } from '@lib/types';
 
 export interface ActivityProps {
 	activity: ActivityFragment;
+	isInvitationDisabled: boolean;
 	onDelete: (activityId: number) => void;
 	onInvitation: (maxInvitations: number) => void;
 }

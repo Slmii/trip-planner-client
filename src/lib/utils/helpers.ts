@@ -1,16 +1,34 @@
-import dayjs, { Dayjs, OpUnitType } from 'dayjs';
+import { BaseQueryOptions } from '@apollo/client';
+import dayjs, { Dayjs } from 'dayjs';
+import { NextRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
 import isEmail from 'validator/lib/isEmail';
 import isIn from 'validator/lib/isIn';
 import trim from 'validator/lib/trim';
-import { NextRouter } from 'next/router';
-import { BaseQueryOptions } from '@apollo/client';
-import { ParsedUrlQuery } from 'querystring';
 
-import { QueryStringFilters, OrderBy, SearchIn, SortBy } from '@components/filters/extended-filters';
-import { date } from '@lib/utils';
+import {
+    OrderBy,
+    QueryStringFilters,
+    SearchIn,
+    SortBy
+} from '@components/filters/extended-filters';
+import {
+    Exact,
+    PaginationInput,
+    SortOrder,
+    SubPreparationFragment,
+    TripSortByInput,
+    TripWhereInput
+} from '@generated/graphql';
 import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
-import { KeyOf, ValueOf, FiltersRouterQueryObject, ActivityType, TransportationType } from '@lib/types';
-import { Exact, PaginationInput, SortOrder, SubPreparationFragment, TripSortByInput, TripWhereInput } from '@generated/graphql';
+import {
+    ActivityType,
+    FiltersRouterQueryObject,
+    KeyOf,
+    TransportationType,
+    ValueOf
+} from '@lib/types';
+import { date } from '@lib/utils';
 
 export const getCurrentPage = (query: ParsedUrlQuery) => {
 	const page = Number(query.page) || 1;
@@ -165,7 +183,18 @@ export const tripsQueryVariables = (
 	filters: QueryStringFilters & { page: number },
 	rows: string
 ): BaseQueryOptions<Exact<{ where?: TripWhereInput; pagination: PaginationInput; orderBy?: TripSortByInput }>> => {
-	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order, page } = filters;
+	const {
+		search,
+		searchIn,
+		dateFrom,
+		dateTo,
+		activityDate,
+		activityType,
+		transportationType,
+		sort,
+		order,
+		page
+	} = filters;
 
 	return {
 		variables: {
@@ -244,7 +273,7 @@ export const isInvitationEmailValid = (email: string, emailInvitations: string[]
 	}
 
 	if (isIn(trimmedEmail, emailInvitations)) {
-		return `${trimmedEmail} has already been added`;
+		return `${trimmedEmail} is already added`;
 	}
 
 	return null;
@@ -255,4 +284,8 @@ export const transformToAvatarInitials = (name: string) => {
 		.split(' ')
 		.map(n => n[0])
 		.join('');
+};
+
+export const wait = (ms: number) => {
+	return new Promise(resolve => setTimeout(resolve, ms));
 };

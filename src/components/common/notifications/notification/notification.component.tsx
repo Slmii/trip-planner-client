@@ -1,17 +1,20 @@
-import React from 'react';
 import cn from 'classnames';
+
+import { Styled } from '@components/common/notifications';
+import { NotificationProps } from '@components/common/notifications/notification';
+import {
+    ReadNotificationBadge,
+    UnReadNotificationBadge
+} from '@components/common/notifications/notification-badge';
+import { NotificationType } from '@generated/graphql';
+import { date, helpers } from '@lib/utils';
+
+import { globalStyles } from '@styles/global-styled';
+
 const Box = require('@material-ui/core/Box').default;
 const Avatar = require('@material-ui/core/Avatar').default;
 const Typography = require('@material-ui/core/Typography').default;
 const ButtonBase = require('@material-ui/core/ButtonBase').default;
-
-import { Styled } from '@components/common/notifications';
-import { NotificationProps } from '@components/common/notifications/notification';
-import { ReadNotificationBadge, UnReadNotificationBadge } from '@components/common/notifications/notification-badge';
-import { date, helpers } from '@lib/utils';
-import { NotificationType } from '@generated/graphql';
-
-import { globalStyles } from '@styles/global-styled';
 
 const Notification = ({ notification, onClick }: NotificationProps) => {
 	const { id, sender, createdAt, type, read: isRead } = notification;
@@ -21,12 +24,12 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
 	const { lineHeight } = Styled.notificationStyles();
 
 	const renderNotification = () => {
-		if ([NotificationType.ActivityInvitationReceived, NotificationType.ActivityJoinRequest].includes(type)) {
+		if ([NotificationType.ActivityInvitationSent, NotificationType.ActivityJoinRequest].includes(type)) {
 			return (
 				<>
 					{sender?.name}{' '}
 					<Styled.NotificationSubTitle>
-						{type === NotificationType.ActivityInvitationReceived && 'invited you to join an activity'}
+						{type === NotificationType.ActivityInvitationSent && 'invited you to join an activity'}
 						{type === NotificationType.ActivityJoinRequest && 'requested to join your activity'}
 					</Styled.NotificationSubTitle>
 				</>
@@ -52,7 +55,9 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
 					{!isRead ? <UnReadNotificationBadge /> : <ReadNotificationBadge />}
 				</Box>
 				<Box mr={1}>
-					<Avatar style={{ width: 44, height: 44 }}>{helpers.transformToAvatarInitials(sender?.name ?? '')}</Avatar>
+					<Avatar style={{ width: 44, height: 44 }}>
+						{helpers.transformToAvatarInitials(sender?.name ?? '')}
+					</Avatar>
 				</Box>
 				<Box width='100%'>
 					<Box display='flex' mb={0.5}>

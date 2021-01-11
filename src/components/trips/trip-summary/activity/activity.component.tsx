@@ -1,5 +1,13 @@
 import React from 'react';
 import { FaHiking } from 'react-icons/fa';
+
+import IconButton from '@components/buttons/icon-button';
+import TripDateAndLocations from '@components/trips/dates-and-locations';
+import { ActivityProps, Styled, TypeMapping } from '@components/trips/trip-summary/activity';
+import { helpers } from '@lib/utils';
+
+import { globalStyles } from '@styles/global-styled';
+
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const AccordionDetails = require('@material-ui/core/AccordionDetails').default;
@@ -9,7 +17,7 @@ const AvatarGroup = require('@material-ui/lab/AvatarGroup').default;
 const Divider = require('@material-ui/core/Divider').default;
 const ExpandMoreIcon = require('@material-ui/icons/ExpandMore').default;
 const DeleteIcon = require('@material-ui/icons/Delete').default;
-const ShareIcon = require('@material-ui/icons/Share').default;
+const MailIcon = require('@material-ui/icons/Mail').default;
 const LockIcon = require('@material-ui/icons/Lock').default;
 const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
 const BeachIcon = require('@material-ui/icons/BeachAccess').default;
@@ -19,13 +27,6 @@ const TaxiIcon = require('@material-ui/icons/LocalTaxi').default;
 const BusIcon = require('@material-ui/icons/DirectionsBus').default;
 const WalkIcon = require('@material-ui/icons/DirectionsWalk').default;
 const MotorcycleIcon = require('@material-ui/icons/Motorcycle').default;
-
-import IconButton from '@components/buttons/icon-button';
-import TripDateAndLocations from '@components/trips/dates-and-locations';
-import { TypeMapping, Styled, ActivityProps } from '@components/trips/trip-summary/activity';
-import { helpers } from '@lib/utils';
-
-import { globalStyles } from '@styles/global-styled';
 
 export const activityTypeIconMapping: TypeMapping[] = [
 	{ type: 'hiking', icon: <FaHiking size='1rem' /> },
@@ -40,7 +41,7 @@ export const transportationTypeIconMapping: TypeMapping[] = [
 	{ type: 'motorbike', icon: <MotorcycleIcon fontSize='inherit' /> }
 ];
 
-const Activity = ({ activity, onDelete, onInvitation }: ActivityProps) => {
+const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: ActivityProps) => {
 	const {
 		id,
 		name,
@@ -107,19 +108,38 @@ const Activity = ({ activity, onDelete, onInvitation }: ActivityProps) => {
 									<Typography variant='subtitle2'>No one has joined yet</Typography>
 								)
 							) : (
-								<Typography variant='subtitle2'>It is not possible for others to join a private activity</Typography>
+								<Typography variant='subtitle2'>
+									It is not possible for the community to join a private activity
+								</Typography>
 							)}
 						</Tooltip>
 						{users.length && publicActivity ? (
 							<>
 								<Divider className={`${iconMl} ${iconMr}`} orientation='vertical' flexItem />
 								<AvatarGroup>
-									<Tooltip title={`Activity: ${activityType.name.toLowerCase()}`} arrow placement='bottom'>
-										<Avatar>{activityTypeIconMapping.find(({ type }) => type === activityType.type)?.icon}</Avatar>
-									</Tooltip>
-									<Tooltip title={`Transport: ${transportationType.name.toLowerCase()}`} arrow placement='bottom'>
+									<Tooltip
+										title={`Activity: ${activityType.name.toLowerCase()}`}
+										arrow
+										placement='bottom'
+									>
 										<Avatar>
-											{transportationTypeIconMapping.find(({ type }) => type === transportationType.type)?.icon}
+											{
+												activityTypeIconMapping.find(({ type }) => type === activityType.type)
+													?.icon
+											}
+										</Avatar>
+									</Tooltip>
+									<Tooltip
+										title={`Transport: ${transportationType.name.toLowerCase()}`}
+										arrow
+										placement='bottom'
+									>
+										<Avatar>
+											{
+												transportationTypeIconMapping.find(
+													({ type }) => type === transportationType.type
+												)?.icon
+											}
 										</Avatar>
 									</Tooltip>
 								</AvatarGroup>
@@ -135,15 +155,25 @@ const Activity = ({ activity, onDelete, onInvitation }: ActivityProps) => {
 							title='Delete'
 							onClick={() => onDelete(id)}
 						/>
-						{publicActivity && (
-							<IconButton
-								color='primary'
-								tooltip={true}
-								icon={<ShareIcon fontSize='small' />}
-								title='Invite others'
-								onClick={() => onInvitation(maxPeople)}
-							/>
-						)}
+						{publicActivity ? (
+							isInvitationDisabled ? (
+								<IconButton
+									color='primary'
+									tooltip={true}
+									icon={<MailIcon fontSize='small' />}
+									title={`${maxPeople} people have already joined`}
+									disabled={true}
+								/>
+							) : (
+								<IconButton
+									color='primary'
+									tooltip={true}
+									icon={<MailIcon fontSize='small' />}
+									title='Invite'
+									onClick={() => onInvitation(maxPeople)}
+								/>
+							)
+						) : null}
 					</Box>
 				</Box>
 			</AccordionDetails>

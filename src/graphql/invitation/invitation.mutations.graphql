@@ -1,0 +1,6 @@
+mutation AddInvitations($data: AddInvitationInput!) {
+	addInvitations(data: $data) {
+		expiresAt
+		email
+	}
+}

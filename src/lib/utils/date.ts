@@ -1,6 +1,6 @@
 import dayjs, { Dayjs, OpUnitType } from 'dayjs';
 
-import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
+import { EU_DATE_FORMAT_SLASHES } from '@lib/constants';
 
 export const formatDate = ({
 	date,
@@ -57,8 +57,8 @@ export const getDifferenceWithCurrentDate = (date: Date) => {
 
 	const timeformat: { time?: number | string; format?: string } = {};
 
-	if (!days && !hours && minutes) {
-		if (minutes <= 2) {
+	if (!days && !hours && (minutes || !minutes)) {
+		if (!minutes || minutes <= 2) {
 			timeformat.time = 'now';
 
 			return timeformat;

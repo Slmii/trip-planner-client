@@ -18,7 +18,7 @@ let theme = createMuiTheme({
 			default: '#F9FAFC'
 		},
 		text: {
-			primary: '#444444'
+			primary: '#000000'
 		},
 		action: {
 			disabled: '#AAA',
@@ -52,8 +52,8 @@ let theme = createMuiTheme({
 		},
 		subtitle2: {
 			fontSize: 12,
-			fontWeight: 550,
-			opacity: 0.6
+			fontWeight: 500
+			// opacity: 0.6
 		}
 	},
 	shape: {
@@ -80,6 +80,9 @@ let theme = createMuiTheme({
 			}
 		},
 		MuiButton: {
+			root: {
+				minHeight: 40
+			},
 			sizeSmall: {
 				minHeight: 33
 			},

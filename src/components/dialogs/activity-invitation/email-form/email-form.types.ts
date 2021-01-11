@@ -1,11 +1,10 @@
 export interface EmailFormProps {
-	email: string;
 	emailInvitations: string[];
 	maxInvitations: number;
 	error?: string;
+	loading: boolean;
 	onClose: () => void;
-	onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onChipAdd: (email: string) => void;
 	onChipDelete: (email: string) => void;
-	onInputKeyDown: (event: React.KeyboardEvent) => void;
 	onConfirm: () => void;
 }

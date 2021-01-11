@@ -17,6 +17,8 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  activityTypes: Array<ActivityType>;
+  transportationTypes: Array<TransportationType>;
   /** Fetch the current user's favorites */
   myFavorites: TripsResponse;
   /** Fetch a trip. Return a user's trip if current user is the creator of the trip. If not, then only return if trip is publicly available */
@@ -31,8 +33,6 @@ export type Query = {
   me?: Maybe<User>;
   /** Fetch a list of Users, only for Admins/Dashboard */
   users: Array<User>;
-  activityTypes: Array<ActivityType>;
-  transportationTypes: Array<TransportationType>;
   /** Fetch current user's trip activities, this includes both publicly and non-publicly available activities */
   myTripActivities: Array<Activity>;
   /** Fetch trip activities. If current user is the creator of the trip then it includes both public and private activities. If current user is not the creator of the trip then it will only include public activities. */
@@ -41,8 +41,8 @@ export type Query = {
   publicActivities: Array<Activity>;
   /** Fetch current user's notifictaions */
   headerNotifications: Array<Notification>;
-  receivedInvitations: Array<ActivityInvitation>;
-  sendInvitations: Array<ActivityInvitation>;
+  receivedInvitations: Array<Invitation>;
+  sentInvitations: Array<Invitation>;
 };
 
 
@@ -90,6 +90,27 @@ export type QueryTripActivitiesArgs = {
   tripId: Scalars['Int'];
 };
 
+export type ActivityType = {
+  __typename?: 'ActivityType';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+
+export type TransportationType = {
+  __typename?: 'TransportationType';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type TripsResponse = {
   __typename?: 'TripsResponse';
   totalCount: Scalars['Int'];
@@ -117,7 +138,6 @@ export type Trip = {
   preparations: Array<Preparation>;
   isInFavorite: Scalars['Boolean'];
 };
-
 
 export type User = {
   __typename?: 'User';
@@ -259,26 +279,6 @@ export type BoolFilter = {
   not?: Maybe<Scalars['Boolean']>;
 };
 
-export type ActivityType = {
-  __typename?: 'ActivityType';
-  id: Scalars['Int'];
-  uuid: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type TransportationType = {
-  __typename?: 'TransportationType';
-  id: Scalars['Int'];
-  uuid: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type Activity = {
   __typename?: 'Activity';
   id: Scalars['Int'];
@@ -317,25 +317,24 @@ export type Notification = {
 
 /** Type of the notification */
 export enum NotificationType {
-  ActivityInvitationReceived = 'ACTIVITY_INVITATION_RECEIVED',
+  ActivityInvitationSent = 'ACTIVITY_INVITATION_SENT',
   ActivityJoinRequest = 'ACTIVITY_JOIN_REQUEST',
   UpcomingTrip = 'UPCOMING_TRIP',
   UpcomingActivity = 'UPCOMING_ACTIVITY'
 }
 
-export type ActivityInvitation = {
-  __typename?: 'ActivityInvitation';
+export type Invitation = {
+  __typename?: 'Invitation';
   id: Scalars['Int'];
   uuid: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   activityId: Scalars['Int'];
   email: Scalars['String'];
-  token: Scalars['String'];
   status: ActivityInvitationStatus;
-  type: ActivityInvitationType;
   expiresAt: Scalars['DateTime'];
   activity?: Maybe<Activity>;
+  user?: Maybe<User>;
 };
 
 /** Status of the activity invitation */
@@ -345,14 +344,10 @@ export enum ActivityInvitationStatus {
   Rejetced = 'REJETCED'
 }
 
-/** Sender or receiver of the activity invitation */
-export enum ActivityInvitationType {
-  Sender = 'SENDER',
-  Receiver = 'RECEIVER'
-}
-
 export type Mutation = {
   __typename?: 'Mutation';
+  addActivityType: ActivityType;
+  addTransportationType: TransportationType;
   /** Only add to Favorite if the Trip is publicly available. If current user is the creator of the Trip then its always allowed */
   addFavorite: Favorite;
   deleteFavorite: Favorite;
@@ -370,8 +365,6 @@ export type Mutation = {
   forgottenPassword: Scalars['String'];
   changeForgottenPassword: Scalars['Boolean'];
   deleteUser: User;
-  addActivityType: ActivityType;
-  addTransportationType: TransportationType;
   /** Link a user to an activity */
   addUserToActivity: Scalars['Boolean'];
   deleteActivity: Activity;
@@ -379,6 +372,17 @@ export type Mutation = {
   setNotificationAsRead: Notification;
   /** Set all current user's notifications as read */
   setAllNotificationAsRead: UpdateManyResponse;
+  addInvitations: Array<Invitation>;
+};
+
+
+export type MutationAddActivityTypeArgs = {
+  data: AddActivityTypeInput;
+};
+
+
+export type MutationAddTransportationTypeArgs = {
+  data: AddTransportationTypeInput;
 };
 
 
@@ -458,18 +462,7 @@ export type MutationDeleteUserArgs = {
 };
 
 
-export type MutationAddActivityTypeArgs = {
-  data: AddActivityTypeInput;
-};
-
-
-export type MutationAddTransportationTypeArgs = {
-  data: AddTransportationTypeInput;
-};
-
-
 export type MutationAddUserToActivityArgs = {
-  userId: Scalars['Float'];
   activityId: Scalars['Float'];
 };
 
@@ -481,6 +474,21 @@ export type MutationDeleteActivityArgs = {
 
 export type MutationSetNotificationAsReadArgs = {
   notificationId: Scalars['Int'];
+};
+
+
+export type MutationAddInvitationsArgs = {
+  data: AddInvitationInput;
+};
+
+export type AddActivityTypeInput = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type AddTransportationTypeInput = {
+  name: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type Favorite = {
@@ -565,19 +573,14 @@ export type ChangeForgottenPasswordInput = {
   confirmPassword: Scalars['String'];
 };
 
-export type AddActivityTypeInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type AddTransportationTypeInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type UpdateManyResponse = {
   __typename?: 'UpdateManyResponse';
   count: Scalars['Int'];
+};
+
+export type AddInvitationInput = {
+  activityId: Scalars['Int'];
+  emails: Array<Scalars['String']>;
 };
 
 export type ActivityFragment = (
@@ -681,6 +684,19 @@ export type MyFavoritesQuery = (
       & TripFragment
     )> }
   ) }
+);
+
+export type AddInvitationsMutationVariables = Exact<{
+  data: AddInvitationInput;
+}>;
+
+
+export type AddInvitationsMutation = (
+  { __typename?: 'Mutation' }
+  & { addInvitations: Array<(
+    { __typename?: 'Invitation' }
+    & Pick<Invitation, 'expiresAt' | 'email'>
+  )> }
 );
 
 export type LocationFragment = (
@@ -1274,6 +1290,39 @@ export function useMyFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type MyFavoritesQueryHookResult = ReturnType<typeof useMyFavoritesQuery>;
 export type MyFavoritesLazyQueryHookResult = ReturnType<typeof useMyFavoritesLazyQuery>;
 export type MyFavoritesQueryResult = Apollo.QueryResult<MyFavoritesQuery, MyFavoritesQueryVariables>;
+export const AddInvitationsDocument = gql`
+    mutation AddInvitations($data: AddInvitationInput!) {
+  addInvitations(data: $data) {
+    expiresAt
+    email
+  }
+}
+    `;
+export type AddInvitationsMutationFn = Apollo.MutationFunction<AddInvitationsMutation, AddInvitationsMutationVariables>;
+
+/**
+ * __useAddInvitationsMutation__
+ *
+ * To run a mutation, you first call `useAddInvitationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddInvitationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addInvitationsMutation, { data, loading, error }] = useAddInvitationsMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useAddInvitationsMutation(baseOptions?: Apollo.MutationHookOptions<AddInvitationsMutation, AddInvitationsMutationVariables>) {
+        return Apollo.useMutation<AddInvitationsMutation, AddInvitationsMutationVariables>(AddInvitationsDocument, baseOptions);
+      }
+export type AddInvitationsMutationHookResult = ReturnType<typeof useAddInvitationsMutation>;
+export type AddInvitationsMutationResult = Apollo.MutationResult<AddInvitationsMutation>;
+export type AddInvitationsMutationOptions = Apollo.BaseMutationOptions<AddInvitationsMutation, AddInvitationsMutationVariables>;
 export const MarkAllHeaderNotificationsAsReadDocument = gql`
     mutation MarkAllHeaderNotificationsAsRead {
   setAllNotificationAsRead {

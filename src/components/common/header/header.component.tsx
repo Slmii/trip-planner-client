@@ -1,47 +1,49 @@
+import { useApolloClient } from '@apollo/client';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { useTheme } from '@material-ui/core/styles';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
-import Link from 'next/link';
-import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import { useRouter } from 'next/router';
-import { useApolloClient } from '@apollo/client';
-import { useTheme } from '@material-ui/core/styles';
 
 import Button from '@components/buttons/button';
 import IconButton from '@components/buttons/icon-button';
-import Dropdown from '@components/dropdown';
-import Notifications from '@components/common/notifications';
 import { Styled } from '@components/common/header';
-import { helpers } from '@lib/utils';
+import Notifications from '@components/common/notifications';
+import Dropdown from '@components/dropdown';
 import {
-	useMeQuery,
-	useSignOutMutation,
-	useHeaderNotificationsQuery,
-	useMarkAllHeaderNotificationsAsReadMutation,
-	HeaderNotificationsQuery,
-	HeaderNotificationsDocument
+    HeaderNotificationsDocument,
+    HeaderNotificationsQuery,
+    useHeaderNotificationsQuery,
+    useMarkAllHeaderNotificationsAsReadMutation,
+    useMeQuery,
+    useSignOutMutation
 } from '@generated/graphql';
+import { helpers } from '@lib/utils';
 
 import { Theme } from '@theme/index';
-import Badge from '@material-ui/core/Badge';
 
 function Header() {
 	const [notificationsAnchorEl, setNotificationsAnchorEl] = useState<Element | null>(null);
 	const [profileAnchorEl, setProfileAnchorEl] = useState<HTMLElement | null>(null);
+	const [signOutLoading, setSignOutLoading] = useState(false);
 
 	const apolloClient = useApolloClient();
 	const router = useRouter();
 	const theme: Theme = useTheme();
 
-	const [signOut, { loading: signOutLoading }] = useSignOutMutation();
+	const [signOut] = useSignOutMutation();
 	const [markAllAsRead] = useMarkAllHeaderNotificationsAsReadMutation();
 	const { data, loading: meLoading } = useMeQuery();
 	const { data: notificationsData } = useHeaderNotificationsQuery();
 
 	const handleOnSignOut = async () => {
 		setProfileAnchorEl(null);
+		setSignOutLoading(true);
 		await signOut();
 		await apolloClient.clearStore();
 		router.push('/signin');
@@ -81,7 +83,8 @@ function Header() {
 		});
 	};
 
-	const unreadNotifications = notificationsData?.headerNotifications.filter(notification => !notification.read).length;
+	const unreadNotifications = notificationsData?.headerNotifications.filter(notification => !notification.read)
+		.length;
 
 	return (
 		<Box component='header' width='100%' bgcolor={theme.palette.primary.dark} fontSize={14}>
@@ -112,9 +115,11 @@ function Header() {
 						</Link>
 					</Styled.NavbarItem>
 					{meLoading || signOutLoading ? (
-						<Box display='flex' justifyContent='center' alignItems='center' width='100px' ml={0.75}>
-							<CircularProgress size='1.5rem' color='secondary' />
-						</Box>
+						<Styled.NavbarItem>
+							<Box display='flex' justifyContent='center' alignItems='center' height='44px'>
+								<CircularProgress size='1.5rem' color='secondary' />
+							</Box>
+						</Styled.NavbarItem>
 					) : data?.me ? (
 						<>
 							<IconButton
@@ -132,18 +137,30 @@ function Header() {
 								tooltip={true}
 							/>
 							<Styled.NavbarItem onClick={e => setProfileAnchorEl(e.currentTarget)}>
-								<Avatar style={{ width: 44, height: 44 }}>{helpers.transformToAvatarInitials(data.me.name)}</Avatar>
+								<Avatar style={{ width: 44, height: 44 }}>
+									{helpers.transformToAvatarInitials(data.me.name)}
+								</Avatar>
 							</Styled.NavbarItem>
 						</>
 					) : (
 						<>
 							<Styled.NavbarItem>
-								<Button variant='outlined' color='secondary' className='bold' onClick={handleOnSignInClick}>
+								<Button
+									variant='outlined'
+									color='secondary'
+									className='bold'
+									onClick={handleOnSignInClick}
+								>
 									Sign in
 								</Button>
 							</Styled.NavbarItem>
 							<Styled.NavbarItem>
-								<Button variant='contained' color='secondary' className='bold' onClick={handleOnSignUpClick}>
+								<Button
+									variant='contained'
+									color='secondary'
+									className='bold'
+									onClick={handleOnSignUpClick}
+								>
 									Sign up
 								</Button>
 							</Styled.NavbarItem>

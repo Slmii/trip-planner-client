@@ -1,9 +1,10 @@
+import MuiDialog from '@material-ui/core/Dialog';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-const MuiDialog = require('@material-ui/core/Dialog').default;
 
 import { EmailForm, Successful } from '@components/dialogs/activity-invitation';
 import { Transition } from '@components/dialogs/dialog';
+import { useAddInvitationsMutation } from '@generated/graphql';
 import { selectActivityInvitation, setActivityInivitation } from '@lib/redux/activityInvitation';
 import { helpers } from '@lib/utils';
 
@@ -13,9 +14,11 @@ const ActivityInvitation = () => {
 	const { open, fullWidth, maxWidth, maxInvitations } = activityInvitation;
 
 	const [emailInvitations, setEmailInvitations] = useState<string[]>([]);
-	const [inputField, setInputField] = useState('');
 	const [inputFieldError, setInputFieldError] = useState('');
 	const [emailsSent, setEmailsSent] = useState(false);
+	const [expiresAt, setExpiredAt] = useState<Date | null>(null);
+
+	const [addInvitations, { loading }] = useAddInvitationsMutation();
 
 	const closeDialog = () => {
 		dispatch(
@@ -24,34 +27,13 @@ const ActivityInvitation = () => {
 				open: false
 			})
 		);
-		setInputField('');
 		setEmailsSent(false);
+		setExpiredAt(null);
 		setEmailInvitations([]);
-	};
-
-	const handleOnInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setInputField(e.target.value);
 	};
 
 	const handleOnDeleteChip = (removeEmail: string) => {
 		setEmailInvitations(prevState => [...prevState.filter(email => email !== removeEmail)]);
-	};
-
-	const handleOnInputKeyDown = (e: React.KeyboardEvent) => {
-		if (['Enter', 'Tab', ',', ' '].includes(e.key)) {
-			e.preventDefault();
-
-			const email = inputField;
-			const error = helpers.isInvitationEmailValid(email, emailInvitations);
-
-			if (error === null) {
-				setInputFieldError('');
-				setInputField('');
-				setEmailInvitations(prevState => [...prevState, email]);
-			} else {
-				setInputFieldError(error);
-			}
-		}
 	};
 
 	const handleOnSendInvitations = async () => {
@@ -67,7 +49,35 @@ const ActivityInvitation = () => {
 		// upon clicking on joining email check if is full or not
 		// with requesting check if full or not as well
 
-		setEmailsSent(true);
+		if (emailInvitations.length) {
+			const response = await addInvitations({
+				variables: {
+					data: {
+						activityId: 4,
+						emails: emailInvitations
+					}
+				}
+			});
+
+			if (!response.errors?.length) {
+				setExpiredAt(response.data?.addInvitations[0].expiresAt);
+				setEmailsSent(true);
+			} else {
+				console.error(response.errors);
+			}
+		}
+	};
+
+	const handleOnAddChip = (inputField: string) => {
+		const email = inputField;
+		const error = helpers.isInvitationEmailValid(email, emailInvitations);
+
+		if (error === null) {
+			setInputFieldError('');
+			setEmailInvitations(prevState => [...prevState, email.toLowerCase()]);
+		} else {
+			setInputFieldError(error);
+		}
 	};
 
 	return (
@@ -82,18 +92,17 @@ const ActivityInvitation = () => {
 		>
 			{!emailsSent ? (
 				<EmailForm
-					email={inputField}
 					emailInvitations={emailInvitations}
 					maxInvitations={maxInvitations}
 					error={inputFieldError}
+					loading={emailsSent && !loading}
 					onClose={closeDialog}
-					onInputChange={handleOnInputChange}
-					onInputKeyDown={handleOnInputKeyDown}
+					onChipAdd={handleOnAddChip}
 					onChipDelete={handleOnDeleteChip}
 					onConfirm={handleOnSendInvitations}
 				/>
 			) : (
-				<Successful onClose={closeDialog} />
+				<Successful onClose={closeDialog} expiresAt={expiresAt ?? new Date()} />
 			)}
 		</MuiDialog>
 	);
