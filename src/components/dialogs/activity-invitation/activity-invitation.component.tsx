@@ -95,7 +95,7 @@ const ActivityInvitation = () => {
 					emailInvitations={emailInvitations}
 					maxInvitations={maxInvitations}
 					error={inputFieldError}
-					loading={emailsSent && !loading}
+					loading={loading}
 					onClose={closeDialog}
 					onChipAdd={handleOnAddChip}
 					onChipDelete={handleOnDeleteChip}
