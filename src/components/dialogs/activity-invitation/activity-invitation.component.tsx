@@ -11,7 +11,7 @@ import { helpers } from '@lib/utils';
 const ActivityInvitation = () => {
 	const dispatch = useDispatch();
 	const activityInvitation = useSelector(selectActivityInvitation);
-	const { open, fullWidth, maxWidth, maxInvitations } = activityInvitation;
+	const { open, fullWidth, maxWidth, activity } = activityInvitation;
 
 	const [emailInvitations, setEmailInvitations] = useState<string[]>([]);
 	const [inputFieldError, setInputFieldError] = useState('');
@@ -24,6 +24,7 @@ const ActivityInvitation = () => {
 		dispatch(
 			setActivityInivitation({
 				...activityInvitation,
+				activity: null,
 				open: false
 			})
 		);
@@ -53,7 +54,7 @@ const ActivityInvitation = () => {
 			const response = await addInvitations({
 				variables: {
 					data: {
-						activityId: 4,
+						activityId: activity?.id ?? 0,
 						emails: emailInvitations
 					}
 				}
@@ -93,7 +94,7 @@ const ActivityInvitation = () => {
 			{!emailsSent ? (
 				<EmailForm
 					emailInvitations={emailInvitations}
-					maxInvitations={maxInvitations}
+					maxInvitations={activity?.maxPeople ?? 0}
 					error={inputFieldError}
 					loading={loading}
 					onClose={closeDialog}

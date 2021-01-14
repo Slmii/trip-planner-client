@@ -1,19 +1,20 @@
+import { Form, Formik } from 'formik';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { Formik, Form } from 'formik';
-import Link from 'next/link';
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const Alert = require('@material-ui/lab/Alert').default;
 
+import Button from '@components/buttons/button';
 import FormGroup from '@components/form/form-group';
 import FormInputField from '@components/form/form-input-field';
-import Button from '@components/buttons/button';
 import { SignInInitialValues, SubmitState } from '@components/signin';
 import { MeDocument, MeQuery, useSignInMutation } from '@generated/graphql';
 
 import { Content } from '@styles/global-styled';
+
+const Box = require('@material-ui/core/Box').default;
+const Typography = require('@material-ui/core/Typography').default;
+const Alert = require('@material-ui/lab/Alert').default;
 
 const initialValues: SignInInitialValues = {
 	email: '',
@@ -48,6 +49,9 @@ export default function SignIn() {
 									me: data?.signIn
 								}
 							});
+
+							// TODO: propely delete cache after someone signs in
+							cache.evict({ fieldName: 'trips' });
 						}
 					});
 

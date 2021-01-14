@@ -5,7 +5,7 @@ export interface ActivityProps {
 	activity: ActivityFragment;
 	isInvitationDisabled: boolean;
 	onDelete: (activityId: number) => void;
-	onInvitation: (maxInvitations: number) => void;
+	onInvitation: (activity: ActivityFragment) => void;
 }
 
 export interface TypeMapping {

@@ -5,7 +5,7 @@ import { ActivityInvitationProps, ActivityInvitationState } from './activityInvi
 
 export const initialState: ActivityInvitationState = {
 	open: false,
-	maxInvitations: 0,
+	activity: null,
 	fullWidth: true,
 	maxWidth: 'sm'
 };

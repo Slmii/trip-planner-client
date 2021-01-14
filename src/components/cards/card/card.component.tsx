@@ -1,25 +1,25 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react';
-import cn from 'classnames';
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpen from '@material-ui/icons/LockOpen';
+import { useTheme } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpen from '@material-ui/icons/LockOpen';
 import ShareIcon from '@material-ui/icons/Share';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { useTheme } from '@material-ui/core/styles';
+import cn from 'classnames';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React from 'react';
 
 import Button from '@components/buttons/button';
 import IconButton from '@components/buttons/icon-button';
-import TripDateAndLocations from '@components/trips/dates-and-locations';
 import { CardProps, Styled } from '@components/cards/card';
+import TripDateAndLocations from '@components/trips/dates-and-locations';
 
-import { Theme } from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
+import { Theme } from '@theme/index';
 
 const Card = ({
 	trip,
@@ -128,7 +128,13 @@ const Card = ({
 								onClick={() => onAddFavorite(trip.id)}
 							/>
 						)}
-						<IconButton aria-label='share' color='primary' tooltip={true} icon={<ShareIcon />} title='Share trip' />
+						<IconButton
+							aria-label='share'
+							color='primary'
+							tooltip={true}
+							icon={<ShareIcon />}
+							title='Share trip'
+						/>
 					</Box>
 				</Box>
 			</Box>

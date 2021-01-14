@@ -1,8 +1,10 @@
 import { DialogSize } from '@lib/redux/dialog';
 
+import { ActivityFragment } from '../../../generated/graphql';
+
 export interface ActivityInvitationProps {
 	open: boolean;
-	maxInvitations: number;
+	activity: ActivityFragment | null;
 	fullWidth?: boolean;
 	maxWidth?: DialogSize;
 }

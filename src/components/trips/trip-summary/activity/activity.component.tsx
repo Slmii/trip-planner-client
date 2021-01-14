@@ -170,7 +170,7 @@ const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: Ac
 									tooltip={true}
 									icon={<MailIcon fontSize='small' />}
 									title='Invite'
-									onClick={() => onInvitation(maxPeople)}
+									onClick={() => onInvitation(activity)}
 								/>
 							)
 						) : null}

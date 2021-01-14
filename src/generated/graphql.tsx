@@ -33,6 +33,10 @@ export type Query = {
   me?: Maybe<User>;
   /** Fetch a list of Users, only for Admins/Dashboard */
   users: Array<User>;
+  receivedInvitations: Array<Invitation>;
+  sentInvitations: Array<Invitation>;
+  validateInvitationToken: TokenValidationResponse;
+  getEmailAddressByInvitationToken: Scalars['String'];
   /** Fetch current user's trip activities, this includes both publicly and non-publicly available activities */
   myTripActivities: Array<Activity>;
   /** Fetch trip activities. If current user is the creator of the trip then it includes both public and private activities. If current user is not the creator of the trip then it will only include public activities. */
@@ -41,8 +45,6 @@ export type Query = {
   publicActivities: Array<Activity>;
   /** Fetch current user's notifictaions */
   headerNotifications: Array<Notification>;
-  receivedInvitations: Array<Invitation>;
-  sentInvitations: Array<Invitation>;
 };
 
 
@@ -77,6 +79,16 @@ export type QueryUsersArgs = {
   pagination: PaginationInput;
   orderBy?: Maybe<UserOrderByInput>;
   where?: Maybe<UserWhereInput>;
+};
+
+
+export type QueryValidateInvitationTokenArgs = {
+  token: Scalars['String'];
+};
+
+
+export type QueryGetEmailAddressByInvitationTokenArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -279,6 +291,27 @@ export type BoolFilter = {
   not?: Maybe<Scalars['Boolean']>;
 };
 
+export type Invitation = {
+  __typename?: 'Invitation';
+  id: Scalars['Int'];
+  uuid: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  activityId: Scalars['Int'];
+  email: Scalars['String'];
+  status: ActivityInvitationStatus;
+  expiresAt: Scalars['DateTime'];
+  activity?: Maybe<Activity>;
+  user?: Maybe<User>;
+};
+
+/** Status of the activity invitation */
+export enum ActivityInvitationStatus {
+  Pending = 'PENDING',
+  Accepted = 'ACCEPTED',
+  Rejetced = 'REJETCED'
+}
+
 export type Activity = {
   __typename?: 'Activity';
   id: Scalars['Int'];
@@ -297,6 +330,12 @@ export type Activity = {
   activityType: ActivityType;
   transportationType: TransportationType;
   users: Array<User>;
+};
+
+export type TokenValidationResponse = {
+  __typename?: 'TokenValidationResponse';
+  token: Scalars['String'];
+  hasAccount: Scalars['Boolean'];
 };
 
 export type Notification = {
@@ -323,27 +362,6 @@ export enum NotificationType {
   UpcomingActivity = 'UPCOMING_ACTIVITY'
 }
 
-export type Invitation = {
-  __typename?: 'Invitation';
-  id: Scalars['Int'];
-  uuid: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  activityId: Scalars['Int'];
-  email: Scalars['String'];
-  status: ActivityInvitationStatus;
-  expiresAt: Scalars['DateTime'];
-  activity?: Maybe<Activity>;
-  user?: Maybe<User>;
-};
-
-/** Status of the activity invitation */
-export enum ActivityInvitationStatus {
-  Pending = 'PENDING',
-  Accepted = 'ACCEPTED',
-  Rejetced = 'REJETCED'
-}
-
 export type Mutation = {
   __typename?: 'Mutation';
   addActivityType: ActivityType;
@@ -365,6 +383,7 @@ export type Mutation = {
   forgottenPassword: Scalars['String'];
   changeForgottenPassword: Scalars['Boolean'];
   deleteUser: User;
+  addInvitations: Array<Invitation>;
   /** Link a user to an activity */
   addUserToActivity: Scalars['Boolean'];
   deleteActivity: Activity;
@@ -372,7 +391,6 @@ export type Mutation = {
   setNotificationAsRead: Notification;
   /** Set all current user's notifications as read */
   setAllNotificationAsRead: UpdateManyResponse;
-  addInvitations: Array<Invitation>;
 };
 
 
@@ -462,6 +480,11 @@ export type MutationDeleteUserArgs = {
 };
 
 
+export type MutationAddInvitationsArgs = {
+  data: AddInvitationInput;
+};
+
+
 export type MutationAddUserToActivityArgs = {
   activityId: Scalars['Float'];
 };
@@ -474,11 +497,6 @@ export type MutationDeleteActivityArgs = {
 
 export type MutationSetNotificationAsReadArgs = {
   notificationId: Scalars['Int'];
-};
-
-
-export type MutationAddInvitationsArgs = {
-  data: AddInvitationInput;
 };
 
 export type AddActivityTypeInput = {
@@ -558,6 +576,7 @@ export type AddUserInput = {
   confirmPassword: Scalars['String'];
   status?: Maybe<Scalars['Boolean']>;
   locked?: Maybe<Scalars['Boolean']>;
+  invitationToken?: Maybe<Scalars['String']>;
   role?: Maybe<Role>;
 };
 
@@ -573,14 +592,14 @@ export type ChangeForgottenPasswordInput = {
   confirmPassword: Scalars['String'];
 };
 
-export type UpdateManyResponse = {
-  __typename?: 'UpdateManyResponse';
-  count: Scalars['Int'];
-};
-
 export type AddInvitationInput = {
   activityId: Scalars['Int'];
   emails: Array<Scalars['String']>;
+};
+
+export type UpdateManyResponse = {
+  __typename?: 'UpdateManyResponse';
+  count: Scalars['Int'];
 };
 
 export type ActivityFragment = (
@@ -696,6 +715,44 @@ export type AddInvitationsMutation = (
   & { addInvitations: Array<(
     { __typename?: 'Invitation' }
     & Pick<Invitation, 'expiresAt' | 'email'>
+  )> }
+);
+
+export type ValidateTokenQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type ValidateTokenQuery = (
+  { __typename?: 'Query' }
+  & { validateInvitationToken: (
+    { __typename?: 'TokenValidationResponse' }
+    & Pick<TokenValidationResponse, 'token' | 'hasAccount'>
+  ) }
+);
+
+export type EmailAddressByInvitationTokenQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type EmailAddressByInvitationTokenQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getEmailAddressByInvitationToken'>
+);
+
+export type ReceivedInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReceivedInvitationsQuery = (
+  { __typename?: 'Query' }
+  & { receivedInvitations: Array<(
+    { __typename?: 'Invitation' }
+    & Pick<Invitation, 'id' | 'uuid' | 'createdAt' | 'email' | 'status' | 'expiresAt'>
+    & { activity?: Maybe<(
+      { __typename?: 'Activity' }
+      & ActivityFragment
+    )> }
   )> }
 );
 
@@ -1323,6 +1380,111 @@ export function useAddInvitationsMutation(baseOptions?: Apollo.MutationHookOptio
 export type AddInvitationsMutationHookResult = ReturnType<typeof useAddInvitationsMutation>;
 export type AddInvitationsMutationResult = Apollo.MutationResult<AddInvitationsMutation>;
 export type AddInvitationsMutationOptions = Apollo.BaseMutationOptions<AddInvitationsMutation, AddInvitationsMutationVariables>;
+export const ValidateTokenDocument = gql`
+    query ValidateToken($token: String!) {
+  validateInvitationToken(token: $token) {
+    token
+    hasAccount
+  }
+}
+    `;
+
+/**
+ * __useValidateTokenQuery__
+ *
+ * To run a query within a React component, call `useValidateTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidateTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidateTokenQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useValidateTokenQuery(baseOptions: Apollo.QueryHookOptions<ValidateTokenQuery, ValidateTokenQueryVariables>) {
+        return Apollo.useQuery<ValidateTokenQuery, ValidateTokenQueryVariables>(ValidateTokenDocument, baseOptions);
+      }
+export function useValidateTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidateTokenQuery, ValidateTokenQueryVariables>) {
+          return Apollo.useLazyQuery<ValidateTokenQuery, ValidateTokenQueryVariables>(ValidateTokenDocument, baseOptions);
+        }
+export type ValidateTokenQueryHookResult = ReturnType<typeof useValidateTokenQuery>;
+export type ValidateTokenLazyQueryHookResult = ReturnType<typeof useValidateTokenLazyQuery>;
+export type ValidateTokenQueryResult = Apollo.QueryResult<ValidateTokenQuery, ValidateTokenQueryVariables>;
+export const EmailAddressByInvitationTokenDocument = gql`
+    query EmailAddressByInvitationToken($token: String!) {
+  getEmailAddressByInvitationToken(token: $token)
+}
+    `;
+
+/**
+ * __useEmailAddressByInvitationTokenQuery__
+ *
+ * To run a query within a React component, call `useEmailAddressByInvitationTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEmailAddressByInvitationTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEmailAddressByInvitationTokenQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useEmailAddressByInvitationTokenQuery(baseOptions: Apollo.QueryHookOptions<EmailAddressByInvitationTokenQuery, EmailAddressByInvitationTokenQueryVariables>) {
+        return Apollo.useQuery<EmailAddressByInvitationTokenQuery, EmailAddressByInvitationTokenQueryVariables>(EmailAddressByInvitationTokenDocument, baseOptions);
+      }
+export function useEmailAddressByInvitationTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EmailAddressByInvitationTokenQuery, EmailAddressByInvitationTokenQueryVariables>) {
+          return Apollo.useLazyQuery<EmailAddressByInvitationTokenQuery, EmailAddressByInvitationTokenQueryVariables>(EmailAddressByInvitationTokenDocument, baseOptions);
+        }
+export type EmailAddressByInvitationTokenQueryHookResult = ReturnType<typeof useEmailAddressByInvitationTokenQuery>;
+export type EmailAddressByInvitationTokenLazyQueryHookResult = ReturnType<typeof useEmailAddressByInvitationTokenLazyQuery>;
+export type EmailAddressByInvitationTokenQueryResult = Apollo.QueryResult<EmailAddressByInvitationTokenQuery, EmailAddressByInvitationTokenQueryVariables>;
+export const ReceivedInvitationsDocument = gql`
+    query ReceivedInvitations {
+  receivedInvitations {
+    id
+    uuid
+    createdAt
+    email
+    status
+    expiresAt
+    activity {
+      ...Activity
+    }
+  }
+}
+    ${ActivityFragmentDoc}`;
+
+/**
+ * __useReceivedInvitationsQuery__
+ *
+ * To run a query within a React component, call `useReceivedInvitationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReceivedInvitationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReceivedInvitationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useReceivedInvitationsQuery(baseOptions?: Apollo.QueryHookOptions<ReceivedInvitationsQuery, ReceivedInvitationsQueryVariables>) {
+        return Apollo.useQuery<ReceivedInvitationsQuery, ReceivedInvitationsQueryVariables>(ReceivedInvitationsDocument, baseOptions);
+      }
+export function useReceivedInvitationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReceivedInvitationsQuery, ReceivedInvitationsQueryVariables>) {
+          return Apollo.useLazyQuery<ReceivedInvitationsQuery, ReceivedInvitationsQueryVariables>(ReceivedInvitationsDocument, baseOptions);
+        }
+export type ReceivedInvitationsQueryHookResult = ReturnType<typeof useReceivedInvitationsQuery>;
+export type ReceivedInvitationsLazyQueryHookResult = ReturnType<typeof useReceivedInvitationsLazyQuery>;
+export type ReceivedInvitationsQueryResult = Apollo.QueryResult<ReceivedInvitationsQuery, ReceivedInvitationsQueryVariables>;
 export const MarkAllHeaderNotificationsAsReadDocument = gql`
     mutation MarkAllHeaderNotificationsAsRead {
   setAllNotificationAsRead {

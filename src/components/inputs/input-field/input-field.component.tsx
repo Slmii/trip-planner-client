@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import cn from 'classnames';
 import IconButton from '@material-ui/core/IconButton';
 import MuiTextField from '@material-ui/core/TextField';
+import { useState } from 'react';
+
+import { InputFieldProps } from '@components/inputs/input-field';
+import PasswordMeter from '@components/password-meter';
+
 const InputAdornment = require('@material-ui/core/InputAdornment').default;
 const VisibilityOff = require('@material-ui/icons/VisibilityOff').default;
 const Visibility = require('@material-ui/icons/Visibility').default;
-
-import PasswordMeter from '@components/password-meter';
-import { InputFieldProps } from '@components/inputs/input-field';
 
 export default function InputField({
 	field,
@@ -67,9 +67,6 @@ export default function InputField({
 				size={size}
 				// eslint-disable-next-line jsx-a11y/no-autofocus
 				autoFocus={autoFocus}
-				style={{
-					background: 'white'
-				}}
 				InputProps={{
 					startAdornment,
 					endAdornment:
@@ -81,9 +78,13 @@ export default function InputField({
 									onMouseDown={handleMouseDownPassword}
 								>
 									{showPassword ? (
-										<Visibility fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''} />
+										<Visibility
+											fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''}
+										/>
 									) : (
-										<VisibilityOff fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''} />
+										<VisibilityOff
+											fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''}
+										/>
 									)}
 								</IconButton>
 							</InputAdornment>

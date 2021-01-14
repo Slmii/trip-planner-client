@@ -1,0 +1,24 @@
+query ValidateToken($token: String!) {
+	validateInvitationToken(token: $token) {
+		token
+		hasAccount
+	}
+}
+
+query EmailAddressByInvitationToken($token: String!) {
+	getEmailAddressByInvitationToken(token: $token)
+}
+
+query ReceivedInvitations {
+	receivedInvitations {
+		id
+		uuid
+		createdAt
+		email
+		status
+		expiresAt
+		activity {
+			...Activity
+		}
+	}
+}

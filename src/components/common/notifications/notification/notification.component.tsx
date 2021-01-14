@@ -71,7 +71,12 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
 							{renderNotification()}
 						</Styled.NotificationTitle>
 					</Box>
-					<Typography variant='subtitle2' className={cn(bold, lineHeight)} style={{ textAlign: 'left' }}>
+					<Typography
+						variant='subtitle2'
+						color='textSecondary'
+						className={cn(bold, lineHeight)}
+						style={{ textAlign: 'left' }}
+					>
 						{notificationDate.time} {notificationDate.format ? `${notificationDate.format} ago` : null}
 					</Typography>
 				</Box>

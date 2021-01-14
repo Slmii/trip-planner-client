@@ -10,7 +10,7 @@ export const breadcrumbsStyles = makeStyles((theme: Theme) =>
 		},
 		hoverOnBreadcrumb: {
 			'&:hover': {
-				color: `${theme.palette.secondary.main} !important`
+				color: `${theme.palette.primary.main} !important`
 			}
 		},
 		separator: {

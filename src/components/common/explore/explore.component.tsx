@@ -1,9 +1,8 @@
-import React from 'react';
-import cn from 'classnames';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
-import CardTravelOutlinedIcon from '@material-ui/icons/CardTravelOutlined';
 import BeachAccessOutlinedIcon from '@material-ui/icons/BeachAccessOutlined';
+import CardTravelOutlinedIcon from '@material-ui/icons/CardTravelOutlined';
+import cn from 'classnames';
 import { useRouter } from 'next/router';
 
 import { Styled } from '@components/common/explore';
@@ -18,7 +17,8 @@ const Explore = () => {
 	const { iconMr } = globalStyles();
 	const { active } = Styled.layoutStyles();
 
-	const { 1: subPath } = helpers.getCurrentRoute(router);
+	const [path, subPath] = helpers.getCurrentRoute(router);
+	const fullPath = `${path}/${subPath}`;
 
 	return (
 		<Box bgcolor={theme.palette.primary.dark}>
@@ -27,7 +27,7 @@ const Explore = () => {
 					<Styled.ExploreItem
 						onClick={() => router.push('/explore/trips')}
 						className={cn({
-							[active]: subPath === 'trips'
+							[active]: fullPath === 'explore/trips'
 						})}
 					>
 						<CardTravelOutlinedIcon fontSize='small' className={iconMr} />
@@ -36,7 +36,7 @@ const Explore = () => {
 					<Styled.ExploreItem
 						onClick={() => router.push('/explore/activities')}
 						className={cn({
-							[active]: subPath === 'activities'
+							[active]: fullPath === 'explore/activities'
 						})}
 					>
 						<BeachAccessOutlinedIcon fontSize='small' className={iconMr} />

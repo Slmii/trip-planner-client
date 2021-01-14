@@ -1,4 +1,3 @@
-import { BaseQueryOptions } from '@apollo/client';
 import dayjs, { Dayjs } from 'dayjs';
 import { NextRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
@@ -6,12 +5,7 @@ import isEmail from 'validator/lib/isEmail';
 import isIn from 'validator/lib/isIn';
 import trim from 'validator/lib/trim';
 
-import {
-    OrderBy,
-    QueryStringFilters,
-    SearchIn,
-    SortBy
-} from '@components/filters/extended-filters';
+import { OrderBy, QueryStringFilters, SearchIn, SortBy } from '@components/filters/extended-filters';
 import {
     Exact,
     PaginationInput,
@@ -21,13 +15,7 @@ import {
     TripWhereInput
 } from '@generated/graphql';
 import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
-import {
-    ActivityType,
-    FiltersRouterQueryObject,
-    KeyOf,
-    TransportationType,
-    ValueOf
-} from '@lib/types';
+import { ActivityType, FiltersRouterQueryObject, KeyOf, TransportationType, ValueOf } from '@lib/types';
 import { date } from '@lib/utils';
 
 export const getCurrentPage = (query: ParsedUrlQuery) => {
@@ -182,7 +170,7 @@ export const hasNotProperties = <T>(object: Record<KeyOf<T>, ValueOf<T>>, proper
 export const tripsQueryVariables = (
 	filters: QueryStringFilters & { page: number },
 	rows: string
-): BaseQueryOptions<Exact<{ where?: TripWhereInput; pagination: PaginationInput; orderBy?: TripSortByInput }>> => {
+): Exact<{ where?: TripWhereInput; pagination: PaginationInput; orderBy?: TripSortByInput }> => {
 	const {
 		search,
 		searchIn,
@@ -197,52 +185,50 @@ export const tripsQueryVariables = (
 	} = filters;
 
 	return {
-		variables: {
-			orderBy: {
-				[sort]: order
+		orderBy: {
+			[sort]: order
+		},
+		pagination: {
+			skip: (page ? page - 1 : 0) * Number(rows),
+			take: Number(rows)
+		},
+		where: {
+			search: {
+				contains: search
 			},
-			pagination: {
-				skip: (page - 1) * Number(rows),
-				take: Number(rows)
+			searchIn,
+			activityType: {
+				equals: activityType
 			},
-			where: {
-				search: {
-					contains: search
-				},
-				searchIn,
-				activityType: {
-					equals: activityType
-				},
-				transportationType: {
-					equals: transportationType
-				},
-				from: {
-					gte: dateFrom
-						? date.formatDate({
-								date: dateFrom,
-								format: SERVER_DATE_FORMAT
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  })
-						: undefined
-				},
-				to: {
-					lte: dateTo
-						? date.formatDate({
-								date: dateTo,
-								format: SERVER_DATE_FORMAT
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  })
-						: undefined
-				},
-				activityDate: {
-					equals: activityDate
-						? date.formatDate({
-								date: activityDate,
-								format: SERVER_DATE_FORMAT
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  })
-						: undefined
-				}
+			transportationType: {
+				equals: transportationType
+			},
+			from: {
+				gte: dateFrom
+					? date.formatDate({
+							date: dateFrom,
+							format: SERVER_DATE_FORMAT
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  })
+					: undefined
+			},
+			to: {
+				lte: dateTo
+					? date.formatDate({
+							date: dateTo,
+							format: SERVER_DATE_FORMAT
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  })
+					: undefined
+			},
+			activityDate: {
+				equals: activityDate
+					? date.formatDate({
+							date: activityDate,
+							format: SERVER_DATE_FORMAT
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  })
+					: undefined
 			}
 		}
 	};
@@ -282,7 +268,7 @@ export const isInvitationEmailValid = (email: string, emailInvitations: string[]
 export const transformToAvatarInitials = (name: string) => {
 	return name
 		.split(' ')
-		.map(n => n[0])
+		.map(n => n[0].toUpperCase())
 		.join('');
 };
 

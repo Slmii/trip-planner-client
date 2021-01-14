@@ -1,7 +1,8 @@
 import Head from 'next/head';
 
-import SignUp from '../components/signup';
 import { withApollo } from '@lib/apollo';
+
+import SignUp from '../components/signup';
 
 function SignUpPage() {
 	return (
@@ -12,4 +13,4 @@ function SignUpPage() {
 	);
 }
 
-export default withApollo({ ssr: false })(SignUpPage);
+export default withApollo({ ssr: true })(SignUpPage);

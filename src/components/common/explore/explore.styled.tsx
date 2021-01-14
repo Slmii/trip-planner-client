@@ -16,7 +16,7 @@ export const ExploreItem = styled(ButtonBase)(({ theme }) => ({
 export const layoutStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		active: {
-			borderBottomColor: 'white',
+			borderBottomColor: theme.palette.secondary.main,
 			color: theme.palette.secondary.main
 		}
 	})

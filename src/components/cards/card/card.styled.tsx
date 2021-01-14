@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import { styled } from '@material-ui/core/styles';
+import Image from 'next/image';
 
 export const Card = styled('div')(({ theme }) => ({
 	display: 'flex',
 	width: '100%',
-	height: 287,
+	height: 260,
 	borderRadius: `${theme.shape.borderRadius}px`,
 	boxShadow: '0 1px 3px 0 rgba(37,32,31,.3)',
 	backgroundColor: '#FFFFFF',
@@ -30,8 +30,8 @@ export const CardHeader = styled('div')(({ theme }) => ({
 }));
 
 export const Img = styled(Image)({
-	width: '100%',
-	height: 287
+	width: '100%'
+	// height: 250
 });
 
 export const Description = styled('div')({
@@ -39,7 +39,5 @@ export const Description = styled('div')({
 	textOverflow: 'ellipsis',
 	display: '-webkit-box',
 	'-webkit-box-orient': 'vertical',
-	'-webkit-line-clamp': 2,
-	maxHeight: 48,
-	minHeight: 48
+	'-webkit-line-clamp': 1
 });

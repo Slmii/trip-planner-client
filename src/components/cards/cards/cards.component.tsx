@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Card, { CardProps } from '@components/cards/card';
 import TripSummary from '@components/trips/trip-summary';
-import { dialog, snackbar } from '@lib/redux';
 import {
-	MyTripsQuery,
-	Trip,
-	TripFragmentDoc,
-	TripsResponse,
-	useAddFavoriteMutation,
-	useDeleteFavoriteMutation,
-	useDeleteTripMutation,
-	useMeQuery,
-	useMyUpcomingTripQuery
+    Trip,
+    TripFragment,
+    TripFragmentDoc,
+    TripsResponse,
+    useAddFavoriteMutation,
+    useDeleteFavoriteMutation,
+    useDeleteTripMutation,
+    useMeQuery,
+    useMyUpcomingTripQuery
 } from '@generated/graphql';
+import { dialog, snackbar } from '@lib/redux';
 
 const Cards = ({ trips }: { trips: Trip[] }) => {
 	const router = useRouter();
@@ -73,7 +73,7 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 			variables: {
 				tripId
 			},
-			update: cache => {
+			update: (cache, { data }) => {
 				const id = `Trip:${tripId}`;
 
 				cache.modify({
@@ -87,17 +87,26 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 
 				cache.modify({
 					fields: {
-						myFavorites(existing: TripsResponse, { readField }) {
-							const trip = cache.readFragment<MyTripsQuery>({
+						myFavorites(existing: TripsResponse, { readField }): TripsResponse | undefined {
+							const cachedTrip = cache.readFragment<TripFragment>({
 								id,
-								fragment: TripFragmentDoc
+								fragment: TripFragmentDoc,
+								fragmentName: 'Trip'
 							});
 
-							if (existing.trips.some(trip => readField('id', trip) === tripId)) {
+							if (!cachedTrip) {
+								return;
+							}
+
+							if (existing.trips.some(trip => readField('id', trip) === cachedTrip.id)) {
 								return existing;
 							}
 
-							return [...existing.trips, trip];
+							return {
+								...existing,
+								totalCount: existing.totalCount + 1,
+								trips: [cachedTrip as Trip, ...existing.trips]
+							};
 						}
 					}
 				});
@@ -136,8 +145,14 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 
 				cache.modify({
 					fields: {
-						myFavorites(existing: TripsResponse, { readField }) {
-							return existing.trips.filter(trip => tripId !== readField('id', trip));
+						myFavorites(existing: TripsResponse, { readField }): TripsResponse {
+							const filteredTrips = existing.trips.filter(trip => readField('id', trip) !== tripId);
+
+							return {
+								...existing,
+								totalCount: existing.totalCount - 1,
+								trips: [...filteredTrips]
+							};
 						}
 					}
 				});

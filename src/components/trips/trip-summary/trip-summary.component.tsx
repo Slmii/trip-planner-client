@@ -10,6 +10,7 @@ import Activity from '@components/trips/trip-summary/activity';
 import Preparation from '@components/trips/trip-summary/preparation';
 import TripSummarySkeleton from '@components/trips/trip-summary/skeleton';
 import {
+    ActivityFragment,
     useDeleteActivityMutation,
     useDeleteSubPreparationMutation,
     useEditSubPreparationStatusMutation,
@@ -144,7 +145,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		[deleteSubPreparation, dispatch]
 	);
 
-	const handleOnStatusChange = useCallback(
+	const handleOnSubPreparationStatusChange = useCallback(
 		async (subPreparationId: number) => {
 			const response = await editSubPreparationStatus({
 				variables: {
@@ -178,10 +179,10 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		[dispatch, editSubPreparationStatus]
 	);
 
-	const handeOnAcvitityInvitation = (maxInvitations: number) => {
+	const handeOnAcvitityInvitation = (activity: ActivityFragment) => {
 		const options: activityInvitation.ActivityInvitationProps = {
 			open: true,
-			maxInvitations
+			activity
 		};
 
 		dispatch(activityInvitation.setActivityInivitation(options));
@@ -275,7 +276,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 										key={idx}
 										preparation={preparation}
 										onDelete={handleOnDeleteSubPreparation}
-										onStatusChange={handleOnStatusChange}
+										onStatusChange={handleOnSubPreparationStatusChange}
 										isLast={idx + 1 === preparations.length}
 									/>
 								))}

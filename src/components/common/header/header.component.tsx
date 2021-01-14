@@ -1,13 +1,14 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useApolloClient } from '@apollo/client';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useTheme } from '@material-ui/core/styles';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 
 import Button from '@components/buttons/button';
@@ -44,8 +45,8 @@ function Header() {
 	const handleOnSignOut = async () => {
 		setProfileAnchorEl(null);
 		setSignOutLoading(true);
-		await signOut();
 		await apolloClient.clearStore();
+		await signOut();
 		router.push('/signin');
 	};
 
@@ -60,15 +61,15 @@ function Header() {
 	const handleOnMarkAllAsRead = () => {
 		markAllAsRead({
 			update: cache => {
-				const cacheNotifications = cache.readQuery<HeaderNotificationsQuery>({
+				const cachedNotifications = cache.readQuery<HeaderNotificationsQuery>({
 					query: HeaderNotificationsDocument
 				});
 
-				if (!cacheNotifications) {
+				if (!cachedNotifications) {
 					return;
 				}
 
-				const modifiedNotifications = cacheNotifications.headerNotifications.map(notification => ({
+				const modifiedNotifications = cachedNotifications.headerNotifications.map(notification => ({
 					...notification,
 					read: true
 				}));
@@ -125,11 +126,11 @@ function Header() {
 							<IconButton
 								icon={
 									unreadNotifications ? (
-										<Badge badgeContent={unreadNotifications} color='secondary'>
+										<Badge badgeContent={unreadNotifications} max={9} color='secondary'>
 											<NotificationsActiveIcon className='white' />
 										</Badge>
 									) : (
-										<NotificationsActiveIcon className='white' />
+										<NotificationsIcon className='white' />
 									)
 								}
 								onClick={e => setNotificationsAnchorEl(e.currentTarget)}
@@ -180,28 +181,23 @@ function Header() {
 				items={[
 					{
 						href: '/account',
-						element: <Box fontWeight='bold'>My account</Box>,
+						element: <Box fontWeight='bold'>Account</Box>,
 						action: () => setProfileAnchorEl(null)
 					},
 					{
-						href: '/trips/my-trips',
+						href: '/account/trips',
 						element: <Box fontWeight='bold'>My trips</Box>,
 						action: () => setProfileAnchorEl(null)
 					},
 					{
-						href: '/activities/my-activities',
-						element: <Box fontWeight='bold'>My activities</Box>,
-						action: () => setProfileAnchorEl(null)
-					},
-					{
-						href: '/trips/favorites',
+						href: '/account/favorites',
 						element: <Box fontWeight='bold'>My favorites</Box>,
 						action: () => setProfileAnchorEl(null),
 						divider: true
 					},
 					{
 						action: handleOnSignOut,
-						element: <Box>Sign out</Box>
+						element: <Box fontWeight={theme.typography.fontWeightMedium}>Sign out</Box>
 					}
 				]}
 			/>

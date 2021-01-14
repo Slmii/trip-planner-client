@@ -1,3 +1,3 @@
-import MyFavorites from './favorites.components';
+import MyFavorites from './my-favorites.components';
 
 export default MyFavorites;

@@ -62,6 +62,11 @@ let theme = createMuiTheme({
 	boxShadow: '0 2px 4px 1px rgba(17,34,68,0.4)',
 	spacing: 16,
 	overrides: {
+		MuiTextField: {
+			root: {
+				backgroundColor: 'white'
+			}
+		},
 		MuiChip: {
 			outlined: {
 				backgroundColor: 'white'

@@ -66,6 +66,9 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		iconMl: {
 			marginLeft: 8
 		},
+		iconMb: {
+			marginBottom: 8
+		},
 		buttonMr: {
 			marginRight: 8
 		},

@@ -1,45 +1,58 @@
-import React from 'react';
-import cn from 'classnames';
 import Box from '@material-ui/core/Box';
+import Checkbox from '@material-ui/core/Checkbox';
+import Chip from '@material-ui/core/Chip';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
-import Chip from '@material-ui/core/Chip';
 import FormControl from '@material-ui/core/FormControl';
-import Typography from '@material-ui/core/Typography';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import SearchIcon from '@material-ui/icons/Search';
-import TuneIcon from '@material-ui/icons/Tune';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import CancelIcon from '@material-ui/icons/Cancel';
+import ClearIcon from '@material-ui/icons/Clear';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ClearIcon from '@material-ui/icons/Clear';
-import CancelIcon from '@material-ui/icons/Cancel';
+import SearchIcon from '@material-ui/icons/Search';
+import cn from 'classnames';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import InputField from '@components/inputs/input-field';
 import Button from '@components/buttons/button';
+import DatePicker from '@components/datepicker';
+import {
+    AnchorElementState,
+    constants,
+    QueryStringFilterChange,
+    QueryStringFilters
+} from '@components/filters/extended-filters';
+import InputField from '@components/inputs/input-field';
 import Menu from '@components/menu';
 import Popover from '@components/popover';
-import DatePicker from '@components/datepicker';
-import { constants, AnchorElementState, QueryStringFilters, QueryStringFilterChange } from '@components/filters/extended-filters';
-import { helpers, date } from '@lib/utils';
-import { KeyOf } from '@lib/types';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
+import { KeyOf } from '@lib/types';
+import { date, helpers } from '@lib/utils';
 
-import theme from '@theme/index';
 import { globalStyles } from '@styles/global-styled';
+import theme from '@theme/index';
 
 const ExtendedFilters = () => {
 	const router = useRouter();
 
 	const [path, subPath] = useMemo(() => helpers.getCurrentRoute(router), [router]);
 	const queryStringsAsFilters = useMemo(() => helpers.getQueryStringFilters(router.query), [router.query]);
-	const { search, searchIn, dateFrom, dateTo, activityDate, activityType, transportationType, sort, order } = queryStringsAsFilters;
+	const {
+		search,
+		searchIn,
+		dateFrom,
+		dateTo,
+		activityDate,
+		activityType,
+		transportationType,
+		sort,
+		order
+	} = queryStringsAsFilters;
 
-	const [showFiltersSection, setShowFiltersSection] = useState(false);
 	const [anchorEls, setAnchorEls] = useState<AnchorElementState>({
 		quickFilters: null,
 		dateFrom: null,
@@ -50,28 +63,16 @@ const ExtendedFilters = () => {
 		filters: null,
 		sort: null
 	});
-
 	const [searchInput, setSearchInput] = useState(search ?? '');
+	const [checked, setChecked] = useState(false);
 
 	const { data: activityTypesData } = useActivityTypesQuery();
 	const { data: transportationTypesData } = useTransportationTypesQuery();
 
-	const { buttonMr, buttonMl, buttonMt, buttonMb, activeButton, errorChipContained, divider, bold } = globalStyles();
+	const { buttonMr, buttonMl, buttonMt, buttonMb, errorChipContained, divider, bold } = globalStyles();
 
-	useEffect(() => {
-		const canShowFiltersSection = helpers.hasQueryStrings<QueryStringFilters>(queryStringsAsFilters, [
-			'search',
-			'dateFrom',
-			'dateTo',
-			'activityDate',
-			'activityType',
-			'transportationType'
-		]);
-
-		canShowFiltersSection && setShowFiltersSection(true);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const isExplorePage = path === 'explore';
+	const isAccountPage = path === 'account';
 
 	const handleOnMenuOpen = (e: React.MouseEvent, type: KeyOf<AnchorElementState>) => {
 		setAnchorEls(prevState => ({ ...prevState, [type]: e.currentTarget }));
@@ -125,7 +126,14 @@ const ExtendedFilters = () => {
 
 		// Append to URL object if a filter is chosen or if a query string (filter) is already present in the URL
 		// This way we dont lose the state of all chosen filters
-		const queryStrings = helpers.convertFiltersToRouterQueryObject({ filters: queryStringsAsFilters, queryString, value });
+		const queryStrings = helpers.convertFiltersToRouterQueryObject({
+			filters: queryStringsAsFilters,
+			queryString,
+			value,
+			removeQueryStrings: isAccountPage
+				? ['activityDate', 'activityType', 'transportationType', 'searchIn', 'order', 'sort']
+				: undefined
+		});
 
 		router.push({
 			pathname: `/${path}/${subPath}`,
@@ -140,10 +148,6 @@ const ExtendedFilters = () => {
 		setSearchInput(e.target.value);
 	};
 
-	const handleOnToggleFiltersSection = () => {
-		setShowFiltersSection(prevState => !prevState);
-	};
-
 	const handleOnResetSearchInput = () => {
 		setSearchInput('');
 		handleOnFilterChange({
@@ -156,51 +160,61 @@ const ExtendedFilters = () => {
 	return (
 		<Box
 			width='100%'
-			bgcolor={theme.palette.background.default}
-			borderBottom={`1px solid ${theme.palette.borderColor}`}
+			bgcolor={isExplorePage ? theme.palette.background.default : 'white'}
+			borderBottom={isExplorePage ? `1px solid ${theme.palette.borderColor}` : 0}
 			position='relative'
 			zIndex={1}
 		>
 			<Container component='div' fixed disableGutters={true}>
-				<Box p={1.5} display='flex' flexDirection='column'>
+				<Box p={isExplorePage && 1.5} display='flex' flexDirection='column'>
 					<Box display='flex' flexDirection='column'>
 						<Box display='flex'>
-							<Box component='form' onSubmit={handleOnSubmitSearch} width='100%' display='flex'>
-								<InputField
-									label='Search'
-									placeholder='Search in trips, activities or preparations'
-									type='text'
-									name='search'
-									size='small'
-									value={searchInput}
-									onChange={handleOnSearchInputChange}
-									endAdornment={<CancelIcon color='action' />}
-									onIconClick={handleOnResetSearchInput}
-								/>
-								<Button
-									variant='contained'
-									type='submit'
-									className={cn(buttonMl, buttonMr)}
-									fullWidth={false}
-									endIcon={<SearchIcon />}
-								>
-									Search
-								</Button>
-							</Box>
-							<Button
-								variant='outlined'
-								color='inherit'
-								className={cn({
-									[activeButton]: showFiltersSection
-								})}
-								fullWidth={false}
-								endIcon={<TuneIcon />}
-								onClick={handleOnToggleFiltersSection}
+							<Box
+								component='form'
+								onSubmit={handleOnSubmitSearch}
+								width='100%'
+								display='flex'
+								flexDirection='column'
 							>
-								Filters
-							</Button>
+								<Box display='flex'>
+									<InputField
+										label='Search'
+										placeholder='Search in trips, activities or preparations'
+										type='text'
+										name='search'
+										size='small'
+										value={searchInput}
+										onChange={handleOnSearchInputChange}
+										endAdornment={<CancelIcon color='action' />}
+										onIconClick={handleOnResetSearchInput}
+									/>
+									<Button
+										variant='contained'
+										type='submit'
+										className={cn(buttonMl)}
+										fullWidth={false}
+										endIcon={<SearchIcon />}
+									>
+										Search
+									</Button>
+								</Box>
+								{isAccountPage ? (
+									<FormControlLabel
+										control={
+											<Switch
+												checked={checked}
+												onChange={() => setChecked(prevState => !prevState)}
+												name='pastTrips'
+											/>
+										}
+										labelPlacement='end'
+										label={<Typography variant='subtitle1'>Show past trips</Typography>}
+										className={cn(buttonMr, buttonMt)}
+									/>
+								) : null}
+							</Box>
 						</Box>
-						{showFiltersSection && (
+						{isExplorePage && (
 							<>
 								<Divider className={divider} />
 								<Box display='flex' justifyContent='space-between'>
@@ -210,7 +224,9 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={anchorEls.quickFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+											deleteIcon={
+												anchorEls.quickFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />
+											}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'quickFilters')}
 											// eslint-disable-next-line @typescript-eslint/no-empty-function
 											onDelete={() => {}}
@@ -253,7 +269,9 @@ const ExtendedFilters = () => {
 											deleteIcon={anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateFrom')}
 											onDelete={() => handleOnChipDelete('dateFrom')}
-											label={`Date from${dateFrom ? `: ${date.formatDate({ date: dateFrom })}` : ''}`}
+											label={`Date from${
+												dateFrom ? `: ${date.formatDate({ date: dateFrom })}` : ''
+											}`}
 											color='primary'
 											variant={dateFrom ? 'default' : 'outlined'}
 											size='small'
@@ -276,10 +294,14 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+											deleteIcon={
+												anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon />
+											}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityDate')}
 											onDelete={() => handleOnChipDelete('activityDate')}
-											label={`Activity date${activityDate ? `: ${date.formatDate({ date: activityDate })}` : ''}`}
+											label={`Activity date${
+												activityDate ? `: ${date.formatDate({ date: activityDate })}` : ''
+											}`}
 											color='primary'
 											variant={activityDate ? 'default' : 'outlined'}
 											size='small'
@@ -289,7 +311,9 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={anchorEls.activityType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+											deleteIcon={
+												anchorEls.activityType ? <ExpandLessIcon /> : <ExpandMoreIcon />
+											}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityType')}
 											onDelete={() => handleOnChipDelete('activityType')}
 											label={`Activity${
@@ -311,7 +335,9 @@ const ExtendedFilters = () => {
 											aria-haspopup='true'
 											className={cn(buttonMr, buttonMb)}
 											clickable={true}
-											deleteIcon={anchorEls.transportationType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+											deleteIcon={
+												anchorEls.transportationType ? <ExpandLessIcon /> : <ExpandMoreIcon />
+											}
 											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'transportationType')}
 											onDelete={() => handleOnChipDelete('transportationType')}
 											label={`Transportation${
@@ -335,7 +361,12 @@ const ExtendedFilters = () => {
 											onClose={type => handleOnMenuClose(type as KeyOf<AnchorElementState>)}
 										>
 											<Box display='flex' width='450px'>
-												<Box width='50%' display='flex' flexDirection='column' margin='20px 15px 20px 20px'>
+												<Box
+													width='50%'
+													display='flex'
+													flexDirection='column'
+													margin='20px 15px 20px 20px'
+												>
 													<FormControl component='fieldset'>
 														<Typography variant='body2' gutterBottom className={bold}>
 															Search in:
@@ -343,7 +374,8 @@ const ExtendedFilters = () => {
 														<Divider />
 														<FormGroup>
 															{constants.SEARCH_IN.map(({ label, value }) => {
-																const isDisabled = searchIn.length === 1 && searchIn[0] === value;
+																const isDisabled =
+																	searchIn.length === 1 && searchIn[0] === value;
 																const isChecked = searchIn.includes(value);
 
 																return (
@@ -352,7 +384,9 @@ const ExtendedFilters = () => {
 																		control={
 																			<Checkbox
 																				checked={isChecked}
-																				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+																				onChange={(
+																					e: React.ChangeEvent<HTMLInputElement>
+																				) =>
 																					handleOnFilterChange({
 																						queryString: 'searchIn',
 																						value: `${e.target.name}-${e.target.checked}`,
@@ -365,15 +399,26 @@ const ExtendedFilters = () => {
 																				size='small'
 																			/>
 																		}
-																		label={<Typography variant='body2'>{label}</Typography>}
+																		label={
+																			<Typography variant='body2'>
+																				{label}
+																			</Typography>
+																		}
 																	/>
 																);
 															})}
 														</FormGroup>
-														<FormHelperText margin='dense'>At least 1 checkbox must be selected</FormHelperText>
+														<FormHelperText margin='dense'>
+															At least 1 checkbox must be selected
+														</FormHelperText>
 													</FormControl>
 												</Box>
-												<Box width='50%' display='flex' flexDirection='column' margin='20px 30px 20px 15px'>
+												<Box
+													width='50%'
+													display='flex'
+													flexDirection='column'
+													margin='20px 30px 20px 15px'
+												>
 													<Typography variant='body2' gutterBottom className={bold}>
 														Date:
 													</Typography>
@@ -423,7 +468,10 @@ const ExtendedFilters = () => {
 														variant='outlined'
 														className={buttonMb}
 														onClick={() => {
-															const upcomingMonths = date.addUnitToCurrentDate(3, 'month');
+															const upcomingMonths = date.addUnitToCurrentDate(
+																3,
+																'month'
+															);
 
 															handleOnFilterChange({
 																queryString: 'dateTo',
@@ -443,11 +491,15 @@ const ExtendedFilters = () => {
 													key={value}
 													type={value}
 													anchorEl={anchorEls[value as KeyOf<AnchorElementState>]}
-													onClose={type => handleOnMenuClose(type as KeyOf<AnchorElementState>)}
+													onClose={type =>
+														handleOnMenuClose(type as KeyOf<AnchorElementState>)
+													}
 												>
 													<DatePicker
 														date={queryStringsAsFilters[value]}
-														onChange={date => handleOnFilterChange({ queryString: value, value: date })}
+														onChange={date =>
+															handleOnFilterChange({ queryString: value, value: date })
+														}
 													/>
 												</Popover>
 											);
@@ -546,4 +598,4 @@ const ExtendedFilters = () => {
 
 ExtendedFilters.whyDidYouRender = true;
 
-export default React.memo(ExtendedFilters);
+export default ExtendedFilters;
