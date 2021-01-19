@@ -1,4 +1,6 @@
-import { MenuItem, MultipleMenuItem } from '@lib/types';
+import React from 'react';
+
+import { MenuItem, MultipleMenuItem } from '@components/menu';
 
 export interface InputSelectProps {
 	value: string | string[];

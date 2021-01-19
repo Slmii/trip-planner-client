@@ -149,7 +149,7 @@ const Notifications = () => {
 		});
 	};
 
-	let body: JSX.Element = <></>;
+	let body: JSX.Element;
 
 	if (loading && !data) {
 		body = <NotificationsSkeleton number={10} />;

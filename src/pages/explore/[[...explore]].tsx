@@ -9,7 +9,7 @@ import { withApollo } from '@lib/apollo';
 const ExplorePage = () => {
 	const router = useRouter();
 
-	const { 1: subPath } = helpers.getCurrentRoute(router.asPath);
+	const { 1: subPath } = helpers.getCurrentRoute(router);
 
 	return (
 		<>
