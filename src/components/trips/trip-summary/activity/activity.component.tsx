@@ -6,7 +6,7 @@ import TripDateAndLocations from '@components/trips/dates-and-locations';
 import { ActivityProps, Styled, TypeMapping } from '@components/trips/trip-summary/activity';
 import { helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
@@ -81,7 +81,7 @@ const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: Ac
 				</Box>
 				<Typography variant='body2'>{description}</Typography>
 				<Divider className={divider} variant='fullWidth' />
-				<Box display='flex' justifyContent='space-between' mb={1} alignItems='center'>
+				<Box display='flex' justifyContent='space-between' alignItems='center'>
 					<Box display='flex' height='100%'>
 						<Tooltip
 							title={

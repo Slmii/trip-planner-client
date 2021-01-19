@@ -18,7 +18,7 @@ import IconButton from '@components/buttons/icon-button';
 import { CardProps, Styled } from '@components/cards/card';
 import TripDateAndLocations from '@components/trips/dates-and-locations';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 import { Theme } from '@theme/index';
 
 const Card = ({

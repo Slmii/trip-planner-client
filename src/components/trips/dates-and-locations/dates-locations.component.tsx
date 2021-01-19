@@ -1,12 +1,13 @@
 import React from 'react';
+
+import { date } from '@lib/utils';
+
+import { globalStyles } from '@styles/index';
+
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const DateRangeIcon = require('@material-ui/icons/DateRange').default;
 const PublicIcon = require('@material-ui/icons/Public').default;
-
-import { date } from '@lib/utils';
-
-import { globalStyles } from '@styles/global-styled';
 
 const TripDatesAndLocations = ({
 	dateFrom,

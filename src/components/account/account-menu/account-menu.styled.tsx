@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 
-export const dashboardMenuStyles = makeStyles((theme: Theme) =>
+export const accountMenuStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		onHover: {
 			'&:hover': {

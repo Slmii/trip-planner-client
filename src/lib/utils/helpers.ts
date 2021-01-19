@@ -18,6 +18,8 @@ import { EU_DATE_FORMAT_SLASHES, SERVER_DATE_FORMAT } from '@lib/constants';
 import { ActivityType, FiltersRouterQueryObject, KeyOf, TransportationType, ValueOf } from '@lib/types';
 import { date } from '@lib/utils';
 
+import { NotificationType } from '../../generated/graphql';
+
 export const getCurrentPage = (query: ParsedUrlQuery) => {
 	const page = Number(query.page) || 1;
 	return page;
@@ -274,4 +276,28 @@ export const transformToAvatarInitials = (name: string) => {
 
 export const wait = (ms: number) => {
 	return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+export const isPage = (page: string, router: NextRouter) => {
+	return page === getCurrentRoute(router)[0];
+};
+
+export const isSubPage = (page: string, router: NextRouter) => {
+	return page === getCurrentRoute(router)[1];
+};
+
+export const transformToNotificationRedirectUrl = (type: NotificationType, uuid: string) => {
+	let url = '';
+
+	if (type === NotificationType.ActivityInvitationSent) {
+		url = `/account/invitations#${uuid}`;
+	} else if (type === NotificationType.ActivityJoinRequest) {
+		url = `/account/requests#${uuid}`;
+	} else if (type === NotificationType.UpcomingActivity) {
+		url = `/activities/my-activities#${uuid}`;
+	} else if (type === NotificationType.UpcomingTrip) {
+		url = `/trips/my-trips#${uuid}`;
+	}
+
+	return url;
 };

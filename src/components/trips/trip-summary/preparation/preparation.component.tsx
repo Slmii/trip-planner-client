@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import cn from 'classnames';
 import Checkbox from '@material-ui/core/Checkbox';
 import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import cn from 'classnames';
+import React, { useState } from 'react';
+
+import IconButton from '@components/buttons/icon-button';
+import { PreparationProps, Styled } from '@components/trips/trip-summary/preparation';
+
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
 const List = require('@material-ui/core/List').default;
@@ -14,14 +18,17 @@ const ListItemText = require('@material-ui/core/ListItemText').default;
 const ListItemSecondaryAction = require('@material-ui/core/ListItemSecondaryAction').default;
 const DeleteIcon = require('@material-ui/icons/Delete').default;
 
-import IconButton from '@components/buttons/icon-button';
-import { PreparationProps, Styled } from '@components/trips/trip-summary/preparation';
-
 const Preparation = ({ preparation, onDelete, onStatusChange, isLast }: PreparationProps) => {
 	const [open, setOpen] = useState(false);
 
 	const { id, name, description, subPreparations } = preparation;
-	const { preparationHeading, preparationComplete, subPreparationHeading, nested, listItemIcon } = Styled.activityStyles();
+	const {
+		preparationHeading,
+		preparationComplete,
+		subPreparationHeading,
+		nested,
+		listItemIcon
+	} = Styled.activityStyles();
 
 	const labelId = `checkbox-list-label-${id}`;
 
@@ -42,7 +49,8 @@ const Preparation = ({ preparation, onDelete, onStatusChange, isLast }: Preparat
 						<Box display='flex' alignItems='flex-end'>
 							<Typography className={preparationHeading}>{name}</Typography>
 							<Typography variant='subtitle2' color='textSecondary'>
-								{subPreparations.filter(({ status }) => status).length}/{subPreparations.length} complete
+								{subPreparations.filter(({ status }) => status).length}/{subPreparations.length}{' '}
+								complete
 							</Typography>
 						</Box>
 					}
@@ -79,7 +87,6 @@ const Preparation = ({ preparation, onDelete, onStatusChange, isLast }: Preparat
 									<ListItemIcon className={listItemIcon}>
 										<Checkbox
 											edge='start'
-											color='primary'
 											size='small'
 											checked={subPreparation.status}
 											tabIndex={-1}
@@ -93,7 +100,11 @@ const Preparation = ({ preparation, onDelete, onStatusChange, isLast }: Preparat
 										className={cn({
 											[preparationComplete]: subPreparation.status
 										})}
-										primary={<Typography className={subPreparationHeading}>{subPreparation.name}</Typography>}
+										primary={
+											<Typography className={subPreparationHeading}>
+												{subPreparation.name}
+											</Typography>
+										}
 									/>
 									<ListItemSecondaryAction>
 										<IconButton

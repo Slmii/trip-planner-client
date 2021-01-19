@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 
+import AccountTitle from '@components/account/account-title';
 import Cards from '@components/cards/cards';
 import CardsSkeleton from '@components/cards/skeleton';
 import ExtendedFilters from '@components/filters/extended-filters';
@@ -14,22 +14,16 @@ const Trips = ({ pageName, trips, loading, totalCount }: TripsProps) => {
 
 	return (
 		<>
-			<Box display='flex' justifyContent='space-between' alignItems='center' mb={1}>
-				<Typography variant='h5' component='h1'>
-					{pageName} <Typography variant='overline'>({totalCount} results)</Typography>
-				</Typography>
+			<AccountTitle title={pageName} subTitle={`(${totalCount} results)`} />
+			<Box mb={1}>
+				<ExtendedFilters />
 			</Box>
 			{loading ? (
 				<CardsSkeleton number={10} />
-			) : trips && trips.length > 0 ? (
+			) : trips.length > 0 ? (
 				<>
-					<Box mb={2}>
-						<ExtendedFilters />
-					</Box>
 					<Cards trips={trips} />
-					<Box display='flex' justifyContent='center' mt={2}>
-						<Pagination count={Math.ceil(totalCount / Number(rows))} />
-					</Box>
+					<Pagination count={Math.ceil(totalCount / Number(rows))} />
 				</>
 			) : (
 				'Nothing'

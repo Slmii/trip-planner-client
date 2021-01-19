@@ -1,5 +1,5 @@
-query HeaderNotifications {
-	headerNotifications {
-		...HeaderNotification
+query Notifications($read: Boolean, $pagination: PaginationInput) {
+	notifications(read: $read, pagination: $pagination) {
+		...Notification
 	}
 }

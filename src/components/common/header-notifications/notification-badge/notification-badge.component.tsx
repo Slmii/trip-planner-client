@@ -1,4 +1,4 @@
-import { Styled } from '@components/common/notifications/notification-badge';
+import { Styled } from '@components/common/header-notifications/notification-badge';
 
 export const UnReadNotificationBadge = () => {
 	return (

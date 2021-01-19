@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
-import Head from 'next/head';
+import '@lib/dayjs';
+
 import DayJsUtils from '@date-io/dayjs';
-import { AppProps } from 'next/app';
 import { CssBaseline, ThemeProvider as MuiThemeProvider } from '@material-ui/core';
 import { StylesProvider } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import React, { useEffect } from 'react';
 
 import { wrapper } from '@lib/redux';
-import '@lib/dayjs';
 
+import { GlobalStyle } from '@styles/index';
 import theme from '@theme/index';
-import '../styles/global.scss';
 
 if (process.env.NODE_ENV === 'development') {
 	if (typeof window !== 'undefined') {
@@ -39,6 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			</Head>
 			<StylesProvider injectFirst>
 				<MuiThemeProvider theme={theme}>
+					<GlobalStyle />
 					<CssBaseline />
 					<MuiPickersUtilsProvider utils={DayJsUtils}>
 						<Component {...pageProps} />

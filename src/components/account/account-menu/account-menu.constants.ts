@@ -5,9 +5,9 @@ import MailIcon from '@material-ui/icons/MailOutline';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import SecurityOutlinedIcon from '@material-ui/icons/SecurityOutlined';
 
-import { DashboardMenuItem } from '@components/dashboard/dashboard-menu';
+import { AccountMenuItem } from '@components/account/account-menu';
 
-export const DASHBOARD_MENU: DashboardMenuItem[] = [
+export const ACCOUNT_MENU: AccountMenuItem[] = [
 	{
 		key: 'profile',
 		title: 'Profile',
@@ -18,8 +18,7 @@ export const DASHBOARD_MENU: DashboardMenuItem[] = [
 		key: 'notifications',
 		title: 'Notifications',
 		description: 'Manage my notifications and notification preferences',
-		Icon: NotificationsIcon,
-		hasBadge: true
+		Icon: NotificationsIcon
 	},
 	{
 		key: 'invitations',

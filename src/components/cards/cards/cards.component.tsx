@@ -73,7 +73,7 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 			variables: {
 				tripId
 			},
-			update: (cache, { data }) => {
+			update: cache => {
 				const id = `Trip:${tripId}`;
 
 				cache.modify({

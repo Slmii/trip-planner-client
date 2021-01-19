@@ -1,7 +1,7 @@
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { SvgIconTypeMap } from '@material-ui/core/SvgIcon';
 
-export interface DashboardMenuItem {
+export interface AccountMenuItem {
 	key: string;
 	title: string;
 	description: string;

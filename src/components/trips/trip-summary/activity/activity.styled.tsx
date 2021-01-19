@@ -1,7 +1,6 @@
-import { styled } from '@material-ui/core/styles';
-const MuiAccordion = require('@material-ui/core/Accordion').default;
-const MuiAccordionSummary = require('@material-ui/core/AccordionSummary').default;
-const { createStyles, withStyles, makeStyles } = require('@material-ui/core/styles');
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import { createStyles, makeStyles, styled, withStyles } from '@material-ui/core/styles';
 
 import { Theme } from '@theme/index';
 
@@ -22,18 +21,23 @@ export const Accordion = withStyles({
 })(MuiAccordion);
 
 export const AccordionSummary = withStyles({
-	root: {
-		'& > div:first-child': {
-			margin: '12px 0',
-			minHeight: 'unset'
-		},
-		'&$expanded': {
+	root: ({ ispage }: { ispage?: string }) => ({
+		padding: ispage === 'true' ? 0 : '0 32px',
+		'&.Mui-expanded': {
 			minHeight: 48
 		}
-	},
-	expanded: {
-		minHeight: 48
-	}
+	}),
+	content: ({ ispage }: { ispage?: string }) => ({
+		margin: ispage === 'true' ? 0 : '12px 0',
+		minHeight: 'unset',
+		'&.Mui-expanded': {
+			margin: 0
+		}
+	}),
+	expandIcon: ({ ispage }: { ispage?: string }) => ({
+		position: ispage === 'true' ? 'absolute' : 'unset',
+		right: ispage === 'true' ? 32 : 0
+	})
 })(MuiAccordionSummary);
 
 export const AccordionTitle = styled('div')({
@@ -57,8 +61,8 @@ export const activityStyles = makeStyles((theme: Theme) =>
 		},
 		accordionDetails: {
 			display: 'block',
-			paddingBottom: 0,
-			paddingTop: 8
+			paddingBottom: theme.spacing(1),
+			paddingTop: theme.spacing(0.5)
 		}
 	})
 );

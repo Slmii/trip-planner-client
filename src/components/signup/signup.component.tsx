@@ -16,7 +16,7 @@ import {
 } from '@generated/graphql';
 import { signUpSchema } from '@lib/validations';
 
-import { Content } from '@styles/global-styled';
+import { Content } from '@styles/index';
 
 const Box = require('@material-ui/core/Box').default;
 const Typography = require('@material-ui/core/Typography').default;
@@ -96,44 +96,46 @@ export default function SignIn() {
 				}}
 			>
 				{props => (
-					<Form className='w-100' onSubmit={props.handleSubmit}>
-						<Box textAlign='center' mb='20px'>
-							<Typography variant='h6' component='h1' gutterBottom>
-								Sign Up for an account
-							</Typography>
-							{submitState.formError && (
-								<Box color='error.main'>
-									<Alert severity='error'>{submitState.formError}</Alert>
-								</Box>
-							)}
-						</Box>
-						<FormGroup>
-							<FormInputField name='email' label='Email Address' />
-						</FormGroup>
-						<FormGroup>
-							<FormInputField name='firstName' label='First Name' />
-						</FormGroup>
-						<FormGroup>
-							<FormInputField name='lastName' label='Last Name' />
-						</FormGroup>
-						<FormGroup>
-							<FormInputField name='password' label='Password' type='password' strengthMeter={true} />
-						</FormGroup>
-						<FormGroup>
-							<FormInputField name='confirmPassword' label='Confirm Password' type='password' />
-						</FormGroup>
-						<Button type='submit' size='large' color='primary' loading={submitState.isSubmitted}>
-							Sign Up
-						</Button>
-						<Box textAlign='center' mt={3}>
-							Already have an account?&nbsp;
-							<Link href='/signin'>
-								<a title='Sign In' className='bold'>
-									Sign In
-								</a>
-							</Link>
-						</Box>
-					</Form>
+					<Box width='100%'>
+						<Form className='w-100' onSubmit={props.handleSubmit}>
+							<Box textAlign='center' mb='20px'>
+								<Typography variant='h6' component='h1' gutterBottom>
+									Sign Up for an account
+								</Typography>
+								{submitState.formError && (
+									<Box color='error.main'>
+										<Alert severity='error'>{submitState.formError}</Alert>
+									</Box>
+								)}
+							</Box>
+							<FormGroup>
+								<FormInputField name='email' label='Email Address' />
+							</FormGroup>
+							<FormGroup>
+								<FormInputField name='firstName' label='First Name' />
+							</FormGroup>
+							<FormGroup>
+								<FormInputField name='lastName' label='Last Name' />
+							</FormGroup>
+							<FormGroup>
+								<FormInputField name='password' label='Password' type='password' strengthMeter={true} />
+							</FormGroup>
+							<FormGroup>
+								<FormInputField name='confirmPassword' label='Confirm Password' type='password' />
+							</FormGroup>
+							<Button type='submit' size='large' color='primary' loading={submitState.isSubmitted}>
+								Sign Up
+							</Button>
+							<Box textAlign='center' mt={3}>
+								Already have an account?&nbsp;
+								<Link href='/signin'>
+									<a title='Sign In' className='bold'>
+										Sign In
+									</a>
+								</Link>
+							</Box>
+						</Form>
+					</Box>
 				)}
 			</Formik>
 		</Content>

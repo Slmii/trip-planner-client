@@ -30,6 +30,7 @@ const ActivityInvitation = () => {
 		);
 		setEmailsSent(false);
 		setExpiredAt(null);
+		setInputFieldError('');
 		setEmailInvitations([]);
 	};
 
@@ -51,6 +52,8 @@ const ActivityInvitation = () => {
 		// with requesting check if full or not as well
 
 		if (emailInvitations.length) {
+			setInputFieldError('');
+
 			const response = await addInvitations({
 				variables: {
 					data: {

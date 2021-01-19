@@ -4,18 +4,20 @@ import Paper from '@material-ui/core/Paper';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import AccountMenu, { constants, Styled } from '@components/account/account-menu';
+import Notifications from '@components/account/notifications';
 import Layout from '@components/common/layout';
-import DashboardMenu, { constants, Styled } from '@components/dashboard/dashboard-menu';
 import MyFavorites from '@components/trips/my-favorites';
 import MyTrips from '@components/trips/my-trips';
 import { withApollo } from '@lib/apollo';
 import { helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 
 const PAGE_COMPONENT: Record<string, JSX.Element> = {
 	trips: <MyTrips />,
-	favorites: <MyFavorites />
+	favorites: <MyFavorites />,
+	notifications: <Notifications />
 };
 
 function AccountPage() {
@@ -23,15 +25,15 @@ function AccountPage() {
 	const { 1: subPath } = helpers.getCurrentRoute(router);
 
 	const { iconMr, bold } = globalStyles();
-	const { onHover, textDecorationNone } = Styled.dashboardMenuStyles();
+	const { onHover, textDecorationNone } = Styled.accountMenuStyles();
 
 	return (
 		<Layout>
 			<Box display='flex' width='100%'>
 				{Object.keys(PAGE_COMPONENT).includes(subPath) ? (
 					<>
-						<DashboardMenu />
-						<Box width='75%'>
+						<AccountMenu />
+						<Box width='calc(85% - 32px)'>
 							{Object.keys(PAGE_COMPONENT).includes(subPath) && PAGE_COMPONENT[subPath]}
 						</Box>
 					</>
@@ -44,7 +46,7 @@ function AccountPage() {
 							<Typography variant='body1'>Manage my environment</Typography>
 						</Box>
 						<Box display='flex' flexWrap='wrap' margin='0 auto'>
-							{constants.DASHBOARD_MENU.map(menu => (
+							{constants.ACCOUNT_MENU.map(menu => (
 								<Box key={menu.key} width='33%' px={0.5} my={0.5}>
 									<Link href={`/account/${menu.key}`}>
 										{/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}

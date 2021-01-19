@@ -1,11 +1,23 @@
-mutation MarkAllHeaderNotificationsAsRead {
+mutation MarkAllNotificationsAsRead {
 	setAllNotificationAsRead {
 		count
 	}
 }
 
-mutation MarkHeaderNotificationAsRead($notificationId: Int!) {
+mutation MarkNotificationAsRead($notificationId: Int!) {
 	setNotificationAsRead(notificationId: $notificationId) {
-		...HeaderNotification
+		...Notification
+	}
+}
+
+mutation ClearNotification($notificationId: Int!) {
+	clearNotification(notificationId: $notificationId) {
+		...Notification
+	}
+}
+
+mutation ClearAllNotifications {
+	clearAllNotifications {
+		count
 	}
 }

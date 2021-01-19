@@ -43,6 +43,9 @@ const EmailForm = ({
 						fullWidth={true}
 						blurBehavior='ignore'
 						allowDuplicates={true}
+						InputProps={{
+							autoFocus: true
+						}}
 						chipRenderer={({ value, text, handleDelete, className }, _key) => (
 							<Chip
 								key={value}

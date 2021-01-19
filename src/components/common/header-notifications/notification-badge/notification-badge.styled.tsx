@@ -4,8 +4,8 @@ import { createStyles, withStyles } from '@material-ui/core/styles';
 export const UnreadNotificationBadge = withStyles(theme =>
 	createStyles({
 		badge: {
-			backgroundColor: theme.palette.secondary.main,
-			color: theme.palette.secondary.main,
+			backgroundColor: theme.palette.primary.main,
+			color: theme.palette.primary.main,
 			boxShadow: `0 0 0 2px ${theme.boxShadow}`,
 			// bottom: 13,
 			'&::after': {

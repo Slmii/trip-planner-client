@@ -19,20 +19,9 @@ export const Content = styled('div')(({ theme }) => ({
 
 export const globalStyles = makeStyles((theme: Theme) =>
 	createStyles({
-		transparantOverlay: {
-			animation: 'show-underlay .25s ease-in-out',
-			display: 'block',
-			backgroundColor: 'rgba(0,0,0)',
-			height: '100%',
-			left: 0,
-			opacity: '.5',
-			position: 'fixed',
-			top: 0,
-			width: '100%'
-		},
 		errorButtonOutlined: {
 			backgroundColor: 'white',
-			borderColor: theme.palette.error.light,
+			border: `1px solid ${theme.palette.error.light}`,
 			color: theme.palette.error.main,
 			'&:hover': {
 				borderColor: theme.palette.error.main
@@ -45,6 +34,12 @@ export const globalStyles = makeStyles((theme: Theme) =>
 			'&:hover': {
 				borderColor: theme.palette.error.dark,
 				backgroundColor: theme.palette.error.dark
+			}
+		},
+		errorButtonText: {
+			color: theme.palette.error.main,
+			'&:hover': {
+				backgroundColor: 'rgba(237, 73, 73, 0.04)'
 			}
 		},
 		errorChipContained: {
@@ -69,6 +64,9 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		iconMb: {
 			marginBottom: 8
 		},
+		iconMt: {
+			marginTop: 8
+		},
 		buttonMr: {
 			marginRight: 8
 		},
@@ -83,20 +81,6 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		},
 		divider: {
 			margin: '20px 0'
-		},
-		avatarSmall: {
-			'& > *': {
-				width: theme.spacing(2),
-				height: theme.spacing(2),
-				fontSize: 16
-			}
-		},
-		avatarLarge: {
-			'& > *': {
-				width: theme.spacing(7),
-				height: theme.spacing(7),
-				fontSize: 54
-			}
 		},
 		bold: {
 			fontWeight: theme.typography.fontWeightBold
@@ -116,11 +100,8 @@ export const globalStyles = makeStyles((theme: Theme) =>
 		warning: {
 			color: theme.palette.warning.dark
 		},
-		activeButton: {
-			borderColor: theme.palette.text.primary
-		},
-		noPadding: {
-			padding: 0
+		noBorderRadius: {
+			borderRadius: 0
 		}
 	})
 );

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { Styled } from '@components/common/explore';
 import { helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 import theme from '@theme/index';
 
 const Explore = () => {

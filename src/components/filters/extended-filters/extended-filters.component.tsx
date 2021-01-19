@@ -30,10 +30,11 @@ import InputField from '@components/inputs/input-field';
 import Menu from '@components/menu';
 import Popover from '@components/popover';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
+import { REMOVE_QUERY_STRINGS_ON_ACCOUNT_PAGE } from '@lib/constants';
 import { KeyOf } from '@lib/types';
 import { date, helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 import theme from '@theme/index';
 
 const ExtendedFilters = () => {
@@ -71,8 +72,8 @@ const ExtendedFilters = () => {
 
 	const { buttonMr, buttonMl, buttonMt, buttonMb, errorChipContained, divider, bold } = globalStyles();
 
-	const isExplorePage = path === 'explore';
-	const isAccountPage = path === 'account';
+	const isExplorePage = helpers.isPage('explore', router);
+	const isAccountPage = helpers.isPage('account', router);
 
 	const handleOnMenuOpen = (e: React.MouseEvent, type: KeyOf<AnchorElementState>) => {
 		setAnchorEls(prevState => ({ ...prevState, [type]: e.currentTarget }));
@@ -130,9 +131,7 @@ const ExtendedFilters = () => {
 			filters: queryStringsAsFilters,
 			queryString,
 			value,
-			removeQueryStrings: isAccountPage
-				? ['activityDate', 'activityType', 'transportationType', 'searchIn', 'order', 'sort']
-				: undefined
+			removeQueryStrings: isAccountPage ? REMOVE_QUERY_STRINGS_ON_ACCOUNT_PAGE : undefined
 		});
 
 		router.push({
@@ -166,7 +165,7 @@ const ExtendedFilters = () => {
 			zIndex={1}
 		>
 			<Container component='div' fixed disableGutters={true}>
-				<Box p={isExplorePage && 1.5} display='flex' flexDirection='column'>
+				<Box padding={isExplorePage ? 1.5 : 0} display='flex' flexDirection='column'>
 					<Box display='flex' flexDirection='column'>
 						<Box display='flex'>
 							<Box

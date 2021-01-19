@@ -20,7 +20,7 @@ import {
 import { activityInvitation, dialog, snackbar } from '@lib/redux';
 import { helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/global-styled';
+import { globalStyles } from '@styles/index';
 
 const Drawer = require('@material-ui/core/Drawer').default;
 const Box = require('@material-ui/core/Box').default;

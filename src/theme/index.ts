@@ -11,11 +11,8 @@ let theme = createMuiTheme({
 		error: {
 			main: '#ED4949'
 		},
-		success: {
-			main: '#4A8B7D'
-		},
 		background: {
-			default: '#F9FAFC'
+			default: '#FFFFFF'
 		},
 		text: {
 			primary: '#000000'

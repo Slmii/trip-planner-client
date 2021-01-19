@@ -14,16 +14,10 @@ import React, { useState } from 'react';
 import Button from '@components/buttons/button';
 import IconButton from '@components/buttons/icon-button';
 import { Styled } from '@components/common/header';
-import Notifications from '@components/common/notifications';
+import Notifications from '@components/common/header-notifications';
 import Dropdown from '@components/dropdown';
-import {
-    HeaderNotificationsDocument,
-    HeaderNotificationsQuery,
-    useHeaderNotificationsQuery,
-    useMarkAllHeaderNotificationsAsReadMutation,
-    useMeQuery,
-    useSignOutMutation
-} from '@generated/graphql';
+import Popover from '@components/popover';
+import { useMeQuery, useNotificationsQuery, useSignOutMutation } from '@generated/graphql';
 import { helpers } from '@lib/utils';
 
 import { Theme } from '@theme/index';
@@ -38,9 +32,8 @@ function Header() {
 	const theme: Theme = useTheme();
 
 	const [signOut] = useSignOutMutation();
-	const [markAllAsRead] = useMarkAllHeaderNotificationsAsReadMutation();
 	const { data, loading: meLoading } = useMeQuery();
-	const { data: notificationsData } = useHeaderNotificationsQuery();
+	const { data: notificationsData } = useNotificationsQuery();
 
 	const handleOnSignOut = async () => {
 		setProfileAnchorEl(null);
@@ -58,34 +51,9 @@ function Header() {
 		router.push('/signup');
 	};
 
-	const handleOnMarkAllAsRead = () => {
-		markAllAsRead({
-			update: cache => {
-				const cachedNotifications = cache.readQuery<HeaderNotificationsQuery>({
-					query: HeaderNotificationsDocument
-				});
+	const handleOnCloseNotifications = () => setNotificationsAnchorEl(null);
 
-				if (!cachedNotifications) {
-					return;
-				}
-
-				const modifiedNotifications = cachedNotifications.headerNotifications.map(notification => ({
-					...notification,
-					read: true
-				}));
-
-				cache.writeQuery<HeaderNotificationsQuery>({
-					query: HeaderNotificationsDocument,
-					data: {
-						headerNotifications: modifiedNotifications
-					}
-				});
-			}
-		});
-	};
-
-	const unreadNotifications = notificationsData?.headerNotifications.filter(notification => !notification.read)
-		.length;
+	const unreadNotifications = notificationsData?.notifications.filter(notification => !notification.read).length;
 
 	return (
 		<Box component='header' width='100%' bgcolor={theme.palette.primary.dark} fontSize={14}>
@@ -169,12 +137,17 @@ function Header() {
 					)}
 				</Box>
 			</Box>
-			<Notifications
-				anchor={notificationsAnchorEl}
-				onClose={() => setNotificationsAnchorEl(null)}
-				onMarkAllAsRead={handleOnMarkAllAsRead}
-				notifications={notificationsData?.headerNotifications ?? []}
-			/>
+			<Popover
+				anchorEl={notificationsAnchorEl}
+				type='notifications'
+				onClose={handleOnCloseNotifications}
+				position='center'
+			>
+				<Notifications
+					notifications={notificationsData?.notifications ?? []}
+					onClose={handleOnCloseNotifications}
+				/>
+			</Popover>
 			<Dropdown
 				anchor={profileAnchorEl}
 				onClose={() => setProfileAnchorEl(null)}
