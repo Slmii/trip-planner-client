@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import { useTheme } from '@material-ui/core/styles';
@@ -10,7 +11,6 @@ import LockIcon from '@material-ui/icons/Lock';
 import LockOpen from '@material-ui/icons/LockOpen';
 import ShareIcon from '@material-ui/icons/Share';
 import cn from 'classnames';
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 
 import Button from '@components/buttons/button';
@@ -86,14 +86,13 @@ const Card = ({
 						<Button
 							variant={isCreator ? 'outlined' : 'contained'}
 							fullWidth={false}
-							size='large'
 							onClick={() => (isSelected ? onClose() : onView(trip.id))}
 							className={buttonMr}
 						>
 							View
 						</Button>
 						{isCreator && (
-							<Button variant='contained' size='large' fullWidth={false}>
+							<Button variant='contained' fullWidth={false}>
 								Manage
 							</Button>
 						)}

@@ -41,7 +41,7 @@ export const transportationTypeIconMapping: TypeMapping[] = [
 	{ type: 'motorbike', icon: <MotorcycleIcon fontSize='inherit' /> }
 ];
 
-const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: ActivityProps) => {
+const Activity = ({ activity, isInvitationDisabled, isProfilePrivate, onDelete, onInvitation }: ActivityProps) => {
 	const {
 		id,
 		name,
@@ -97,23 +97,24 @@ const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: Ac
 							arrow
 							placement='left'
 						>
-							{publicActivity ? (
-								users.length ? (
-									<AvatarGroup max={3}>
-										{users.map((user, idx) => (
-											<Avatar key={idx}>{helpers.transformToAvatarInitials(user.name)}</Avatar>
-										))}
-									</AvatarGroup>
-								) : (
-									<Typography variant='subtitle2'>No one has joined yet</Typography>
-								)
+							{users.length ? (
+								<AvatarGroup max={3}>
+									{users.map((user, idx) => (
+										<Avatar key={idx}>{helpers.transformToAvatarInitials(user.name ?? '')}</Avatar>
+									))}
+								</AvatarGroup>
+							) : publicActivity ? (
+								<Typography variant='subtitle2'>No one has joined yet</Typography>
 							) : (
-								<Typography variant='subtitle2'>
-									It is not possible for the community to join a private activity
-								</Typography>
+								<Box display='flex' flexDirection='column'>
+									<Typography variant='subtitle2'>No one has joined yet.</Typography>
+									<Typography variant='subtitle2'>
+										Private activities are only joinable by invitations
+									</Typography>
+								</Box>
 							)}
 						</Tooltip>
-						{users.length && publicActivity ? (
+						{users.length ? (
 							<>
 								<Divider className={`${iconMl} ${iconMr}`} orientation='vertical' flexItem />
 								<AvatarGroup>
@@ -155,25 +156,27 @@ const Activity = ({ activity, isInvitationDisabled, onDelete, onInvitation }: Ac
 							title='Delete'
 							onClick={() => onDelete(id)}
 						/>
-						{publicActivity ? (
-							isInvitationDisabled ? (
-								<IconButton
-									color='primary'
-									tooltip={true}
-									icon={<MailIcon fontSize='small' />}
-									title={`${maxPeople} people have already joined`}
-									disabled={true}
-								/>
-							) : (
-								<IconButton
-									color='primary'
-									tooltip={true}
-									icon={<MailIcon fontSize='small' />}
-									title='Invite'
-									onClick={() => onInvitation(activity)}
-								/>
-							)
-						) : null}
+						{isInvitationDisabled || isProfilePrivate ? (
+							<IconButton
+								color='primary'
+								tooltip={true}
+								icon={<MailIcon fontSize='small' />}
+								title={
+									isInvitationDisabled
+										? `${maxPeople} people have already joined`
+										: 'Account needs to be public in order to send out invitations'
+								}
+								disabled={true}
+							/>
+						) : (
+							<IconButton
+								color='primary'
+								tooltip={true}
+								icon={<MailIcon fontSize='small' />}
+								title='Invite'
+								onClick={() => onInvitation(activity)}
+							/>
+						)}
 					</Box>
 				</Box>
 			</AccordionDetails>

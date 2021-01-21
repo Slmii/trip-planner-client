@@ -122,7 +122,13 @@ const Notifications = ({ notifications, onClose }: NotificationsProps) => {
 							/>
 						))}
 					</Box>
-					<Button className={noBorderRadius} onClick={() => router.push('/account/notifications')}>
+					<Button
+						className={noBorderRadius}
+						onClick={() => {
+							onClose();
+							router.push('/account/notifications');
+						}}
+					>
 						See all notifications
 					</Button>
 				</>

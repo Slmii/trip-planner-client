@@ -107,7 +107,7 @@ function Header() {
 							/>
 							<Styled.NavbarItem onClick={e => setProfileAnchorEl(e.currentTarget)}>
 								<Avatar style={{ width: 44, height: 44 }}>
-									{helpers.transformToAvatarInitials(data.me.name)}
+									{helpers.transformToAvatarInitials(data.me.name ?? '')}
 								</Avatar>
 							</Styled.NavbarItem>
 						</>

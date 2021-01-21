@@ -16,7 +16,6 @@ const ActivityInvitation = () => {
 	const [emailInvitations, setEmailInvitations] = useState<string[]>([]);
 	const [inputFieldError, setInputFieldError] = useState('');
 	const [emailsSent, setEmailsSent] = useState(false);
-	const [expiresAt, setExpiredAt] = useState<Date | null>(null);
 
 	const [addInvitations, { loading }] = useAddInvitationsMutation();
 
@@ -29,7 +28,6 @@ const ActivityInvitation = () => {
 			})
 		);
 		setEmailsSent(false);
-		setExpiredAt(null);
 		setInputFieldError('');
 		setEmailInvitations([]);
 	};
@@ -64,7 +62,6 @@ const ActivityInvitation = () => {
 			});
 
 			if (!response.errors?.length) {
-				setExpiredAt(response.data?.addInvitations[0].expiresAt);
 				setEmailsSent(true);
 			} else {
 				console.error(response.errors);
@@ -106,7 +103,7 @@ const ActivityInvitation = () => {
 					onConfirm={handleOnSendInvitations}
 				/>
 			) : (
-				<Successful onClose={closeDialog} expiresAt={expiresAt ?? new Date()} />
+				<Successful onClose={closeDialog} />
 			)}
 		</MuiDialog>
 	);

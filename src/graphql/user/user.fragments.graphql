@@ -3,4 +3,5 @@ fragment Me on User {
 	email
 	name
 	role
+	public
 }

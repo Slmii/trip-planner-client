@@ -14,6 +14,7 @@ import {
     useDeleteActivityMutation,
     useDeleteSubPreparationMutation,
     useEditSubPreparationStatusMutation,
+    useMeQuery,
     useTripActivitiesQuery,
     useTripQuery
 } from '@generated/graphql';
@@ -44,6 +45,10 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		skip: tripId <= 0
 	});
 
+	const [deleteActivity] = useDeleteActivityMutation();
+	const [editSubPreparationStatus] = useEditSubPreparationStatusMutation();
+	const [deleteSubPreparation] = useDeleteSubPreparationMutation();
+	const { data: meData } = useMeQuery();
 	const { data: activitiesData, loading: activitiesLoading } = useTripActivitiesQuery({
 		variables: {
 			tripId,
@@ -51,12 +56,6 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		},
 		skip: tripLoading || !tripData
 	});
-
-	const [deleteActivity] = useDeleteActivityMutation();
-
-	const [editSubPreparationStatus] = useEditSubPreparationStatusMutation();
-
-	const [deleteSubPreparation] = useDeleteSubPreparationMutation();
 
 	const preperationCompletionPercentage = helpers.calculatePreperationsCompletionPercentage(
 		tripData?.trip ? tripData.trip.preparations.map(prep => prep.subPreparations).flat() : []
@@ -241,6 +240,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 									onDelete={handleOnDeleteActivity}
 									onInvitation={handeOnAcvitityInvitation}
 									isInvitationDisabled={activity.users.length >= activity.maxPeople}
+									isProfilePrivate={!meData?.me?.public}
 								/>
 							))}
 						</Box>

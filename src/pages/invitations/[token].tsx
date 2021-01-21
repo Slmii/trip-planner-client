@@ -22,7 +22,7 @@ const InvitationsPage = () => {
 
 			if (hasAccount) {
 				router.push({
-					pathname: '/account/received-invitations',
+					pathname: '/account/invitations',
 					query: {
 						token
 					}
