@@ -1,4 +1,5 @@
 import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import cn from 'classnames';
 
@@ -19,11 +20,10 @@ import { globalStyles } from '@styles/index';
 const ExpandMoreIcon = require('@material-ui/icons/ExpandMore').default;
 
 const Box = require('@material-ui/core/Box').default;
-const Avatar = require('@material-ui/core/Avatar').default;
 const Typography = require('@material-ui/core/Typography').default;
 const ButtonBase = require('@material-ui/core/ButtonBase').default;
 
-const Notification = ({ notification, onOpen, isPage, onView, onClear }: NotificationProps) => {
+const Notification = ({ notification, onOpen, isPage = false, onView, onClear }: NotificationProps) => {
 	const { id, sender, createdAt, type, read: isRead, activity } = notification;
 	const notificationDate = date.getDifferenceWithCurrentDate(createdAt);
 
@@ -31,7 +31,45 @@ const Notification = ({ notification, onOpen, isPage, onView, onClear }: Notific
 	const { lineHeight, borderBottomNone } = Styled.notificationStyles();
 	const { accordionDetails, accordionHeading } = ActivityStyled.activityStyles();
 
+	if (!sender) {
+		throw Error('Sender is not known!');
+	}
+
 	const renderNotification = () => {
+		return (
+			<Styled.Notification read={isRead} isPage={isPage}>
+				<Box mr={1} display='flex' alignItems='center'>
+					{!isRead ? <UnReadNotificationBadge /> : <ReadNotificationBadge />}
+				</Box>
+				<Box mr={1}>
+					<Avatar
+						style={{ width: isPage ? 66 : 44, height: isPage ? 66 : 44 }}
+						alt={sender.name ?? ''}
+						src={sender.profileImgUrl ?? ''}
+					>
+						{helpers.transformToAvatarInitials(sender?.name ?? '')}
+					</Avatar>
+				</Box>
+				<Box width='100%'>
+					<Box display='flex' mb={0.5}>
+						<Styled.NotificationTitle variant='subtitle1' color={!isRead ? 'primary' : 'textPrimary'}>
+							{renderNotificationTitle()}
+						</Styled.NotificationTitle>
+					</Box>
+					<Typography
+						variant='subtitle2'
+						color='textSecondary'
+						className={cn(bold, lineHeight)}
+						style={{ textAlign: 'left' }}
+					>
+						{notificationDate.time} {notificationDate.format ? `${notificationDate.format} ago` : null}
+					</Typography>
+				</Box>
+			</Styled.Notification>
+		);
+	};
+
+	const renderNotificationTitle = () => {
 		if ([NotificationType.ActivityInvitationSent, NotificationType.ActivityJoinRequest].includes(type)) {
 			return (
 				<>
@@ -63,35 +101,7 @@ const Notification = ({ notification, onOpen, isPage, onView, onClear }: Notific
 						id='my-trip-activities-header'
 						ispage='true'
 					>
-						<Styled.Notification read={isRead} isPage={true}>
-							<Box mr={1} display='flex' alignItems='center'>
-								{!isRead ? <UnReadNotificationBadge /> : <ReadNotificationBadge />}
-							</Box>
-							<Box mr={1}>
-								<Avatar style={{ width: 66, height: 66 }}>
-									{helpers.transformToAvatarInitials(sender?.name ?? '')}
-								</Avatar>
-							</Box>
-							<Box width='100%'>
-								<Box display='flex' mb={0.5}>
-									<Styled.NotificationTitle
-										variant='body2'
-										color={!isRead ? 'primary' : 'textPrimary'}
-									>
-										{renderNotification()}
-									</Styled.NotificationTitle>
-								</Box>
-								<Typography
-									variant='subtitle1'
-									color='textSecondary'
-									className={cn(bold, lineHeight)}
-									style={{ textAlign: 'left' }}
-								>
-									{notificationDate.time}{' '}
-									{notificationDate.format ? `${notificationDate.format} ago` : null}
-								</Typography>
-							</Box>
-						</Styled.Notification>
+						{renderNotification()}
 					</ActivityStyled.AccordionSummary>
 					<AccordionDetails className={accordionDetails}>
 						<Box mb={1}>
@@ -126,35 +136,7 @@ const Notification = ({ notification, onOpen, isPage, onView, onClear }: Notific
 				</ActivityStyled.Accordion>
 			) : (
 				<ButtonBase onClick={() => onView(id)} className={borderBottomNone}>
-					<Styled.Notification read={isRead} isPage={false}>
-						<Box mr={1} display='flex' alignItems='center'>
-							{!isRead ? <UnReadNotificationBadge /> : <ReadNotificationBadge />}
-						</Box>
-						<Box mr={1}>
-							<Avatar style={{ width: 44, height: 44 }}>
-								{helpers.transformToAvatarInitials(sender?.name ?? '')}
-							</Avatar>
-						</Box>
-						<Box width='100%'>
-							<Box display='flex' mb={0.5}>
-								<Styled.NotificationTitle
-									variant='subtitle1'
-									color={!isRead ? 'primary' : 'textPrimary'}
-								>
-									{renderNotification()}
-								</Styled.NotificationTitle>
-							</Box>
-							<Typography
-								variant='subtitle2'
-								color='textSecondary'
-								className={cn(bold, lineHeight)}
-								style={{ textAlign: 'left' }}
-							>
-								{notificationDate.time}{' '}
-								{notificationDate.format ? `${notificationDate.format} ago` : null}
-							</Typography>
-						</Box>
-					</Styled.Notification>
+					{renderNotification()}
 				</ButtonBase>
 			)}
 		</>

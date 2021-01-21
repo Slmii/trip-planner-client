@@ -1,6 +1,6 @@
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { SortOrder, TripSortByInput } from '@generated/graphql';
 
+import { SortOrder, TripSortByInput } from '@generated/graphql';
 import { ActivityType, KeyOf, TransportationType, ValueOf } from '@lib/types';
 
 export type SortBy = keyof TripSortByInput;
@@ -16,6 +16,7 @@ export interface QueryStringFilters {
 	activityDate: MaterialUiPickersDate;
 	activityType?: ActivityType;
 	transportationType?: TransportationType;
+	past: boolean;
 	sort: SortBy;
 	order: OrderBy;
 }

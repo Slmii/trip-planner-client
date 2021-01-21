@@ -106,7 +106,11 @@ function Header() {
 								tooltip={true}
 							/>
 							<Styled.NavbarItem onClick={e => setProfileAnchorEl(e.currentTarget)}>
-								<Avatar style={{ width: 44, height: 44 }}>
+								<Avatar
+									style={{ width: 44, height: 44 }}
+									src={data.me.profileImgUrl ?? undefined}
+									alt={data.me.name ?? ''}
+								>
 									{helpers.transformToAvatarInitials(data.me.name ?? '')}
 								</Avatar>
 							</Styled.NavbarItem>

@@ -5,6 +5,8 @@ fragment Notification on Notification {
 	read
 	sender {
 		name
+		public
+		profileImgUrl
 	}
 	activity {
 		...Activity

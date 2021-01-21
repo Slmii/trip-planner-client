@@ -50,6 +50,7 @@ const ExtendedFilters = () => {
 		activityDate,
 		activityType,
 		transportationType,
+		past,
 		sort,
 		order
 	} = queryStringsAsFilters;
@@ -65,7 +66,6 @@ const ExtendedFilters = () => {
 		sort: null
 	});
 	const [searchInput, setSearchInput] = useState(search ?? '');
-	const [checked, setChecked] = useState(false);
 
 	const { data: activityTypesData } = useActivityTypesQuery();
 	const { data: transportationTypesData } = useTransportationTypesQuery();
@@ -201,8 +201,14 @@ const ExtendedFilters = () => {
 									<FormControlLabel
 										control={
 											<Switch
-												checked={checked}
-												onChange={() => setChecked(prevState => !prevState)}
+												checked={past}
+												onChange={() =>
+													handleOnFilterChange({
+														queryString: 'past',
+														value: !past,
+														closeMenu: false
+													})
+												}
 												name='pastTrips'
 											/>
 										}

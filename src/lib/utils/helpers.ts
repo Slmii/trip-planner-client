@@ -37,7 +37,7 @@ export const getQueryStringFilters = (query: ParsedUrlQuery): Readonly<QueryStri
 		search: (query.search as string) || undefined,
 		searchIn: query.searchIn
 			? ((query.searchIn as string).split(',') as SearchIn[])
-			: (['trips', 'activities', 'preparations'] as SearchIn[]),
+			: (['trips', 'activities', 'preparations'] as SearchIn[]), // default when there is no query string
 		sort: (query.sort as SortBy) ?? 'dateFrom',
 		order: (query.order as OrderBy) ?? SortOrder.Asc,
 		dateFrom,
@@ -45,6 +45,7 @@ export const getQueryStringFilters = (query: ParsedUrlQuery): Readonly<QueryStri
 		activityDate,
 		activityType: (query.activityType as ActivityType) ?? undefined,
 		transportationType: (query.transportationType as TransportationType) ?? undefined,
+		past: query.past ? (query.past as string) === 'true' : false,
 		page: query.page ? Number(query.page as string) : 1
 	});
 
@@ -80,6 +81,7 @@ export const convertFiltersToRouterQueryObject = ({
 		activityDate: qsActivityDate,
 		activityType: qsActivityType,
 		transportationType: qsTransportationType,
+		past: qsPast,
 		sort: qsSort,
 		order: qsOrder
 	} = filters;
@@ -138,6 +140,13 @@ export const convertFiltersToRouterQueryObject = ({
 		filtersRouterObject.transportationType = qsTransportationType;
 	}
 
+	if (queryString === 'past') {
+		// value for query past will come in as a boolean
+		filtersRouterObject[queryString] = (value as boolean) === true ? 'true' : 'false';
+	} else if (typeof qsPast !== 'undefined') {
+		filtersRouterObject.past = qsPast === true ? 'true' : 'false';
+	}
+
 	if (queryString === 'sort') {
 		filtersRouterObject[queryString] = valueToString;
 	} else if (qsSort) {
@@ -181,6 +190,7 @@ export const tripsQueryVariables = (
 		activityDate,
 		activityType,
 		transportationType,
+		past,
 		sort,
 		order,
 		page
@@ -206,13 +216,21 @@ export const tripsQueryVariables = (
 				equals: transportationType
 			},
 			from: {
-				gte: dateFrom
-					? date.formatDate({
+				gte: !dateFrom // if dateFrom fiter is not set
+					? !past // if past trips must not be shown
+						? date.formatDate({
+								// show trips starting from current date
+								date: new Date(),
+								format: SERVER_DATE_FORMAT
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  })
+						: undefined // show also past trips
+					: date.formatDate({
+							// dateFrom filter is set, use that as starting point
 							date: dateFrom,
 							format: SERVER_DATE_FORMAT
 							// eslint-disable-next-line no-mixed-spaces-and-tabs
 					  })
-					: undefined
 			},
 			to: {
 				lte: dateTo

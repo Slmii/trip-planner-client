@@ -99,9 +99,15 @@ const Activity = ({ activity, isInvitationDisabled, isProfilePrivate, onDelete, 
 						>
 							{users.length ? (
 								<AvatarGroup max={3}>
-									{users.map((user, idx) => (
-										<Avatar key={idx}>{helpers.transformToAvatarInitials(user.name ?? '')}</Avatar>
-									))}
+									{users.map((user, idx) =>
+										!user.public ? (
+											<Avatar key={idx} />
+										) : (
+											<Avatar key={idx} alt={user.name ?? ''} src={user.profileImgUrl ?? ''}>
+												{helpers.transformToAvatarInitials(user.name ?? '')}
+											</Avatar>
+										)
+									)}
 								</AvatarGroup>
 							) : publicActivity ? (
 								<Typography variant='subtitle2'>No one has joined yet</Typography>
