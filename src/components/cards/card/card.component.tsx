@@ -1,25 +1,18 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import { useTheme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpen from '@material-ui/icons/LockOpen';
-import ShareIcon from '@material-ui/icons/Share';
-import cn from 'classnames';
+import { Box, Divider, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import NextImage from 'next/image';
 import React from 'react';
+import { MdDelete, MdFavorite, MdFavoriteBorder, MdLock, MdLockOpen, MdShare } from 'react-icons/md';
 
 import Button from '@components/buttons/button';
 import IconButton from '@components/buttons/icon-button';
-import { CardProps, Styled } from '@components/cards/card';
+import { CardProps } from '@components/cards/card';
+import Icon from '@components/icon';
+import Paper from '@components/paper';
 import TripDateAndLocations from '@components/trips/dates-and-locations';
 
-import { globalStyles } from '@styles/index';
-import { Theme } from '@theme/index';
+import spacing from '@theme/spacing';
 
 const Card = ({
 	trip,
@@ -33,111 +26,106 @@ const Card = ({
 	isDeleteAvailable,
 	isUpcomingTrip
 }: CardProps) => {
-	const theme = useTheme() as Theme;
-	const { iconMr, buttonMr, divider } = globalStyles();
-
 	return (
-		<Styled.Card
-			className={cn({
-				'selected-card': isSelected
-			})}
+		<Paper
+			display='flex'
+			width='100%'
+			_hover={{
+				boxShadow: 'card'
+			}}
+			transition='box-shadow .3s'
 		>
-			<Styled.CardHeader>
+			<Box bg='primary.500' pos='relative' borderTopLeftRadius='base' borderBottomLeftRadius='base'>
 				{isUpcomingTrip && (
 					<Box
-						position='absolute'
-						top={10}
-						left={10}
-						bgcolor='white'
-						padding='0 16px'
-						className='noselect'
-						borderRadius={theme.shape.borderRadius}
+						pos='absolute'
+						top={3}
+						left={3}
+						bg='white'
+						py={1}
+						px={2}
+						userSelect='none'
+						rounded='base'
 						zIndex={1}
 					>
-						<Typography className='bold' variant='overline'>
+						<Text textStyle='overline' fontWeight='bold'>
 							My upcoming trip
-						</Typography>
+						</Text>
 					</Box>
 				)}
-				{trip.backgroundUrl && <Styled.Img src={trip.backgroundUrl} layout='fill' />}
-			</Styled.CardHeader>
-			<Box width='100%' display='flex' justifyContent='space-between' flexDirection='column' padding='20px 30px'>
-				<Box>
-					<Box display='flex' mb={0.5} alignItems='center'>
-						{trip.public ? <LockOpen className={iconMr} /> : <LockIcon className={iconMr} />}
-						<Typography variant='h5' component='h2' noWrap={true} title={trip.name}>
-							{trip.name}
-						</Typography>
-					</Box>
-					<Box display='flex' flexDirection='column' mb={1}>
-						<TripDateAndLocations
-							dateFrom={trip.dateFrom}
-							dateTo={trip.dateTo}
-							locations={trip.locations.map(location => location.name)}
+				{trip.backgroundUrl && (
+					<Box width='360px'>
+						<Box
+							as={NextImage}
+							alt={trip.user?.name ?? ''}
+							src={trip.backgroundUrl}
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
+							layout='fill'
+							borderTopLeftRadius='base'
+							borderBottomLeftRadius='base'
 						/>
 					</Box>
-					<Styled.Description>
-						<Typography variant='body2'>{trip.description}</Typography>
-					</Styled.Description>
-				</Box>
-				<Divider className={divider} variant='fullWidth' />
-				<Box display='flex' justifyContent='space-between' alignItems='center'>
-					<Box display='flex'>
-						<Button
-							variant={isCreator ? 'outlined' : 'contained'}
-							fullWidth={false}
-							onClick={() => (isSelected ? onClose() : onView(trip.id))}
-							className={buttonMr}
-						>
-							View
-						</Button>
-						{isCreator && (
-							<Button variant='contained' fullWidth={false}>
-								Manage
-							</Button>
-						)}
-					</Box>
-					<Box display='flex'>
+				)}
+			</Box>
+			<VStack spacing={spacing.BODY_SPACING} p={spacing.INNER_PADDING} align='flex-start'>
+				<Flex alignItems='center'>
+					{trip.public ? <Icon as={MdLockOpen} mr size='lg' /> : <Icon as={MdLock} mr size='lg' />}
+					<Heading as='h2' textStyle='title'>
+						{trip.name}
+					</Heading>
+				</Flex>
+				<TripDateAndLocations
+					dateFrom={trip.dateFrom}
+					dateTo={trip.dateTo}
+					locations={trip.locations.map(location => location.name)}
+				/>
+				<Text textStyle='body' noOfLines={1}>
+					{trip.description}
+				</Text>
+				<Divider />
+				<HStack justify='space-between' w='100%'>
+					<Flex>
 						{isDeleteAvailable && (
 							<IconButton
-								color='error'
-								aria-label='delete trip'
+								colorScheme='red'
 								tooltip={true}
-								icon={<DeleteIcon />}
+								icon={<MdDelete />}
 								title='Delete'
 								onClick={() => onDelete(trip.id)}
 							/>
 						)}
 						{trip.isInFavorite ? (
 							<IconButton
-								color='primary'
-								aria-label='remove from favorite'
+								colorScheme='primary'
 								tooltip={true}
-								icon={<FavoriteIcon />}
+								icon={<MdFavorite />}
 								title='Remove from favorite'
 								onClick={() => onDeleteFavorite(trip.id)}
 							/>
 						) : (
 							<IconButton
-								color='primary'
-								aria-label='add to favorite'
+								colorScheme='primary'
 								tooltip={true}
-								icon={<FavoriteBorderIcon />}
+								icon={<MdFavoriteBorder />}
 								title='Add to favorite'
 								onClick={() => onAddFavorite(trip.id)}
 							/>
 						)}
-						<IconButton
-							aria-label='share'
-							color='primary'
-							tooltip={true}
-							icon={<ShareIcon />}
-							title='Share trip'
-						/>
-					</Box>
-				</Box>
-			</Box>
-		</Styled.Card>
+						<IconButton colorScheme='primary' tooltip={true} icon={<MdShare />} title='Share trip' />
+					</Flex>
+					<HStack spacing={spacing.BUTTON}>
+						<Button
+							variant={isCreator ? 'ghost' : 'solid'}
+							onClick={() => (isSelected ? onClose() : onView(trip.id))}
+						>
+							View
+						</Button>
+						{isCreator && <Button variant='solid'>Manage</Button>}
+					</HStack>
+				</HStack>
+			</VStack>
+		</Paper>
 	);
 };
 

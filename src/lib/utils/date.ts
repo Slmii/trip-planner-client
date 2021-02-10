@@ -30,10 +30,19 @@ export const isCurrentYear = (date: Date | Dayjs) => {
 	return dayjs(date).year() === dayjs().year();
 };
 
+/**
+ * Add given unit to current date and return new date.
+ * @param  {Dayjs} date?
+ */
 export const addUnitToCurrentDate = (value: number, unit: OpUnitType = 'day') => {
 	return dayjs().add(value, unit);
 };
 
+/**
+ * Get the date of the end of the week. If no argument provided, get end of week date
+ * from current date.
+ * @param  {Dayjs} date?
+ */
 export const getEndOfWeek = (date?: Dayjs) => {
 	if (date) {
 		return dayjs(date).endOf('week');
@@ -42,6 +51,11 @@ export const getEndOfWeek = (date?: Dayjs) => {
 	return dayjs().endOf('week');
 };
 
+/**
+ * Get the date of the end of the month. If no argument provided, get end of month date
+ * from current date.
+ * @param  {Dayjs} date?
+ */
 export const getEndOfMonth = (date?: Dayjs) => {
 	if (date) {
 		return dayjs(date).endOf('month');
@@ -50,6 +64,12 @@ export const getEndOfMonth = (date?: Dayjs) => {
 	return dayjs().endOf('month');
 };
 
+/**
+ * Get the difference between current date and the provided date argument in either
+ * seconds, minutes, hours or days. If days is more than `20` then return in `DD MMM YY`
+ * format.
+ * @param  {Date} date
+ */
 export const getDifferenceWithCurrentDate = (date: Date) => {
 	const difference = dayjs().diff(date);
 
@@ -102,6 +122,7 @@ const dhm = (ms: number) => {
 	const sec = Math.floor(minutesms / 1000);
 
 	return {
+		sec,
 		days,
 		hours,
 		minutes

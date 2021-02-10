@@ -6,8 +6,7 @@ import { DialogProps, DialogState } from './dialog.types';
 
 export const initialState: DialogState = {
 	open: false,
-	fullWidth: true,
-	maxWidth: 'sm',
+	size: 'lg',
 	severity: 'error',
 	title: '',
 	body: '',

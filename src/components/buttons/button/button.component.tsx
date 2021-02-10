@@ -1,36 +1,19 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import MuiButton from '@material-ui/core/Button';
-
-import { ButtonProps } from '@components/buttons/button';
+import { Button as CUIButton, ButtonProps, Flex } from '@chakra-ui/react';
+import React from 'react';
 
 export default function Button({
-	type = 'button',
-	color = 'primary',
-	size = 'medium',
-	variant = 'contained',
-	loading = false,
-	fullWidth = true,
-	className = '',
-	disabled = false,
-	startIcon,
-	endIcon,
-	onClick,
-	children
-}: ButtonProps) {
+	children,
+	leftIcon,
+	rightIcon,
+	...props
+}: ButtonProps & { children: React.ReactNode }) {
 	return (
-		<MuiButton
-			type={type}
-			variant={variant}
-			color={color}
-			size={size}
-			fullWidth={fullWidth}
-			disabled={disabled || loading}
-			className={className}
-			onClick={onClick}
-			startIcon={startIcon}
-			endIcon={endIcon}
+		<CUIButton
+			leftIcon={leftIcon ? <Flex>{leftIcon}</Flex> : undefined}
+			rightIcon={rightIcon ? <Flex>{rightIcon}</Flex> : undefined}
+			{...props}
 		>
-			{loading ? <CircularProgress size='1rem' color={color !== 'default' ? color : 'inherit'} /> : children}
-		</MuiButton>
+			{children}
+		</CUIButton>
 	);
 }

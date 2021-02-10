@@ -1,17 +1,10 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import Link from 'next/link';
-import MuiBreadcrumbs from '@material-ui/core/Breadcrumbs';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import HomeIcon from '@material-ui/icons/Home';
-import cn from 'classnames';
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Container } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { MdNavigateNext } from 'react-icons/md';
 
-import { Styled } from '@components/common/breadcrumbs';
-
-import theme from '@theme/index';
+import Icon from '@components/icon';
 
 const convertBreadcrumb = (string: string) => {
 	const [convertedBreadcrumb] = string
@@ -31,8 +24,6 @@ const Breadcrumbs = () => {
 	const router = useRouter();
 	const [breadcrumbs, setBreadcrumbs] = useState<{ breadcrumb: string; href: string }[]>([]);
 
-	const { inactive, hoverOnBreadcrumb, separator } = Styled.breadcrumbsStyles();
-
 	useEffect(() => {
 		if (router) {
 			const linkPath = router.asPath.split('/');
@@ -51,31 +42,22 @@ const Breadcrumbs = () => {
 	}
 
 	return (
-		<Container fixed disableGutters={true}>
-			<Box p={1.5}>
-				<MuiBreadcrumbs
-					separator={<NavigateNextIcon fontSize='small' className={cn(separator, inactive)} />}
-					aria-label='breadcrumbs'
-				>
-					<Link href='/'>
-						<a title='Home'>
-							<Box display='flex' alignItems='center'>
-								<HomeIcon fontSize='small' style={{ color: theme.palette.primary.main }} />
-							</Box>
-						</a>
-					</Link>
-					{breadcrumbs.map(({ breadcrumb, href }, i) => (
-						<Link key={i} href={href}>
-							<a
-								className={cn(hoverOnBreadcrumb, {
-									[inactive]: i + 1 !== breadcrumbs.length
-								})}
-							>
-								{convertBreadcrumb(breadcrumb)}
-							</a>
-						</Link>
+		<Container maxW='container.xl'>
+			<Box p={6}>
+				<Breadcrumb fontSize='md' spacing={1} separator={<Icon size='sm' as={MdNavigateNext} />}>
+					<BreadcrumbItem layerStyle='disabled'>
+						<BreadcrumbLink as={NextLink} href='/' passHref>
+							<Box as='a'>Home</Box>
+						</BreadcrumbLink>
+					</BreadcrumbItem>
+					{breadcrumbs.map(({ breadcrumb, href }, idx) => (
+						<BreadcrumbItem key={idx} layerStyle={idx + 1 !== breadcrumbs.length ? 'disabled' : undefined}>
+							<BreadcrumbLink as={NextLink} href={href} passHref>
+								<Box as='a'>{convertBreadcrumb(breadcrumb)}</Box>
+							</BreadcrumbLink>
+						</BreadcrumbItem>
 					))}
-				</MuiBreadcrumbs>
+				</Breadcrumb>
 			</Box>
 		</Container>
 	);

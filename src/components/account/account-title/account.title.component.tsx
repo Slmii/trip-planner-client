@@ -1,12 +1,23 @@
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
+import { Box, Heading, Text } from '@chakra-ui/react';
 
-const AccountTitle = ({ title, subTitle }: { title: string; subTitle?: string }) => {
+import { AccountTitleProps } from '@components/account/account-title';
+
+const AccountTitle = ({ heading, suffix, subHeading }: AccountTitleProps) => {
 	return (
-		<Box mb={2}>
-			<Typography variant='h5' component='h1'>
-				{title} {subTitle && <Typography variant='overline'>{subTitle}</Typography>}
-			</Typography>
+		<Box>
+			<Heading as='h1' size='lg'>
+				{heading}
+			</Heading>
+			{suffix && (
+				<Text mb={subHeading ? 2 : undefined} textStyle='overline'>
+					{suffix}
+				</Text>
+			)}
+			{subHeading && (
+				<Heading as='h2' size='md'>
+					{subHeading}
+				</Heading>
+			)}
 		</Box>
 	);
 };

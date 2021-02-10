@@ -1,9 +1,31 @@
-import cn from 'classnames';
+import {
+    Accordion,
+    Box,
+    Divider,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    Flex,
+    Heading,
+    HStack,
+    Link,
+    List,
+    Progress,
+    Text,
+    useToast,
+    VStack
+} from '@chakra-ui/react';
+import NextLink from 'next/link';
 import React, { useCallback } from 'react';
+import { MdLock, MdLockOpen } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 
 import Button from '@components/buttons/button';
-import IconButton from '@components/buttons/icon-button';
+import Toast, { constants } from '@components/feedback/toast';
+import Icon from '@components/icon';
 import TripDateAndLocations from '@components/trips/dates-and-locations';
 import { TripSummaryProps } from '@components/trips/trip-summary';
 import Activity from '@components/trips/trip-summary/activity';
@@ -14,41 +36,29 @@ import {
     useDeleteActivityMutation,
     useDeleteSubPreparationMutation,
     useEditSubPreparationStatusMutation,
-    useMeQuery,
     useTripActivitiesQuery,
     useTripQuery
 } from '@generated/graphql';
-import { activityInvitation, dialog, snackbar } from '@lib/redux';
+import { activityInvitation, dialog } from '@lib/redux';
 import { helpers } from '@lib/utils';
 
-import { globalStyles } from '@styles/index';
-
-const Drawer = require('@material-ui/core/Drawer').default;
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const List = require('@material-ui/core/List').default;
-const Collapse = require('@material-ui/core/Collapse').default;
-const LinearProgress = require('@material-ui/core/LinearProgress').default;
-const Cancel = require('@material-ui/icons/Cancel').default;
-const LockIcon = require('@material-ui/icons/Lock').default;
-const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
+import spacing from '@theme/spacing';
 
 const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 	const dispatch = useDispatch();
 
-	const { iconMr, buttonMr, bold } = globalStyles();
+	const toast = useToast();
 
 	const { data: tripData, loading: tripLoading, error } = useTripQuery({
 		variables: {
-			tripId
+			tripId,
+			isCreator: Boolean(me)
 		},
 		skip: tripId <= 0
 	});
-
 	const [deleteActivity] = useDeleteActivityMutation();
 	const [editSubPreparationStatus] = useEditSubPreparationStatusMutation();
 	const [deleteSubPreparation] = useDeleteSubPreparationMutation();
-	const { data: meData } = useMeQuery();
 	const { data: activitiesData, loading: activitiesLoading } = useTripActivitiesQuery({
 		variables: {
 			tripId,
@@ -57,20 +67,10 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 		skip: tripLoading || !tripData
 	});
 
+	const isLoading = (tripLoading || activitiesLoading) && (!tripData || !activitiesData);
 	const preperationCompletionPercentage = helpers.calculatePreperationsCompletionPercentage(
 		tripData?.trip ? tripData.trip.preparations.map(prep => prep.subPreparations).flat() : []
 	);
-
-	const handleOnDrawerClose = (event: React.KeyboardEvent | React.MouseEvent) => {
-		if (
-			event.type === 'keydown' &&
-			((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
-		) {
-			return;
-		}
-
-		onClose();
-	};
 
 	const handleOnDeleteActivity = useCallback(
 		async (activityId: number) => {
@@ -90,13 +90,11 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 					});
 
 					if (response.data) {
-						dispatch(
-							snackbar.setSnackbar({
-								open: true,
-								severity: 'error',
-								message: 'Activity has been deleted'
-							})
-						);
+						toast({
+							...constants.TOAST_OPTIONS,
+							render: () =>
+								(<Toast message='Activity has been deleted' severity='error' />) as React.ReactNode
+						});
 					} else {
 						console.error(response.errors);
 					}
@@ -105,7 +103,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 
 			dispatch(dialog.setDialog(options));
 		},
-		[deleteActivity, dispatch]
+		[deleteActivity, dispatch, toast]
 	);
 
 	const handleOnDeleteSubPreparation = useCallback(
@@ -126,13 +124,11 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 					});
 
 					if (response.data) {
-						dispatch(
-							snackbar.setSnackbar({
-								open: true,
-								severity: 'error',
-								message: 'Preparation has been deleted'
-							})
-						);
+						toast({
+							...constants.TOAST_OPTIONS,
+							render: () =>
+								(<Toast message='Preparation has been deleted' severity='error' />) as React.ReactNode
+						});
 					} else {
 						console.error(response.errors);
 					}
@@ -141,7 +137,7 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 
 			dispatch(dialog.setDialog(options));
 		},
-		[deleteSubPreparation, dispatch]
+		[deleteSubPreparation, dispatch, toast]
 	);
 
 	const handleOnSubPreparationStatusChange = useCallback(
@@ -164,18 +160,21 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 
 			if (response.data) {
 				const complete = response.data.editSubPreparationStatus.status;
-				dispatch(
-					snackbar.setSnackbar({
-						open: true,
-						severity: complete ? 'success' : 'info',
-						message: `Preparation ${complete ? 'complete' : 'in progress'}`
-					})
-				);
+				toast({
+					...constants.TOAST_OPTIONS,
+					render: () =>
+						(
+							<Toast
+								message={`Preparation ${complete ? 'complete' : 'in progress'}`}
+								severity={complete ? 'success' : 'info'}
+							/>
+						) as React.ReactNode
+				});
 			} else {
 				console.error(response.errors);
 			}
 		},
-		[dispatch, editSubPreparationStatus]
+		[editSubPreparationStatus, toast]
 	);
 
 	const handeOnAcvitityInvitation = (activity: ActivityFragment) => {
@@ -195,118 +194,122 @@ const TripSummary = ({ tripId, me, onClose }: TripSummaryProps) => {
 				<pre>{JSON.stringify(error, null, 4)}</pre>
 			</div>
 		);
-	} else if ((tripLoading || activitiesLoading) && (!tripData || !activitiesData)) {
-		body = <TripSummarySkeleton />;
+	} else if (isLoading) {
+		body = (
+			<>
+				<DrawerHeader></DrawerHeader>
+				<DrawerBody>
+					<TripSummarySkeleton />
+				</DrawerBody>
+			</>
+		);
 	} else if (tripData && tripData.trip) {
 		const { name, public: publicTrip, dateFrom, dateTo, locations, preparations, description } = tripData.trip;
 
 		body = (
 			<>
-				<Box maxHeight='90%' minHeight='90%' overflow='auto' padding='20px 30px 0 30px'>
-					<Box mb={2}>
-						<Box display='flex' justifyContent='space-between' alignItems='center'>
-							<Box display='flex' alignItems='center'>
-								{publicTrip ? <LockOpenIcon className={iconMr} /> : <LockIcon className={iconMr} />}
-								<Typography variant='h5' component='h1' noWrap={true} title={name}>
-									{name}
-								</Typography>
-							</Box>
-							<IconButton
-								tooltip={true}
-								icon={<Cancel fontSize='large' />}
-								title='Close summary'
-								onClick={handleOnDrawerClose}
-								color='primary'
-							/>
-						</Box>
-						<Box mb={1}>
-							<TripDateAndLocations
-								dateFrom={dateFrom}
-								dateTo={dateTo}
-								locations={locations.map(location => location.name)}
-							/>
-						</Box>
-						<Typography variant='body2'>{description}</Typography>
-					</Box>
-					<Box mb={2}>
-						<Typography variant='h6' component='h2' gutterBottom>
-							My trip activities ({activitiesData?.tripActivities.length})
-						</Typography>
-						<Box>
-							{activitiesData?.tripActivities.map((activity, idx) => (
-								<Activity
-									key={idx}
-									activity={activity}
-									onDelete={handleOnDeleteActivity}
-									onInvitation={handeOnAcvitityInvitation}
-									isInvitationDisabled={activity.users.length >= activity.maxPeople}
-									isProfilePrivate={!meData?.me?.public}
-								/>
-							))}
-						</Box>
-					</Box>
-					<Box>
-						<Typography variant='h6' component='h2' gutterBottom>
-							My preparations (
-							{tripData.trip.preparations.map(prep => prep.subPreparations).flat().length})
-						</Typography>
-						{preparations.length ? (
-							<Box display='flex' alignItems='center'>
-								<Box width='82.5%'>
-									<LinearProgress
-										className={iconMr}
-										variant='determinate'
-										value={preperationCompletionPercentage}
-									/>
-								</Box>
-								<Typography
-									variant='subtitle2'
-									className={cn({
-										[bold]: true
-									})}
-								>
-									{preperationCompletionPercentage}% complete
-								</Typography>
-							</Box>
-						) : null}
-						<Collapse in={true} timeout='auto' unmountOnExit>
-							<List>
-								{preparations.map((preparation, idx) => (
-									<Preparation
-										key={idx}
-										preparation={preparation}
-										onDelete={handleOnDeleteSubPreparation}
-										onStatusChange={handleOnSubPreparationStatusChange}
-										isLast={idx + 1 === preparations.length}
-									/>
-								))}
-							</List>
-						</Collapse>
-					</Box>
-				</Box>
-				<Box padding='0 30px 30px 30px' display='flex' justifyContent='flex-end'>
-					<Button
-						className={buttonMr}
-						variant='outlined'
-						fullWidth={false}
-						type='button'
-						onClick={handleOnDrawerClose}
-					>
-						Close
-					</Button>
-					<Button variant='contained' fullWidth={false} type='button'>
-						Manage
-					</Button>
-				</Box>
+				<DrawerHeader borderBottomWidth='1px' display='flex' alignItems='center'>
+					<Icon as={publicTrip ? MdLockOpen : MdLock} mr size='lg' />
+					<Heading as='h1'>{name}</Heading>
+				</DrawerHeader>
+				<DrawerBody>
+					<VStack spacing={spacing.BODY_SPACING_LARGE} align='stretch'>
+						<TripDateAndLocations
+							dateFrom={dateFrom}
+							dateTo={dateTo}
+							locations={locations.map(location => location.name)}
+						/>
+						<Text textStyle='body'>{description}</Text>
+						<Divider />
+						<VStack align='stretch'>
+							<Heading as='h2' textStyle='title'>
+								My activities
+							</Heading>
+							<Accordion defaultIndex={[]} allowMultiple>
+								{activitiesData?.tripActivities.length ? (
+									activitiesData.tripActivities.map((activity, idx) => (
+										<Activity
+											key={idx}
+											activity={activity}
+											onDelete={handleOnDeleteActivity}
+											onInvitation={handeOnAcvitityInvitation}
+											isInvitationDisabled={activity.users.length >= activity.maxPeople}
+											isProfilePrivate={!me?.public}
+										/>
+									))
+								) : (
+									<Text textStyle='body'>
+										Nothing here yet. Start{' '}
+										<Link as={NextLink} href={`/account/trip/${tripData.trip.id}`} passHref>
+											<Box as='a' color='primary.500' fontWeight='bold'>
+												adding activities
+											</Box>
+										</Link>{' '}
+										to your trip!
+									</Text>
+								)}
+							</Accordion>
+						</VStack>
+						<VStack align='stretch'>
+							<Heading as='h2' textStyle='title'>
+								My preparations
+							</Heading>
+							{preparations.length ? (
+								<>
+									<Flex alignItems='center'>
+										<Box flex='1' mr={2}>
+											<Progress
+												colorScheme='secondary'
+												size='xs'
+												value={preperationCompletionPercentage}
+												rounded='full'
+											/>
+										</Box>
+										<Text textStyle='subtitle'>{preperationCompletionPercentage}% complete</Text>
+									</Flex>
+									<List>
+										{preparations.map((preparation, idx) => (
+											<Preparation
+												key={idx}
+												preparation={preparation}
+												onDelete={handleOnDeleteSubPreparation}
+												onStatusChange={handleOnSubPreparationStatusChange}
+												isLast={idx + 1 === preparations.length}
+											/>
+										))}
+									</List>
+								</>
+							) : (
+								<Text textStyle='body'>
+									Nothing here yet. Start{' '}
+									<Link as={NextLink} href={`/account/trip/${tripData.trip.id}`} passHref>
+										<Box as='a' color='primary.500' fontWeight='bold'>
+											adding preparations
+										</Box>
+									</Link>{' '}
+									to your trip!
+								</Text>
+							)}
+						</VStack>
+					</VStack>
+				</DrawerBody>
+				<DrawerFooter borderTopWidth='1px'>
+					<HStack spacing={spacing.BUTTON}>
+						<Button variant='ghost' onClick={onClose}>
+							Close
+						</Button>
+						<Button>Manage</Button>
+					</HStack>
+				</DrawerFooter>
 			</>
 		);
 	}
 
 	return (
-		<Drawer anchor='right' open={tripId > 0} onClose={handleOnDrawerClose}>
-			<Box width={550} height='100%' display='flex' flexDirection='column' justifyContent='space-between'>
-				{body}
-			</Box>
+		<Drawer placement='right' size='md' isOpen={tripId > 0} onClose={onClose}>
+			<DrawerOverlay>
+				<DrawerContent>{body}</DrawerContent>
+			</DrawerOverlay>
 		</Drawer>
 	);
 };

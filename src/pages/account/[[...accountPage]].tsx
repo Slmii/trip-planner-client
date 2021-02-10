@@ -1,73 +1,68 @@
-import { Typography } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
+import { Box, Flex, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import AccountMenu, { constants, Styled } from '@components/account/account-menu';
+import AccountMenu, { constants } from '@components/account/account-menu';
+import AccountTitle from '@components/account/account-title';
+import Favorites from '@components/account/favorites';
 import Notifications from '@components/account/notifications';
+import Trips from '@components/account/trips';
 import Layout from '@components/common/layout';
-import MyFavorites from '@components/trips/my-favorites';
-import MyTrips from '@components/trips/my-trips';
+import Icon from '@components/icon';
+import Paper from '@components/paper';
 import { withApollo } from '@lib/apollo';
-import { helpers } from '@lib/utils';
+import { url } from '@lib/utils';
 
-import { globalStyles } from '@styles/index';
+import spacing from '@theme/spacing';
 
 const PAGE_COMPONENT: Record<string, JSX.Element> = {
-	trips: <MyTrips />,
-	favorites: <MyFavorites />,
+	trips: <Trips />,
+	favorites: <Favorites />,
 	notifications: <Notifications />
 };
 
 function AccountPage() {
 	const router = useRouter();
-	const { 1: subPath } = helpers.getCurrentRoute(router);
-
-	const { iconMr, bold } = globalStyles();
-	const { onHover, textDecorationNone } = Styled.accountMenuStyles();
+	const { 1: subPath } = url.getCurrentRoute(router);
 
 	return (
 		<Layout>
-			<Box display='flex' width='100%'>
+			<Box width='100%'>
 				{Object.keys(PAGE_COMPONENT).includes(subPath) ? (
-					<>
+					<Flex>
 						<AccountMenu />
-						<Box width='calc(85% - 32px)'>
+						<VStack spacing={spacing.BODY_SPACING} width='calc(85% - 32px)' align='stretch'>
 							{Object.keys(PAGE_COMPONENT).includes(subPath) && PAGE_COMPONENT[subPath]}
-						</Box>
-					</>
+						</VStack>
+					</Flex>
 				) : (
-					<Box display='flex' flexDirection='column'>
-						<Box px={0.5} mb={2}>
-							<Typography variant='h5' component='h1' gutterBottom className={bold}>
-								Account
-							</Typography>
-							<Typography variant='body1'>Manage my environment</Typography>
-						</Box>
-						<Box display='flex' flexWrap='wrap' margin='0 auto'>
-							{constants.ACCOUNT_MENU.map(menu => (
-								<Box key={menu.key} width='33%' px={0.5} my={0.5}>
-									<Link href={`/account/${menu.key}`}>
-										{/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-										<a className={textDecorationNone}>
-											<Paper elevation={2} className={onHover}>
-												<Box display='flex' flexDirection='column' p={2} minHeight='160px'>
-													<Box display='flex' mb={1} alignItems='center'>
-														<menu.Icon className={iconMr} />
-														<Typography variant='h6' component='h2' className={bold}>
-															{menu.title}
-														</Typography>
-													</Box>
-													<Typography variant='body2'>{menu.description}</Typography>
-												</Box>
-											</Paper>
-										</a>
-									</Link>
-								</Box>
+					<VStack spacing={spacing.BODY_SPACING} align='stretch'>
+						<AccountTitle heading='Account' subHeading='Manage my environment' />
+						<SimpleGrid columns={3} spacing={spacing.CARD}>
+							{constants.ACCOUNT_MENU.map(({ Icon: AccountMenuIcon, description, key, title }) => (
+								<Link key={key} href={`/account/${key}`}>
+									<Box
+										as='a'
+										_hover={{
+											textDecoration: 'none !important',
+											color: 'primary.500'
+										}}
+										minH='160px'
+									>
+										<Paper height='100%' p={spacing.INNER_PADDING}>
+											<Flex flexDirection='column'>
+												<Flex mb={4} alignItems='center'>
+													<Icon as={AccountMenuIcon} size='lg' mr />
+													<Text textStyle='title'>{title}</Text>
+												</Flex>
+												<Text textStyle='body'>{description}</Text>
+											</Flex>
+										</Paper>
+									</Box>
+								</Link>
 							))}
-						</Box>
-					</Box>
+						</SimpleGrid>
+					</VStack>
 				)}
 			</Box>
 		</Layout>

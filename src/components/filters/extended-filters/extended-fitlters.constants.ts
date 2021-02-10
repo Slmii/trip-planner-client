@@ -1,6 +1,7 @@
+import { ArrayValues, ChipsPrefixMapping, SearchInCheckboxes } from '@components/filters/extended-filters';
 import { SortOrder } from '@generated/graphql';
 
-import { ArrayValues, ChipsPrefixMapping, SearchInCheckboxes } from '@components/filters/extended-filters';
+
 
 type POPOVER_FILTER_DATES = 'dateFrom' | 'dateTo' | 'activityDate';
 
@@ -18,7 +19,6 @@ export const SORT_BY_VALUES: ArrayValues[] = [
 		label: 'Date added'
 	}
 ];
-
 export const ORDER_BY_VALUES: ArrayValues[] = [
 	{
 		value: SortOrder.Asc,
@@ -29,8 +29,7 @@ export const ORDER_BY_VALUES: ArrayValues[] = [
 		label: 'Desc'
 	}
 ];
-
-export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
+export const CHIPS_PREFIX_MAPPING: Partial<Record<keyof ChipsPrefixMapping, string>> = {
 	search: 'Search',
 	searchIn: 'Search in',
 	dateFrom: 'Date from',
@@ -41,7 +40,6 @@ export const CHIPS_PREFIX_MAPPING: Record<keyof ChipsPrefixMapping, string> = {
 	sort: 'Sort by',
 	order: 'Order by'
 };
-
 export const SEARCH_IN: SearchInCheckboxes[] = [
 	{
 		label: 'Trips',
@@ -56,5 +54,4 @@ export const SEARCH_IN: SearchInCheckboxes[] = [
 		value: 'preparations'
 	}
 ];
-
 export const POPOVER_FILTER_DATES: POPOVER_FILTER_DATES[] = ['dateFrom', 'dateTo', 'activityDate'];

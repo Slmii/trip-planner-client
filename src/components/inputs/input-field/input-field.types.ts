@@ -1,6 +1,6 @@
 import { FieldInputProps } from 'formik';
 
-import { InputSize } from '@components/form/form-input-field';
+import { Size } from '@lib/types';
 
 export interface InputFieldProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,20 +8,18 @@ export interface InputFieldProps {
 	value?: string;
 	name?: string;
 	label?: string;
-	type?: string;
-	required?: boolean;
-	disabled?: boolean;
+	type?: InputFieldType;
+	isRequired?: boolean;
+	isReadOnly?: boolean;
+	isDisabled?: boolean;
 	error?: string;
 	touched?: boolean;
 	strengthMeter?: boolean;
 	passwordStrength?: string;
 	optional?: boolean;
-	multiline?: boolean;
-	fullWidth?: boolean;
 	autoFocus?: boolean;
-	rows?: number;
 	placeholder?: string;
-	size?: InputSize;
+	size?: Size;
 	startAdornment?: JSX.Element;
 	endAdornment?: JSX.Element;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -30,3 +28,5 @@ export interface InputFieldProps {
 	onIconClick?: () => void;
 	onKeyDown?: (event: React.KeyboardEvent) => void;
 }
+
+export type InputFieldType = 'text' | 'number' | 'password';

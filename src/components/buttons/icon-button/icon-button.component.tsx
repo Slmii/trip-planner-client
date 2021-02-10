@@ -1,39 +1,46 @@
-import MuiIconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import cn from 'classnames';
+import { IconButton as CUIIconButton, Tooltip } from '@chakra-ui/react';
 
-import { IconButtonProps, Styled } from '@components/buttons/icon-button';
+import { IconButtonProps } from '@components/buttons/icon-button';
 
-import theme from '@theme/index';
-
-const IconButton = ({ tooltip = false, title, onClick, color, icon, disabled = false }: IconButtonProps) => {
-	const { isDisabled } = Styled.iconButtonStyles();
+const IconButton = ({
+	tooltip = false,
+	title,
+	onClick,
+	size = 'lg',
+	colorScheme = 'primary',
+	icon,
+	disabled = false
+}: IconButtonProps) => {
 	return (
 		<>
 			{tooltip ? (
-				<Tooltip title={title} arrow>
-					<MuiIconButton
-						aria-label={title.toLowerCase()}
-						style={{ color: color ? theme.palette[color].main : 'inherit' }}
+				<Tooltip label={title} hasArrow fontSize='sm' shouldWrapChildren>
+					<CUIIconButton
+						colorScheme={colorScheme}
+						aria-label={title}
+						variant='outline'
+						icon={icon}
+						isRound={true}
+						border='none'
+						boxShadow='none'
 						onClick={onClick}
-						className={cn({
-							[isDisabled]: disabled
-						})}
-					>
-						{icon}
-					</MuiIconButton>
+						disabled={disabled}
+						size={size}
+					/>
 				</Tooltip>
 			) : (
-				<MuiIconButton
-					aria-label={title.toLowerCase()}
-					style={{ color: color ? theme.palette[color].main : 'inherit' }}
+				<CUIIconButton
+					colorScheme={colorScheme}
+					aria-label={title}
+					variant='outline'
+					icon={icon}
+					isRound={true}
+					border='none'
+					boxShadow='none'
 					onClick={onClick}
-					className={cn({
-						[isDisabled]: disabled
-					})}
-				>
-					{icon}
-				</MuiIconButton>
+					disabled={disabled}
+					size={size}
+				/>
 			)}
 		</>
 	);

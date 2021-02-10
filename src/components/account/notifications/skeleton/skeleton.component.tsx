@@ -1,37 +1,35 @@
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-// import Typography from '@material-ui/core/Typography';
-import MuiSkeleton from '@material-ui/lab/Skeleton';
+import { Box, Flex, SkeletonCircle, SkeletonText, Stack } from '@chakra-ui/react';
+
+import Paper from '@components/paper';
 
 import theme from '@theme/index';
+import spacing from '@theme/spacing';
 
 const Skeleton = ({ number = 10 }: { number?: number }) => {
 	return (
-		<Paper elevation={2}>
-			<Box display='flex' flexDirection='column' border={`1px solid ${theme.palette.borderColor}`}>
+		<Paper>
+			<Stack>
 				{Array.from(new Array(number)).map((_item, idx) => (
-					<Box
+					<Flex
 						key={idx}
-						borderBottom={`1px solid ${theme.palette.borderColor}`}
-						height={98}
+						borderBottom={`1px solid ${theme.colors.border}`}
+						height={104}
 						width='100%'
-						display='flex'
 						alignItems='center'
-						p={1}
+						p={spacing.INNER_PADDING}
 					>
-						<Box display='flex' alignItems='center' mr={1}>
-							<MuiSkeleton variant='circle' height={8} width={8} />
-						</Box>
-						<Box mr={1}>
-							<MuiSkeleton variant='circle' height={66} width={66} />
+						<Flex alignItems='center' mr={4}>
+							<SkeletonCircle size='2' />
+						</Flex>
+						<Box mr={4}>
+							<SkeletonCircle size='16' />
 						</Box>
 						<Box width='100%'>
-							<MuiSkeleton variant='text' animation='wave' />
-							<MuiSkeleton variant='text' animation='wave' />
+							<SkeletonText noOfLines={2} spacing='2' />
 						</Box>
-					</Box>
+					</Flex>
 				))}
-			</Box>
+			</Stack>
 		</Paper>
 	);
 };

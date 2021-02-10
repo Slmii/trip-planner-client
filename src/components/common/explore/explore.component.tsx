@@ -1,48 +1,39 @@
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import BeachAccessOutlinedIcon from '@material-ui/icons/BeachAccessOutlined';
-import CardTravelOutlinedIcon from '@material-ui/icons/CardTravelOutlined';
-import cn from 'classnames';
+import { Box, Container, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { MdBeachAccess, MdCardTravel } from 'react-icons/md';
 
-import { Styled } from '@components/common/explore';
-import { helpers } from '@lib/utils';
-
-import { globalStyles } from '@styles/index';
-import theme from '@theme/index';
+import ExploreItem from '@components/common/explore/explore-item';
+import Icon from '@components/icon';
+import { url } from '@lib/utils';
 
 const Explore = () => {
 	const router = useRouter();
 
-	const { iconMr } = globalStyles();
-	const { active } = Styled.layoutStyles();
+	const handleOnExploreItemNavigation = (name: string) => {
+		router.push(`/explore/${name}`);
+	};
 
-	const [path, subPath] = helpers.getCurrentRoute(router);
-	const fullPath = `${path}/${subPath}`;
+	const isExplorePage = url.isPage('explore', router);
+	const isTripsPage = url.isSubPage('trips', router);
+	const isActivitiesPage = url.isSubPage('activities', router);
 
 	return (
-		<Box bgcolor={theme.palette.primary.dark}>
-			<Container fixed disableGutters={true}>
-				<Box display='flex' margin='0 24px' color='white' alignItems='center'>
-					<Styled.ExploreItem
-						onClick={() => router.push('/explore/trips')}
-						className={cn({
-							[active]: fullPath === 'explore/trips'
-						})}
-					>
-						<CardTravelOutlinedIcon fontSize='small' className={iconMr} />
-						Explore trips
-					</Styled.ExploreItem>
-					<Styled.ExploreItem
-						onClick={() => router.push('/explore/activities')}
-						className={cn({
-							[active]: fullPath === 'explore/activities'
-						})}
-					>
-						<BeachAccessOutlinedIcon fontSize='small' className={iconMr} />
-						Explore activities
-					</Styled.ExploreItem>
-				</Box>
+		<Box bgColor='primary.600'>
+			<Container maxW='container.xl'>
+				<Flex mx={6} color='white' alignItems='center'>
+					<ExploreItem
+						name='trips'
+						onNavigation={handleOnExploreItemNavigation}
+						isPage={isExplorePage && isTripsPage}
+						icon={<Icon as={MdCardTravel} />}
+					/>
+					<ExploreItem
+						name='activities'
+						onNavigation={handleOnExploreItemNavigation}
+						isPage={isExplorePage && isActivitiesPage}
+						icon={<Icon as={MdBeachAccess} />}
+					/>
+				</Flex>
 			</Container>
 		</Box>
 	);

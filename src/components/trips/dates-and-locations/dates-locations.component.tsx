@@ -1,13 +1,9 @@
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+import { MdDateRange, MdPublic } from 'react-icons/md';
 
+import Icon from '@components/icon';
 import { date } from '@lib/utils';
-
-import { globalStyles } from '@styles/index';
-
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const DateRangeIcon = require('@material-ui/icons/DateRange').default;
-const PublicIcon = require('@material-ui/icons/Public').default;
 
 const TripDatesAndLocations = ({
 	dateFrom,
@@ -20,13 +16,11 @@ const TripDatesAndLocations = ({
 	timezone?: string;
 	locations: string[];
 }) => {
-	const { iconMr } = globalStyles();
-
 	return (
-		<>
-			<Box display='flex' alignItems='center'>
-				<DateRangeIcon className={iconMr} fontSize='inherit' />
-				<Typography variant='subtitle1' color='textSecondary'>
+		<Flex flexDirection='column'>
+			<Flex alignItems='center'>
+				<Icon as={MdDateRange} size='sm' mr />
+				<Text textStyle='subtitle'>
 					{date.formatDate({
 						date: dateFrom,
 						format: date.isCurrentYear(dateFrom as Date) ? 'DD MMM' : 'DD MMM YYYY',
@@ -40,15 +34,13 @@ const TripDatesAndLocations = ({
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  })}`
 						: null}
-				</Typography>
-			</Box>
-			<Box display='flex' alignItems='center'>
-				<PublicIcon fontSize='inherit' className={iconMr} />
-				<Typography variant='subtitle1' color='textSecondary'>
-					{locations.length ? locations.join(' - ') : '-'}
-				</Typography>
-			</Box>
-		</>
+				</Text>
+			</Flex>
+			<Flex alignItems='center'>
+				<Icon as={MdPublic} size='sm' mr />
+				<Text textStyle='subtitle'>{locations.length ? locations.join(' - ') : '-'}</Text>
+			</Flex>
+		</Flex>
 	);
 };
 

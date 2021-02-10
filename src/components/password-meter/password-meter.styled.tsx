@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import theme from '@theme/index';
 
 export const Content = styled.div`
 	display: flex;
 	flex-direction: column;
-	background-color: ${theme.palette.background.default};
+	background-color: #ffffff;
 	height: 5px;
 	width: 100%;
 `;
@@ -20,22 +20,22 @@ export const StrengthMeter = styled.span<{ value: string }>`
 	}
 
 	&[value='2'] {
-		background-color: ${theme.palette.error.main};
+		background-color: ${theme.colors.red[500]};
 		width: 25%;
 	}
 
 	&[value='3'] {
-		background-color: ${theme.palette.warning.main};
+		background-color: ${theme.colors.orange[500]};
 		width: 50%;
 	}
 
 	&[value='4'] {
-		background-color: ${theme.palette.warning.main};
+		background-color: ${theme.colors.orange[500]};
 		width: 75%;
 	}
 
 	&[value='5'] {
-		background-color: ${theme.palette.success.main};
+		background-color: ${theme.colors.primary[500]};
 		width: 100%;
 	}
 `;

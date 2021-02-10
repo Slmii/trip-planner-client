@@ -5,8 +5,7 @@ import { ActivityFragment } from '../../../generated/graphql';
 export interface ActivityInvitationProps {
 	open: boolean;
 	activity: ActivityFragment | null;
-	fullWidth?: boolean;
-	maxWidth?: DialogSize;
+	size?: DialogSize;
 }
 
 export type ActivityInvitationState = ActivityInvitationProps;

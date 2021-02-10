@@ -1,127 +1,96 @@
-import Checkbox from '@material-ui/core/Checkbox';
-import Collapse from '@material-ui/core/Collapse';
-import Divider from '@material-ui/core/Divider';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import cn from 'classnames';
-import React, { useState } from 'react';
+import {
+    Box,
+    Checkbox,
+    Collapse,
+    Divider,
+    Flex,
+    HStack,
+    ListIcon,
+    ListItem,
+    Text,
+    useDisclosure,
+    VStack
+} from '@chakra-ui/react';
+import React from 'react';
+import { MdDelete, MdExpandLess, MdExpandMore } from 'react-icons/md';
 
 import IconButton from '@components/buttons/icon-button';
-import { PreparationProps, Styled } from '@components/trips/trip-summary/preparation';
+import Icon from '@components/icon';
+import { PreparationProps } from '@components/trips/trip-summary/preparation';
 
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const List = require('@material-ui/core/List').default;
-const ListItem = require('@material-ui/core/ListItem').default;
-const ListItemIcon = require('@material-ui/core/ListItemIcon').default;
-const ListItemText = require('@material-ui/core/ListItemText').default;
-const ListItemSecondaryAction = require('@material-ui/core/ListItemSecondaryAction').default;
-const DeleteIcon = require('@material-ui/icons/Delete').default;
+import spacing from '@theme/spacing';
 
 const Preparation = ({ preparation, onDelete, onStatusChange, isLast }: PreparationProps) => {
-	const [open, setOpen] = useState(false);
+	const { isOpen, onToggle } = useDisclosure();
 
-	const { id, name, description, subPreparations } = preparation;
-	const {
-		preparationHeading,
-		preparationComplete,
-		subPreparationHeading,
-		nested,
-		listItemIcon
-	} = Styled.activityStyles();
-
-	const labelId = `checkbox-list-label-${id}`;
-
-	const handleOnOpen = () => {
-		setOpen(!open);
-	};
+	const { name, description, subPreparations } = preparation;
 
 	return (
 		<>
-			<ListItem role={undefined} dense button onClick={handleOnOpen}>
-				<ListItemText
-					disableTypography={true}
-					id={labelId}
-					className={cn({
-						[preparationComplete]: subPreparations.every(({ status }) => status)
-					})}
-					primary={
-						<Box display='flex' alignItems='flex-end'>
-							<Typography className={preparationHeading}>{name}</Typography>
-							<Typography variant='subtitle2' color='textSecondary'>
-								{subPreparations.filter(({ status }) => status).length}/{subPreparations.length}{' '}
-								complete
-							</Typography>
-						</Box>
-					}
-					secondary={
-						description ? (
-							<Typography variant='subtitle1' color='textSecondary'>
-								{description}
-							</Typography>
-						) : null
-					}
-				/>
-				{}
-				<ListItemSecondaryAction>
-					<IconButton
-						title=''
-						icon={open ? <ExpandLess color='action' /> : <ExpandMore color='action' />}
-						onClick={handleOnOpen}
-					/>
-				</ListItemSecondaryAction>
+			<ListItem
+				display='flex'
+				alignItems='center'
+				cursor='pointer'
+				_hover={{
+					bg: 'gray.100'
+				}}
+				onClick={onToggle}
+				p={3}
+			>
+				<VStack align='stretch' w='100%'>
+					<Flex>
+						<HStack flex='1' spacing={spacing.BODY_SPACING_SMALL}>
+							<Text textStyle='notification-title-name' lineHeight='none'>
+								{name}
+							</Text>
+							<Text textStyle='overline' lineHeight='none'>
+								({subPreparations.filter(({ status }) => status).length}/{subPreparations.length}{' '}
+								complete)
+							</Text>
+						</HStack>
+						<ListIcon as={isOpen ? MdExpandLess : MdExpandMore} />
+					</Flex>
+					{description && (
+						<Text textStyle='subtitle' textAlign='left' lineHeight='none'>
+							{description}
+						</Text>
+					)}
+				</VStack>
 			</ListItem>
-			{subPreparations.length ? (
-				<Collapse in={open} timeout='auto' unmountOnExit>
-					<List component='div' disablePadding>
-						{subPreparations.map(subPreparation => {
-							const labelId = `checkbox-sub-list-label-${subPreparation.id}`;
-
-							return (
-								<ListItem
-									key={subPreparation.id}
-									button
-									onClick={() => onStatusChange(subPreparation.id)}
-									className={nested}
-								>
-									<ListItemIcon className={listItemIcon}>
-										<Checkbox
-											edge='start'
-											size='small'
-											checked={subPreparation.status}
-											tabIndex={-1}
-											disableRipple
-											inputProps={{ 'aria-labelledby': labelId }}
-										/>
-									</ListItemIcon>
-									<ListItemText
-										disableTypography={true}
-										id={labelId}
-										className={cn({
-											[preparationComplete]: subPreparation.status
-										})}
-										primary={
-											<Typography className={subPreparationHeading}>
-												{subPreparation.name}
-											</Typography>
-										}
-									/>
-									<ListItemSecondaryAction>
-										<IconButton
-											aria-label='delete sub preparation'
-											color='error'
-											tooltip={true}
-											icon={<DeleteIcon fontSize='small' />}
-											title='Delete'
-											onClick={() => onDelete(subPreparation.id)}
-										/>
-									</ListItemSecondaryAction>
-								</ListItem>
-							);
-						})}
-					</List>
-				</Collapse>
-			) : null}
+			<Collapse in={isOpen} animateOpacity>
+				<VStack align='stretch'>
+					{subPreparations.map(subPrep => (
+						<Flex
+							key={subPrep.id}
+							justifyContent='space-between'
+							_hover={{
+								bg: 'gray.100'
+							}}
+							pl={8}
+						>
+							<Checkbox
+								colorScheme='secondary'
+								isChecked={subPrep.status}
+								onChange={() => onStatusChange(subPrep.id)}
+								flex='1'
+								py={3}
+							>
+								{subPrep.name}
+							</Checkbox>
+							<Box pr={2} pt={1}>
+								<IconButton
+									colorScheme='red'
+									tooltip={true}
+									icon={<Icon as={MdDelete} size='md' />}
+									size='md'
+									title='Delete'
+									onClick={() => onDelete(subPrep.id)}
+								/>
+							</Box>
+						</Flex>
+					))}
+				</VStack>
+			</Collapse>
 			{!isLast && <Divider />}
 		</>
 	);

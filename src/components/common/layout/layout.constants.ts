@@ -1,1 +1,1 @@
-export const HAS_EXTENDED_FILTERS = ['trips', 'explore'];
+export const HAS_EXTENDED_FILTERS = ['explore/trips', 'explore/activities'];

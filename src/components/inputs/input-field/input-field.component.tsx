@@ -1,13 +1,18 @@
-import IconButton from '@material-ui/core/IconButton';
-import MuiTextField from '@material-ui/core/TextField';
-import { useState } from 'react';
+import {
+    FormControl,
+    FormErrorMessage,
+    FormLabel,
+    Input,
+    InputGroup,
+    InputRightElement
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
+import IconButton from '@components/buttons/icon-button';
+import Icon from '@components/icon';
 import { InputFieldProps } from '@components/inputs/input-field';
 import PasswordMeter from '@components/password-meter';
-
-const InputAdornment = require('@material-ui/core/InputAdornment').default;
-const VisibilityOff = require('@material-ui/icons/VisibilityOff').default;
-const Visibility = require('@material-ui/icons/Visibility').default;
 
 export default function InputField({
 	field,
@@ -15,17 +20,15 @@ export default function InputField({
 	value,
 	label = '',
 	type = 'text',
-	required = false,
-	disabled = false,
+	isRequired = false,
+	isDisabled = false,
+	isReadOnly = false,
 	error = '',
 	touched = false,
 	optional = false,
-	multiline = false,
-	fullWidth = true,
 	autoFocus = false,
-	rows = 4,
 	placeholder = '',
-	size = 'medium',
+	size = 'lg',
 	strengthMeter = false,
 	passwordStrength = '',
 	startAdornment,
@@ -38,66 +41,52 @@ export default function InputField({
 }: InputFieldProps) {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 
-	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-		event.preventDefault();
-	};
-
 	return (
-		<>
-			<MuiTextField
-				type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
-				error={touched && Boolean(error)}
-				label={label}
-				helperText={touched && error ? error : ''}
-				required={required}
-				disabled={disabled}
-				name={name}
-				value={value}
-				onFocus={onFocus}
-				onBlur={onFocusOut}
-				onChange={onChange}
-				onKeyDown={onKeyDown}
-				{...field}
-				fullWidth={fullWidth}
-				variant={disabled ? 'filled' : 'outlined'}
-				multiline={multiline}
-				rowsMax={rows}
-				rows={rows}
-				placeholder={placeholder}
-				size={size}
-				// eslint-disable-next-line jsx-a11y/no-autofocus
-				autoFocus={autoFocus}
-				InputProps={{
-					startAdornment,
-					endAdornment:
-						!endAdornment && type === 'password' ? (
-							<InputAdornment position='end'>
-								<IconButton
-									aria-label='toggle password visibility'
-									onClick={() => setShowPassword(prevState => !prevState)}
-									onMouseDown={handleMouseDownPassword}
-								>
-									{showPassword ? (
-										<Visibility
-											fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''}
-										/>
-									) : (
-										<VisibilityOff
-											fontSize={size === 'small' ? 'small' : size === 'medium' ? 'inherit' : ''}
-										/>
-									)}
-								</IconButton>
-							</InputAdornment>
-						) : endAdornment ? (
-							<InputAdornment position='end'>
-								<IconButton onClick={() => onIconClick?.()} onMouseDown={handleMouseDownPassword}>
-									{endAdornment}
-								</IconButton>
-							</InputAdornment>
-						) : null
-				}}
-			/>
+		<FormControl id={name} isRequired={isRequired} isInvalid={touched && Boolean(error)}>
+			{label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+			<InputGroup>
+				<Input
+					focusBorderColor='primary.500'
+					errorBorderColor='red.500'
+					_hover={{
+						borderColor: 'black'
+					}}
+					id={name}
+					type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
+					name={name}
+					value={value}
+					isDisabled={isDisabled}
+					isReadOnly={isReadOnly}
+					onFocus={onFocus}
+					onBlur={onFocusOut}
+					onChange={onChange}
+					onKeyDown={onKeyDown}
+					{...field}
+					variant={isDisabled ? 'filled' : 'outline'}
+					placeholder={placeholder}
+					size={size}
+					bg='white'
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus={autoFocus}
+				/>
+				{!endAdornment && type === 'password' ? (
+					<InputRightElement width='4.5rem' top='4px'>
+						<IconButton
+							icon={<Icon as={showPassword ? MdVisibility : MdVisibilityOff} size='lg' />}
+							title={showPassword ? 'Show password' : 'Hide password'}
+							tooltip={true}
+							onClick={() => setShowPassword(!showPassword)}
+						/>
+					</InputRightElement>
+				) : (
+					<InputRightElement width='4.5rem' top='4px'>
+						{/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+						<IconButton icon={endAdornment!} title='' onClick={onIconClick} />
+					</InputRightElement>
+				)}
+			</InputGroup>
 			{strengthMeter && <PasswordMeter passwordStrength={passwordStrength} />}
-		</>
+			<FormErrorMessage>{error}</FormErrorMessage>
+		</FormControl>
 	);
 }

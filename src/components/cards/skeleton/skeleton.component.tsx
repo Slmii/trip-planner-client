@@ -1,51 +1,31 @@
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import MuiSkeleton from '@material-ui/lab/Skeleton';
+import { Divider, Skeleton as CUISkeleton, SkeletonText, VStack } from '@chakra-ui/react';
 
-import { Styled } from '@components/cards/card';
+import Paper from '@components/paper';
+
+import spacing from '@theme/spacing';
 
 const Skeleton = ({ number = 10 }: { number?: number }) => {
 	return (
-		<>
+		<VStack spacing={spacing.CARD}>
 			{Array.from(new Array(number)).map((_item, idx) => (
-				<Box key={idx} display='flex'>
-					<Styled.Card>
-						<MuiSkeleton animation='wave' variant='rect'>
-							<Styled.CardHeader />
-						</MuiSkeleton>
-						<Box padding='20px 30px' display='flex' flexDirection='column' width='100%'>
-							<Typography variant='h5'>
-								<MuiSkeleton animation='wave' />
-							</Typography>
-							<Typography variant='subtitle1'>
-								<MuiSkeleton animation='wave' width='30%' />
-							</Typography>
-							<Typography variant='subtitle1'>
-								<MuiSkeleton animation='wave' width='30%' />
-							</Typography>
-							<Box mb={1} mt={1}>
-								<Typography variant='body2'>
-									<MuiSkeleton animation='wave' />
-								</Typography>
-								<Typography variant='body2'>
-									<MuiSkeleton animation='wave' />
-								</Typography>
-								<Typography variant='body2'>
-									<MuiSkeleton animation='wave' />
-								</Typography>
-							</Box>
-							<Box display='flex' justifyContent='space-between'>
-								<Box display='flex'>
-									<MuiSkeleton style={{ marginRight: 8 }} animation='wave' variant='rect' width={100} height={50} />
-									<MuiSkeleton animation='wave' variant='rect' width={100} height={50} />
-								</Box>
-								<MuiSkeleton animation='wave' variant='rect' width={300} height={50} />
-							</Box>
-						</Box>
-					</Styled.Card>
-				</Box>
+				<Paper
+					key={idx}
+					display='flex'
+					width='100%'
+					height='257px'
+					_hover={{
+						boxShadow: 'card'
+					}}
+				>
+					<CUISkeleton w='360px' />
+					<VStack spacing={spacing.BODY_SPACING} p={spacing.INNER_PADDING} align='flex-start' width='659px'>
+						<SkeletonText noOfLines={5} spacing={5} w='100%' />
+						<Divider />
+						<CUISkeleton h='100%' w='100%' />
+					</VStack>
+				</Paper>
 			))}
-		</>
+		</VStack>
 	);
 };
 

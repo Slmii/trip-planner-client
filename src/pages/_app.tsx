@@ -1,16 +1,15 @@
 import '@lib/dayjs';
+import 'focus-visible/dist/focus-visible';
+import 'react-datepicker/dist/react-datepicker.css';
 
-import DayJsUtils from '@date-io/dayjs';
-import { CssBaseline, ThemeProvider as MuiThemeProvider } from '@material-ui/core';
-import { StylesProvider } from '@material-ui/core/styles';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
+import { IconContext } from 'react-icons';
 
 import { wrapper } from '@lib/redux';
 
-import { GlobalStyle } from '@styles/index';
 import theme from '@theme/index';
 
 if (process.env.NODE_ENV === 'development') {
@@ -25,28 +24,16 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-	useEffect(() => {
-		// Remove the server-side injected CSS.
-		const jssStyles = document.querySelector('#jss-server-side');
-		if (jssStyles && jssStyles.parentElement) {
-			jssStyles.parentElement.removeChild(jssStyles);
-		}
-	}, []);
-
 	return (
 		<>
 			<Head>
 				<meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
 			</Head>
-			<StylesProvider injectFirst>
-				<MuiThemeProvider theme={theme}>
-					<GlobalStyle />
-					<CssBaseline />
-					<MuiPickersUtilsProvider utils={DayJsUtils}>
-						<Component {...pageProps} />
-					</MuiPickersUtilsProvider>
-				</MuiThemeProvider>
-			</StylesProvider>
+			<ChakraProvider resetCSS theme={theme}>
+				<IconContext.Provider value={{ size: '1.75rem' }}>
+					<Component {...pageProps} />
+				</IconContext.Provider>
+			</ChakraProvider>
 		</>
 	);
 }

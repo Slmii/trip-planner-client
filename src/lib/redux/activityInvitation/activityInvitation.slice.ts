@@ -6,8 +6,7 @@ import { ActivityInvitationProps, ActivityInvitationState } from './activityInvi
 export const initialState: ActivityInvitationState = {
 	open: false,
 	activity: null,
-	fullWidth: true,
-	maxWidth: 'sm'
+	size: 'xl'
 };
 
 const activityInvitationSlice = createSlice({

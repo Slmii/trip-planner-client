@@ -1,9 +1,10 @@
-import Box from '@material-ui/core/Box';
+import { useToast, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Card, { CardProps } from '@components/cards/card';
+import Toast, { constants } from '@components/feedback/toast';
 import TripSummary from '@components/trips/trip-summary';
 import {
     Trip,
@@ -16,24 +17,22 @@ import {
     useMeQuery,
     useMyUpcomingTripQuery
 } from '@generated/graphql';
-import { dialog, snackbar } from '@lib/redux';
+import { dialog } from '@lib/redux';
+
+import spacing from '@theme/spacing';
 
 const Cards = ({ trips }: { trips: Trip[] }) => {
 	const router = useRouter();
-
 	const dispatch = useDispatch();
-
-	const [selectedTrip, setSelectedTrip] = useState<number>(0);
+	const [selectedTrip, setSelectedTrip] = useState(0);
 
 	const [deleteTrip] = useDeleteTripMutation();
-
 	const [addFavorite] = useAddFavoriteMutation();
-
 	const [deleteFavorite] = useDeleteFavoriteMutation();
-
 	const { data: meData } = useMeQuery();
-
 	const { data: upcomingTripData } = useMyUpcomingTripQuery();
+
+	const toast = useToast();
 
 	const handleOnDeleteTrip = async (tripId: number) => {
 		const options: dialog.DialogProps = {
@@ -52,13 +51,10 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 				});
 
 				if (response.data) {
-					dispatch(
-						snackbar.setSnackbar({
-							open: true,
-							severity: 'error',
-							message: 'Trip has been deleted'
-						})
-					);
+					toast({
+						...constants.TOAST_OPTIONS,
+						render: () => (<Toast message='Trip has been deleted' severity='error' />) as React.ReactNode
+					});
 				} else {
 					console.error(response.errors);
 				}
@@ -114,13 +110,11 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 		});
 
 		if (showSnackbar && response.data) {
-			dispatch(
-				snackbar.setSnackbar({
-					open: true,
-					severity: 'success',
-					message: 'Trip has been added to favorites'
-				})
-			);
+			toast({
+				...constants.TOAST_OPTIONS,
+				render: () =>
+					(<Toast message='Trip has been added to favorites' severity='success' />) as React.ReactNode
+			});
 		} else {
 			console.error(response.errors);
 		}
@@ -160,14 +154,11 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 		});
 
 		if (response.data) {
-			dispatch(
-				snackbar.setSnackbar({
-					open: true,
-					severity: 'error',
-					message: 'Trip has been deleted from favorites',
-					onUndo: () => handleOnAddFavorite(tripId, false)
-				})
-			);
+			toast({
+				...constants.TOAST_OPTIONS,
+				render: () =>
+					(<Toast message='Trip has been deleted from favorites' severity='error' />) as React.ReactNode
+			});
 		} else {
 			console.error(response.errors);
 		}
@@ -175,7 +166,7 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 
 	return (
 		<>
-			<Box display='flex' flexDirection='column'>
+			<VStack spacing={spacing.CARD}>
 				{trips.map(trip => {
 					const isCreator = trip.userId === meData?.me?.id;
 					const props: CardProps = {
@@ -192,7 +183,7 @@ const Cards = ({ trips }: { trips: Trip[] }) => {
 					};
 					return <Card key={trip.id} {...props} />;
 				})}
-			</Box>
+			</VStack>
 			<TripSummary tripId={selectedTrip} me={meData?.me} onClose={() => setSelectedTrip(0)} />
 		</>
 	);

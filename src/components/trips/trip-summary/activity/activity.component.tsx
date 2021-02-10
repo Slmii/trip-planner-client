@@ -1,44 +1,52 @@
-import React from 'react';
+import {
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Avatar,
+    AvatarGroup,
+    Box,
+    Divider,
+    Flex,
+    HStack,
+    Text,
+    Tooltip,
+    VStack
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { FaHiking } from 'react-icons/fa';
+import {
+    MdBeachAccess,
+    MdDelete,
+    MdDirectionsBus,
+    MdDirectionsWalk,
+    MdEmail,
+    MdLocalTaxi,
+    MdLocationCity,
+    MdLock,
+    MdLockOpen,
+    MdMotorcycle,
+    MdNaturePeople
+} from 'react-icons/md';
 
 import IconButton from '@components/buttons/icon-button';
+import Icon from '@components/icon';
 import TripDateAndLocations from '@components/trips/dates-and-locations';
-import { ActivityProps, Styled, TypeMapping } from '@components/trips/trip-summary/activity';
-import { helpers } from '@lib/utils';
+import { ActivityProps, TypeMapping } from '@components/trips/trip-summary/activity';
 
-import { globalStyles } from '@styles/index';
-
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const AccordionDetails = require('@material-ui/core/AccordionDetails').default;
-const Avatar = require('@material-ui/core/Avatar').default;
-const Tooltip = require('@material-ui/core/Tooltip').default;
-const AvatarGroup = require('@material-ui/lab/AvatarGroup').default;
-const Divider = require('@material-ui/core/Divider').default;
-const ExpandMoreIcon = require('@material-ui/icons/ExpandMore').default;
-const DeleteIcon = require('@material-ui/icons/Delete').default;
-const MailIcon = require('@material-ui/icons/Mail').default;
-const LockIcon = require('@material-ui/icons/Lock').default;
-const LockOpenIcon = require('@material-ui/icons/LockOpen').default;
-const BeachIcon = require('@material-ui/icons/BeachAccess').default;
-const LocationCityIcon = require('@material-ui/icons/LocationCity').default;
-const NaturePeopleIcon = require('@material-ui/icons/NaturePeople').default;
-const TaxiIcon = require('@material-ui/icons/LocalTaxi').default;
-const BusIcon = require('@material-ui/icons/DirectionsBus').default;
-const WalkIcon = require('@material-ui/icons/DirectionsWalk').default;
-const MotorcycleIcon = require('@material-ui/icons/Motorcycle').default;
+import spacing from '@theme/spacing';
 
 export const activityTypeIconMapping: TypeMapping[] = [
-	{ type: 'hiking', icon: <FaHiking size='1rem' /> },
-	{ type: 'beach', icon: <BeachIcon fontSize='inherit' /> },
-	{ type: 'tour', icon: <LocationCityIcon fontSize='inherit' /> },
-	{ type: 'nature', icon: <NaturePeopleIcon fontSize='inherit' /> }
+	{ type: 'hiking', icon: FaHiking },
+	{ type: 'beach', icon: MdBeachAccess },
+	{ type: 'tour', icon: MdLocationCity },
+	{ type: 'nature', icon: MdNaturePeople }
 ];
 export const transportationTypeIconMapping: TypeMapping[] = [
-	{ type: 'taxi', icon: <TaxiIcon fontSize='inherit' /> },
-	{ type: 'bus', icon: <BusIcon fontSize='inherit' /> },
-	{ type: 'foot', icon: <WalkIcon fontSize='inherit' /> },
-	{ type: 'motorbike', icon: <MotorcycleIcon fontSize='inherit' /> }
+	{ type: 'taxi', icon: MdLocalTaxi },
+	{ type: 'bus', icon: MdDirectionsBus },
+	{ type: 'foot', icon: MdDirectionsWalk },
+	{ type: 'motorbike', icon: MdMotorcycle }
 ];
 
 const Activity = ({ activity, isInvitationDisabled, isProfilePrivate, onDelete, onInvitation }: ActivityProps) => {
@@ -56,137 +64,160 @@ const Activity = ({ activity, isInvitationDisabled, isProfilePrivate, onDelete, 
 		transportationType
 	} = activity;
 
-	const { accordionHeading, accordionDetails } = Styled.activityStyles();
-
-	const { iconMr, iconMl, divider } = globalStyles();
+	const [isExpanded, setIsExpanded] = useState(false);
 
 	return (
-		<Styled.Accordion>
-			<Styled.AccordionSummary
-				expandIcon={<ExpandMoreIcon />}
-				aria-controls='my-trip-activities-content'
-				id='my-trip-activities-header'
-				title={name}
+		<AccordionItem
+			_first={{
+				mb: isExpanded ? '10px' : 0
+			}}
+			_notFirst={{
+				my: isExpanded ? '10px' : 0
+			}}
+		>
+			<AccordionButton
+				onClick={() => {
+					setIsExpanded(!isExpanded);
+				}}
 			>
-				<Box display='flex' alignItems='flex-end'>
-					{publicActivity ? <LockOpenIcon className={iconMr} /> : <LockIcon className={iconMr} />}
-					<Styled.AccordionTitle>
-						<Typography className={accordionHeading}>{name}</Typography>
-					</Styled.AccordionTitle>
-				</Box>
-			</Styled.AccordionSummary>
-			<AccordionDetails className={accordionDetails}>
-				<Box mb={1}>
+				<Flex alignItems='center' flex='1' textAlign='left'>
+					<Icon as={publicActivity ? MdLockOpen : MdLock} mr />
+					<Text textStyle='notification-title-name'>{name}</Text>
+				</Flex>
+				<AccordionIcon />
+			</AccordionButton>
+			<AccordionPanel>
+				<VStack spacing={spacing.BODY_SPACING} align='stretch'>
 					<TripDateAndLocations dateFrom={date} timezone={timezone} locations={[location]} />
-				</Box>
-				<Typography variant='body2'>{description}</Typography>
-				<Divider className={divider} variant='fullWidth' />
-				<Box display='flex' justifyContent='space-between' alignItems='center'>
-					<Box display='flex' height='100%'>
-						<Tooltip
-							title={
-								<>
-									<Typography variant='subtitle1'>
+					<Text textStyle='body'>{description}</Text>
+					<Divider />
+					<Flex justifyContent='space-between' alignItems='center'>
+						<HStack spacing={spacing.BODY_SPACING_SMALL} height='48px'>
+							<Tooltip
+								hasArrow
+								placement='left'
+								label={
+									<>
 										{users.length}/{maxPeople} joining
-									</Typography>
-									{users.map((user, idx) => (
-										<Box key={idx}>{user.name}</Box>
-									))}
-								</>
-							}
-							arrow
-							placement='left'
-						>
-							{users.length ? (
-								<AvatarGroup max={3}>
-									{users.map((user, idx) =>
-										!user.public ? (
-											<Avatar key={idx} />
-										) : (
-											<Avatar key={idx} alt={user.name ?? ''} src={user.profileImgUrl ?? ''}>
-												{helpers.transformToAvatarInitials(user.name ?? '')}
-											</Avatar>
-										)
-									)}
-								</AvatarGroup>
-							) : publicActivity ? (
-								<Typography variant='subtitle2'>No one has joined yet</Typography>
-							) : (
-								<Box display='flex' flexDirection='column'>
-									<Typography variant='subtitle2'>No one has joined yet.</Typography>
-									<Typography variant='subtitle2'>
-										Private activities are only joinable by invitations
-									</Typography>
-								</Box>
-							)}
-						</Tooltip>
-						{users.length ? (
-							<>
-								<Divider className={`${iconMl} ${iconMr}`} orientation='vertical' flexItem />
-								<AvatarGroup>
-									<Tooltip
-										title={`Activity: ${activityType.name.toLowerCase()}`}
-										arrow
-										placement='bottom'
-									>
-										<Avatar>
-											{
-												activityTypeIconMapping.find(({ type }) => type === activityType.type)
-													?.icon
-											}
-										</Avatar>
-									</Tooltip>
-									<Tooltip
-										title={`Transport: ${transportationType.name.toLowerCase()}`}
-										arrow
-										placement='bottom'
-									>
-										<Avatar>
-											{
-												transportationTypeIconMapping.find(
-													({ type }) => type === transportationType.type
-												)?.icon
-											}
-										</Avatar>
-									</Tooltip>
-								</AvatarGroup>
-							</>
-						) : null}
-					</Box>
-					<Box display='flex' alignItems='center'>
-						<IconButton
-							color='error'
-							aria-label='delete activity'
-							tooltip={true}
-							icon={<DeleteIcon fontSize='small' />}
-							title='Delete'
-							onClick={() => onDelete(id)}
-						/>
-						{isInvitationDisabled || isProfilePrivate ? (
-							<IconButton
-								color='primary'
-								tooltip={true}
-								icon={<MailIcon fontSize='small' />}
-								title={
-									isInvitationDisabled
-										? `${maxPeople} people have already joined`
-										: 'Account needs to be public in order to send out invitations'
+										{users.length ? (
+											<>
+												<Divider />
+												{users.map((user, idx) => (
+													<Box key={idx}>{user.name}</Box>
+												))}
+											</>
+										) : null}
+									</>
 								}
-								disabled={true}
-							/>
-						) : (
+							>
+								{users.length ? (
+									<AvatarGroup max={3}>
+										{users.map((user, idx) =>
+											!user.public ? (
+												<Avatar key={idx} size='sm' />
+											) : (
+												<Avatar
+													size='sm'
+													key={idx}
+													name={user.name ?? ''}
+													src={user.profileImgUrl ?? ''}
+												/>
+											)
+										)}
+									</AvatarGroup>
+								) : publicActivity ? (
+									<Text textStyle='subtitle'>No one has joined yet</Text>
+								) : (
+									<Box display='flex' flexDirection='column'>
+										<Text textStyle='subtitle'>No one has joined yet.</Text>
+										<Text textStyle='subtitle' lineHeight={1}>
+											Private activities are only joinable by invitations.
+										</Text>
+									</Box>
+								)}
+							</Tooltip>
+							{users.length ? (
+								<>
+									<Divider orientation='vertical' />
+									<AvatarGroup>
+										<Tooltip label={`Activity: ${activityType.name.toLowerCase()}`} hasArrow>
+											<Avatar
+												bg='primary.500'
+												size='sm'
+												mr={1}
+												icon={
+													<Icon
+														color='white'
+														size='sm'
+														as={
+															// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+															activityTypeIconMapping.find(
+																({ type }) => type === activityType.type
+															)!.icon
+														}
+													/>
+												}
+											/>
+										</Tooltip>
+										<Tooltip label={`Transport: ${transportationType.name.toLowerCase()}`} hasArrow>
+											<Avatar
+												bg='primary.500'
+												size='sm'
+												icon={
+													<Icon
+														color='white'
+														size='sm'
+														as={
+															// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+															transportationTypeIconMapping.find(
+																({ type }) => type === transportationType.type
+															)!.icon
+														}
+													/>
+												}
+											/>
+										</Tooltip>
+									</AvatarGroup>
+								</>
+							) : null}
+						</HStack>
+						<Flex>
 							<IconButton
-								color='primary'
+								colorScheme='red'
 								tooltip={true}
-								icon={<MailIcon fontSize='small' />}
-								title='Invite'
-								onClick={() => onInvitation(activity)}
+								icon={<Icon as={MdDelete} size='md' />}
+								title='Delete'
+								onClick={() => onDelete(id)}
+								size='md'
 							/>
-						)}
-					</Box>
-				</Box>
-			</AccordionDetails>
-		</Styled.Accordion>
+							{isInvitationDisabled || isProfilePrivate ? (
+								<IconButton
+									colorScheme='primary'
+									tooltip={true}
+									icon={<Icon as={MdEmail} size='md' />}
+									title={
+										isInvitationDisabled
+											? `${maxPeople} people have already joined`
+											: 'Account needs to be public in order to send out invitations'
+									}
+									disabled={true}
+									size='md'
+								/>
+							) : (
+								<IconButton
+									colorScheme='primary'
+									tooltip={true}
+									icon={<Icon as={MdEmail} size='md' />}
+									title='Invite'
+									onClick={() => onInvitation(activity)}
+									size='md'
+								/>
+							)}
+						</Flex>
+					</Flex>
+				</VStack>
+			</AccordionPanel>
+		</AccordionItem>
 	);
 };
 

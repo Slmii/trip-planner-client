@@ -1,3 +1,4 @@
+import { theme } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 import { QueryStringFilters } from '@components/filters/extended-filters';
@@ -17,10 +18,11 @@ export interface FiltersRouterQueryObject {
 }
 
 export type Color = 'inherit' | 'default' | 'primary' | 'secondary';
-export type Size = 'small' | 'medium' | 'large';
+export type Size = 'lg' | 'md' | 'sm' | 'xs';
 export type Severity = 'error' | 'warning' | 'success' | 'info';
 export type ActivityType = 'hiking' | 'beach' | 'tour' | 'nature';
 export type TransportationType = 'taxi' | 'bus' | 'foot' | 'motorbike';
+export type ColorKeys = KeyOf<typeof theme.colors> | 'primary' | 'secondary' | 'text';
 export type ValueOf<T> = T[keyof T];
 export type KeyOf<T> = keyof T;
 

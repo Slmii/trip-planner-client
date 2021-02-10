@@ -5,13 +5,13 @@ const signUpSchema = yup.object().shape({
     firstName: yup
         .string()
         .trim()
-        .matches(/^[a-zA-Z ]*$/, 'First Name can only contain alpha characters')
-        .required('Please provide your First Name'),
+        .matches(/^[a-zA-Z ]*$/, 'First name can only contain alpha characters')
+        .required('Please provide your first Name'),
     lastName: yup
         .string()
         .trim()
-        .matches(/^[a-zA-Z ]*$/, 'Last Name can only contain alpha characters')
-        .required('Please provide your Last Name'),
+        .matches(/^[a-zA-Z ]*$/, 'Last name can only contain alpha characters')
+        .required('Please provide your last name'),
     email: yup
         .string()
         .trim()

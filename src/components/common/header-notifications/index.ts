@@ -1,5 +1,3 @@
-import Notifications from './notifications.component';
+import Notifications from './header-notifications.component';
 
-export * as Styled from './notifications.styled';
-export type { NotificationsProps, StyledBadgeProps } from './notifications.types';
 export default Notifications;

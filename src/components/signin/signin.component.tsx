@@ -1,20 +1,18 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import Button from '@components/buttons/button';
-import FormGroup from '@components/form/form-group';
-import FormInputField from '@components/form/form-input-field';
-import { SignInInitialValues, SubmitState } from '@components/signin';
+import Alert from '@components/feedback/alert';
+import FormGroup from '@components/inputs/form-group';
+import FormInputField from '@components/inputs/form-input-field';
+import { SignInInitialValues } from '@components/signin';
 import { MeDocument, MeQuery, useSignInMutation } from '@generated/graphql';
 
 import { Content } from '@styles/index';
-
-const Box = require('@material-ui/core/Box').default;
-const Typography = require('@material-ui/core/Typography').default;
-const Alert = require('@material-ui/lab/Alert').default;
 
 const initialValues: SignInInitialValues = {
 	email: '',
@@ -23,7 +21,7 @@ const initialValues: SignInInitialValues = {
 
 export default function SignIn() {
 	const router = useRouter();
-	const [submitState, setSubmitState] = useState<SubmitState>({ formError: '', isSubmitted: false });
+	const [submitState, setSubmitState] = useState({ formError: '', isSubmitted: false });
 
 	const [signIn] = useSignInMutation();
 
@@ -80,40 +78,40 @@ export default function SignIn() {
 				{props => (
 					<Box width='100%'>
 						<Form onSubmit={props.handleSubmit}>
-							<Box textAlign='center' mb='20px'>
-								<Typography variant='h6' component='h1' gutterBottom>
+							<Box textAlign='center' mb={5}>
+								<Heading as='h1' size='md'>
 									Sign In to your account
-								</Typography>
+								</Heading>
 								{submitState.formError && (
-									<Box color='error.main'>
-										<Alert severity='error'>{submitState.formError}</Alert>
+									<Box mt={5}>
+										<Alert status='error' error={submitState.formError} />
 									</Box>
 								)}
 							</Box>
 							<FormGroup>
-								<FormInputField name='email' label='Email Address' />
+								<FormInputField name='email' label='Email address' />
 							</FormGroup>
 							<FormGroup>
 								<FormInputField name='password' label='Password' type='password' />
 							</FormGroup>
-							<Box fontSize={14} display='flex' justifyContent='flex-end' mt={1.5} mb={1.5}>
-								<Link href='/forgotten'>
-									<a className='bold' title='Forgot password?'>
+							<Flex fontSize={14} justifyContent='flex-end' mt={5} mb={5}>
+								<Text as={Link} href='/forgotten' passHref>
+									<Text as='a' fontWeight='bold'>
 										Forgot password?
-									</a>
-								</Link>
-							</Box>
-							<Button type='submit' size='large' loading={submitState.isSubmitted}>
+									</Text>
+								</Text>
+							</Flex>
+							<Button type='submit' size='lg' isFullWidth={true} isLoading={submitState.isSubmitted}>
 								Sign In
 							</Button>
-							<Box textAlign='center' mt={3}>
+							<Text textAlign='center' mt={12}>
 								Don&apos;t have an account yet?&nbsp;
-								<Link href='/signup'>
-									<a title='Sign Up' className='bold'>
-										Sign Up
-									</a>
-								</Link>
-							</Box>
+								<Text as={Link} href='/signup' passHref>
+									<Text as='a' fontWeight='bold' color='secondary.500'>
+										Sign up
+									</Text>
+								</Text>
+							</Text>
 						</Form>
 					</Box>
 				)}

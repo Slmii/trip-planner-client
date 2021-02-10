@@ -1,38 +1,35 @@
-import Box from '@material-ui/core/Box';
-import cn from 'classnames';
+import { Box, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { constants, Styled } from '@components/account/account-menu';
-import { helpers } from '@lib/utils';
-
-import { globalStyles } from '@styles/index';
+import { constants } from '@components/account/account-menu';
+import Icon from '@components/icon';
+import { url } from '@lib/utils';
 
 const AccountMenu = () => {
 	const router = useRouter();
-	const { 1: subPath } = helpers.getCurrentRoute(router);
-
-	const { iconMr } = globalStyles();
-	const { onHover, active } = Styled.accountMenuStyles();
+	const { 1: subPath } = url.getCurrentRoute(router);
 
 	return (
-		<Box width='15%' display='flex' flexDirection='column' mr={2}>
-			{constants.ACCOUNT_MENU.map(({ key, Icon, title }) => (
+		<Flex width='15%' flexDirection='column' mr={8}>
+			{constants.ACCOUNT_MENU.map(({ key, Icon: AccountMenuIcon, title }) => (
 				<Link key={key} href={`/account/${key}`}>
-					{/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-					<a
-						className={cn(onHover, {
-							[active]: subPath === key
-						})}
+					<Box
+						as='a'
+						color={subPath === key ? 'primary.500' : 'text'}
+						_hover={{
+							textDecoration: 'none !important',
+							color: 'primary.500'
+						}}
 					>
-						<Box padding='14px 0' display='flex' alignContent='center'>
-							<Icon fontSize='small' className={iconMr} />
+						<Flex py='14px' alignContent='center'>
+							<Icon as={AccountMenuIcon} mr />
 							{title}
-						</Box>
-					</a>
+						</Flex>
+					</Box>
 				</Link>
 			))}
-		</Box>
+		</Flex>
 	);
 };
 

@@ -1,3 +1,5 @@
+import { IconType } from 'react-icons/lib';
+
 import { ActivityFragment } from '@generated/graphql';
 import { ActivityType, TransportationType } from '@lib/types';
 
@@ -11,5 +13,5 @@ export interface ActivityProps {
 
 export interface TypeMapping {
 	type: ActivityType | TransportationType;
-	icon: JSX.Element;
+	icon: IconType;
 }

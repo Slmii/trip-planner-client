@@ -2,7 +2,7 @@ import ExtendedFilters from './extended-filters.component';
 
 export * as constants from './extended-fitlters.constants';
 export type {
-	AnchorElementState,
+	FilterMenusState,
 	ArrayValues,
 	ChipsPrefixMapping,
 	QueryStringFilters,

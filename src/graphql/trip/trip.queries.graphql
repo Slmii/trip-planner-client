@@ -7,8 +7,8 @@ query MyTrips($where: TripWhereInput, $pagination: PaginationInput!, $orderBy: T
 	}
 }
 
-query Trip($tripId: Int!) {
-	trip(tripId: $tripId) {
+query Trip($tripId: Int!, $isCreator: Boolean) {
+	trip(tripId: $tripId, isCreator: $isCreator) {
 		...Trip
 	}
 }

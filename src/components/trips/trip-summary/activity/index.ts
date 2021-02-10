@@ -1,5 +1,5 @@
-import Activity from './activity.component';
+import Activity, { activityTypeIconMapping, transportationTypeIconMapping } from './activity.component';
 
-export * as Styled from './activity.styled';
 export type { ActivityProps, TypeMapping } from './activity.types';
+export { activityTypeIconMapping, transportationTypeIconMapping };
 export default Activity;

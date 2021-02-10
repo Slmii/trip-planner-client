@@ -1,5 +1,3 @@
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-
 import { SortOrder, TripSortByInput } from '@generated/graphql';
 import { ActivityType, KeyOf, TransportationType, ValueOf } from '@lib/types';
 
@@ -11,24 +9,23 @@ export type SearchIn = 'trips' | 'activities' | 'preparations';
 export interface QueryStringFilters {
 	search?: string;
 	searchIn: SearchIn[];
-	dateFrom: MaterialUiPickersDate;
-	dateTo: MaterialUiPickersDate;
-	activityDate: MaterialUiPickersDate;
+	dateFrom: Date | null;
+	dateTo: Date | null;
+	activityDate: Date | null;
 	activityType?: ActivityType;
 	transportationType?: TransportationType;
 	past: boolean;
 	sort: SortBy;
 	order: OrderBy;
 }
-export interface AnchorElementState {
-	quickFilters: null | HTMLElement;
-	dateFrom: null | HTMLElement;
-	dateTo: null | HTMLElement;
-	activityDate: null | HTMLElement;
-	filters: null | HTMLElement;
-	activityType: null | HTMLElement;
-	transportationType: null | HTMLElement;
-	sort: null | HTMLElement;
+export interface FilterMenusState {
+	quickFilters: boolean;
+	dateFrom: boolean;
+	dateTo: boolean;
+	activityDate: boolean;
+	activityType: boolean;
+	transportationType: boolean;
+	sort: boolean;
 }
 
 export interface ArrayValues {
@@ -39,8 +36,6 @@ export interface ArrayValues {
 export interface QueryStringFilterChange {
 	queryString: KeyOf<QueryStringFilters>;
 	value: ValueOf<QueryStringFilters>;
-	closeMenu?: boolean;
-	otherMenus?: KeyOf<AnchorElementState>[];
 }
 
 export interface SearchInCheckboxes {

@@ -1,4 +1,4 @@
-import Trips from './trips.component';
+import TripsWrapper from './trips.component';
 
-export type { TripsProps } from './trips.types';
-export default Trips;
+export type { TripsWrapperProps } from './trips.types';
+export default TripsWrapper;

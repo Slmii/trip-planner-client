@@ -1,8 +1,10 @@
 import { Trip } from '@generated/graphql';
 
-export interface TripsProps {
+export interface TripsWrapperProps {
+	heading: string;
+	isLoading: boolean;
 	trips: Trip[];
-	loading: boolean;
-	pageName: string;
 	totalCount: number;
+	suffix?: string;
+	hasFilters?: boolean;
 }

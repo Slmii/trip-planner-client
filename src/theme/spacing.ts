@@ -1,0 +1,17 @@
+const BREADCRUMB = 5;
+const BUTTON = 2;
+const CARD = 5;
+const INNER_PADDING = '20px 30px';
+const BODY_SPACING = 4;
+const BODY_SPACING_LARGE = 6;
+const BODY_SPACING_SMALL = 2;
+
+export default {
+	BREADCRUMB,
+	BUTTON,
+	CARD,
+	INNER_PADDING,
+	BODY_SPACING,
+	BODY_SPACING_LARGE,
+	BODY_SPACING_SMALL
+};

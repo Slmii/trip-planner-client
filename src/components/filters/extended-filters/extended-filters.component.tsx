@@ -1,47 +1,54 @@
-import Box from '@material-ui/core/Box';
-import Checkbox from '@material-ui/core/Checkbox';
-import Chip from '@material-ui/core/Chip';
-import Container from '@material-ui/core/Container';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
-import CancelIcon from '@material-ui/icons/Cancel';
-import ClearIcon from '@material-ui/icons/Clear';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SearchIcon from '@material-ui/icons/Search';
-import cn from 'classnames';
+import {
+    Box,
+    Checkbox,
+    CheckboxGroup,
+    Container,
+    Divider,
+    Flex,
+    HStack,
+    Tag,
+    TagCloseButton,
+    TagLabel,
+    Text,
+    VStack,
+    Wrap,
+    WrapItem
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import { MdCancel, MdSearch } from 'react-icons/md';
 
 import Button from '@components/buttons/button';
-import DatePicker from '@components/datepicker';
 import {
-    AnchorElementState,
     constants,
+    FilterMenusState,
     QueryStringFilterChange,
     QueryStringFilters
 } from '@components/filters/extended-filters';
+import FilterTag from '@components/filters/filter-tag';
 import InputField from '@components/inputs/input-field';
-import Menu from '@components/menu';
-import Popover from '@components/popover';
+import InputSwitch from '@components/inputs/input-switch';
+import Menu from '@components/overlay/menu';
+import Popover from '@components/overlay/popover';
+import {
+    activityTypeIconMapping,
+    transportationTypeIconMapping
+} from '@components/trips/trip-summary/activity';
 import { useActivityTypesQuery, useTransportationTypesQuery } from '@generated/graphql';
 import { REMOVE_QUERY_STRINGS_ON_ACCOUNT_PAGE } from '@lib/constants';
 import { KeyOf } from '@lib/types';
-import { date, helpers } from '@lib/utils';
+import { date, url } from '@lib/utils';
 
-import { globalStyles } from '@styles/index';
-import theme from '@theme/index';
+import spacing from '@theme/spacing';
+
+// const entries = Object.entries as <T>(o: T) => [Extract<keyof T, string>, T[keyof T]][];
 
 const ExtendedFilters = () => {
 	const router = useRouter();
 
-	const [path, subPath] = useMemo(() => helpers.getCurrentRoute(router), [router]);
-	const queryStringsAsFilters = useMemo(() => helpers.getQueryStringFilters(router.query), [router.query]);
+	const [path, subPath] = useMemo(() => url.getCurrentRoute(router), [router]);
+	const queryStringsAsFilters = useMemo(() => url.getQueryStringFilters(router.query), [router.query]);
 	const {
 		search,
 		searchIn,
@@ -54,29 +61,21 @@ const ExtendedFilters = () => {
 		sort,
 		order
 	} = queryStringsAsFilters;
-
-	const [anchorEls, setAnchorEls] = useState<AnchorElementState>({
-		quickFilters: null,
-		dateFrom: null,
-		dateTo: null,
-		activityDate: null,
-		activityType: null,
-		transportationType: null,
-		filters: null,
-		sort: null
-	});
 	const [searchInput, setSearchInput] = useState(search ?? '');
+	const [calendarStates, setCalendarStates] = useState<Partial<Record<KeyOf<QueryStringFilters>, boolean>>>({
+		dateFrom: false,
+		dateTo: false,
+		activityDate: false
+	});
 
 	const { data: activityTypesData } = useActivityTypesQuery();
 	const { data: transportationTypesData } = useTransportationTypesQuery();
 
-	const { buttonMr, buttonMl, buttonMt, buttonMb, errorChipContained, divider, bold } = globalStyles();
+	const isExplorePage = url.isPage('explore', router);
+	const isAccountPage = url.isPage('account', router);
 
-	const isExplorePage = helpers.isPage('explore', router);
-	const isAccountPage = helpers.isPage('account', router);
-
-	const handleOnMenuOpen = (e: React.MouseEvent, type: KeyOf<AnchorElementState>) => {
-		setAnchorEls(prevState => ({ ...prevState, [type]: e.currentTarget }));
+	const handleOnCalendarChange = (calendar: 'dateTo' | 'dateFrom' | 'activityDate') => {
+		setCalendarStates(prevState => ({ ...prevState, [calendar]: !prevState[calendar] }));
 	};
 
 	const handleOnChipDelete = (type: KeyOf<QueryStringFilters>) => {
@@ -84,7 +83,7 @@ const ExtendedFilters = () => {
 			setSearchInput('');
 		}
 
-		const queryStrings = helpers.convertFiltersToRouterQueryObject({
+		const queryStrings = url.convertFiltersToRouterQueryObject({
 			filters: queryStringsAsFilters,
 			removeQueryStrings: [type]
 		});
@@ -102,13 +101,8 @@ const ExtendedFilters = () => {
 		e.preventDefault();
 		handleOnFilterChange({
 			queryString: 'search',
-			value: searchInput,
-			closeMenu: false
+			value: searchInput
 		});
-	};
-
-	const handleOnMenuClose = (type: KeyOf<AnchorElementState>) => {
-		setAnchorEls(prevState => ({ ...prevState, [type]: null }));
 	};
 
 	const handleOnClearFilters = () => {
@@ -116,22 +110,18 @@ const ExtendedFilters = () => {
 		router.push(`/${path}/${subPath}`);
 	};
 
-	const handleOnFilterChange = ({ queryString, value, closeMenu = true, otherMenus }: QueryStringFilterChange) => {
-		if (closeMenu) {
-			handleOnMenuClose(queryString as KeyOf<AnchorElementState>);
-
-			if (otherMenus) {
-				otherMenus.forEach(menu => handleOnMenuClose(menu));
-			}
-		}
-
+	const handleOnFilterChange = ({ queryString, value }: QueryStringFilterChange) => {
 		// Append to URL object if a filter is chosen or if a query string (filter) is already present in the URL
 		// This way we dont lose the state of all chosen filters
-		const queryStrings = helpers.convertFiltersToRouterQueryObject({
+		const queryStrings = url.convertFiltersToRouterQueryObject({
 			filters: queryStringsAsFilters,
 			queryString,
 			value,
-			removeQueryStrings: isAccountPage ? REMOVE_QUERY_STRINGS_ON_ACCOUNT_PAGE : undefined
+			removeQueryStrings: isAccountPage
+				? REMOVE_QUERY_STRINGS_ON_ACCOUNT_PAGE
+				: isExplorePage
+				? ['past']
+				: undefined
 		});
 
 		router.push({
@@ -151,451 +141,435 @@ const ExtendedFilters = () => {
 		setSearchInput('');
 		handleOnFilterChange({
 			queryString: 'search',
-			value: '',
-			closeMenu: false
+			value: ''
 		});
+	};
+
+	const renderTagLabel = (type: KeyOf<FilterMenusState> | 'search') => {
+		if (type === 'quickFilters') {
+			return 'Quick options';
+		} else if (type === 'search') {
+			return `Search: ${search}`;
+		} else if (type === 'sort') {
+			return `Sort: ${constants.SORT_BY_VALUES.find(
+				item => item.value === sort
+			)?.label.toLowerCase()}, ${constants.ORDER_BY_VALUES.find(
+				item => item.value === order
+			)?.label.toLowerCase()}`;
+		} else if (type === 'dateFrom') {
+			return `Date from${dateFrom ? `: ${date.formatDate({ date: dateFrom })}` : ''}`;
+		} else if (type === 'dateTo') {
+			return `Date to${dateTo ? `: ${date.formatDate({ date: dateTo })}` : ''}`;
+		} else if (type === 'activityDate') {
+			return `Activity date${activityDate ? `: ${date.formatDate({ date: activityDate })}` : ''}`;
+		} else if (type === 'activityType') {
+			return `Activity${
+				activityType
+					? `: ${
+							activityTypesData?.activityTypes
+								?.find(({ type }) => type === activityType)
+								?.name.toLowerCase()
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  }`
+					: ''
+			}`;
+		} else if (type === 'transportationType') {
+			return `Transportation${
+				transportationType
+					? `: ${
+							transportationTypesData?.transportationTypes
+								?.find(({ type }) => type === transportationType)
+								?.name.toLowerCase()
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  }`
+					: ''
+			}`;
+		}
+
+		return '';
 	};
 
 	return (
 		<Box
 			width='100%'
-			bgcolor={isExplorePage ? theme.palette.background.default : 'white'}
-			borderBottom={isExplorePage ? `1px solid ${theme.palette.borderColor}` : 0}
+			bg={'gray.50'}
+			borderWidth={1}
+			borderRadius={isAccountPage ? 'base' : 0}
+			borderStyle='solid'
+			borderColor='border'
 			position='relative'
-			zIndex={1}
 		>
-			<Container component='div' fixed disableGutters={true}>
-				<Box padding={isExplorePage ? 1.5 : 0} display='flex' flexDirection='column'>
-					<Box display='flex' flexDirection='column'>
-						<Box display='flex'>
-							<Box
-								component='form'
+			<Container maxW='container.xl' as='div' p={isAccountPage ? 0 : undefined}>
+				<Flex p={6} flexDirection='column'>
+					<VStack spacing={spacing.BODY_SPACING} align='stretch'>
+						<Flex>
+							<VStack
+								spacing={spacing.BODY_SPACING}
+								align='stretch'
+								as='form'
+								w='100%'
 								onSubmit={handleOnSubmitSearch}
-								width='100%'
-								display='flex'
-								flexDirection='column'
 							>
-								<Box display='flex'>
+								<HStack spacing={spacing.BUTTON}>
 									<InputField
-										label='Search'
 										placeholder='Search in trips, activities or preparations'
 										type='text'
 										name='search'
-										size='small'
 										value={searchInput}
 										onChange={handleOnSearchInputChange}
-										endAdornment={<CancelIcon color='action' />}
+										endAdornment={<MdCancel />}
 										onIconClick={handleOnResetSearchInput}
 									/>
-									<Button
-										variant='contained'
-										type='submit'
-										className={cn(buttonMl)}
-										fullWidth={false}
-										endIcon={<SearchIcon />}
-									>
+									<Button variant='solid' height='100%' type='submit' rightIcon={<MdSearch />}>
 										Search
 									</Button>
-								</Box>
+								</HStack>
 								{isAccountPage ? (
-									<FormControlLabel
-										control={
-											<Switch
-												checked={past}
-												onChange={() =>
-													handleOnFilterChange({
-														queryString: 'past',
-														value: !past,
-														closeMenu: false
-													})
-												}
-												name='pastTrips'
-											/>
+									<InputSwitch
+										onChange={() =>
+											handleOnFilterChange({
+												queryString: 'past',
+												value: !past
+											})
 										}
+										checked={past}
+										name='showPastTrips'
+										label='Show past trips'
 										labelPlacement='end'
-										label={<Typography variant='subtitle1'>Show past trips</Typography>}
-										className={cn(buttonMr, buttonMt)}
 									/>
 								) : null}
-							</Box>
-						</Box>
+							</VStack>
+						</Flex>
 						{isExplorePage && (
 							<>
-								<Divider className={divider} />
-								<Box display='flex' justifyContent='space-between'>
-									<Box display='flex' mb={1} flexWrap='wrap' width='100%'>
-										<Chip
-											aria-controls='quick-filters-popover'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={
-												anchorEls.quickFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />
-											}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'quickFilters')}
-											// eslint-disable-next-line @typescript-eslint/no-empty-function
-											onDelete={() => {}}
-											label='Quick options'
-											color='primary'
-											size='small'
-										/>
-										{search ? (
-											<Chip
-												className={cn(buttonMr, buttonMb)}
-												clickable={true}
-												onDelete={() => handleOnChipDelete('search')}
-												label={`Search${search ? `: ${search}` : ''}`}
-												color='primary'
-												size='small'
-											/>
-										) : null}
-										<Chip
-											aria-controls='sort-menu'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={anchorEls.sort ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'sort')}
-											label={`Sort: ${constants.SORT_BY_VALUES.find(
-												item => item.value === sort
-											)?.label.toLowerCase()}, ${constants.ORDER_BY_VALUES.find(
-												item => item.value === order
-											)?.label.toLowerCase()}`}
-											// eslint-disable-next-line @typescript-eslint/no-empty-function
-											onDelete={() => {}}
-											color='primary'
-											size='small'
-										/>
-										<Chip
-											aria-controls='date-from-menu'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={anchorEls.dateFrom ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateFrom')}
-											onDelete={() => handleOnChipDelete('dateFrom')}
-											label={`Date from${
-												dateFrom ? `: ${date.formatDate({ date: dateFrom })}` : ''
-											}`}
-											color='primary'
-											variant={dateFrom ? 'default' : 'outlined'}
-											size='small'
-										/>
-										<Chip
-											aria-controls='date-to-popover'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={anchorEls.dateTo ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'dateTo')}
-											onDelete={() => handleOnChipDelete('dateTo')}
-											label={`Date to${dateTo ? `: ${date.formatDate({ date: dateTo })}` : ''}`}
-											color='primary'
-											variant={dateTo ? 'default' : 'outlined'}
-											size='small'
-										/>
-										<Chip
-											aria-controls='activity-date-popover'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={
-												anchorEls.activityDate ? <ExpandLessIcon /> : <ExpandMoreIcon />
-											}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityDate')}
-											onDelete={() => handleOnChipDelete('activityDate')}
-											label={`Activity date${
-												activityDate ? `: ${date.formatDate({ date: activityDate })}` : ''
-											}`}
-											color='primary'
-											variant={activityDate ? 'default' : 'outlined'}
-											size='small'
-										/>
-										<Chip
-											aria-controls='activity-menu'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={
-												anchorEls.activityType ? <ExpandLessIcon /> : <ExpandMoreIcon />
-											}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'activityType')}
-											onDelete={() => handleOnChipDelete('activityType')}
-											label={`Activity${
-												activityType
-													? `: ${
-															activityTypesData?.activityTypes
-																?.find(({ type }) => type === activityType)
-																?.name.toLowerCase()
-															// eslint-disable-next-line no-mixed-spaces-and-tabs
-													  }`
-													: ''
-											}`}
-											color='primary'
-											variant={activityType ? 'default' : 'outlined'}
-											size='small'
-										/>
-										<Chip
-											aria-controls='transportation-menu'
-											aria-haspopup='true'
-											className={cn(buttonMr, buttonMb)}
-											clickable={true}
-											deleteIcon={
-												anchorEls.transportationType ? <ExpandLessIcon /> : <ExpandMoreIcon />
-											}
-											onClick={(e: React.MouseEvent) => handleOnMenuOpen(e, 'transportationType')}
-											onDelete={() => handleOnChipDelete('transportationType')}
-											label={`Transportation${
-												transportationType
-													? `: ${
-															transportationTypesData?.transportationTypes
-																?.find(({ type }) => type === transportationType)
-																?.name.toLowerCase()
-															// eslint-disable-next-line no-mixed-spaces-and-tabs
-													  }`
-													: ''
-											}`}
-											color='primary'
-											variant={transportationType ? 'default' : 'outlined'}
-											size='small'
-										/>
-
-										<Popover
-											type='quickFilters'
-											anchorEl={anchorEls.quickFilters}
-											onClose={type => handleOnMenuClose(type as KeyOf<AnchorElementState>)}
-										>
-											<Box display='flex' width='450px'>
-												<Box
-													width='50%'
-													display='flex'
-													flexDirection='column'
-													margin='20px 15px 20px 20px'
-												>
-													<FormControl component='fieldset'>
-														<Typography variant='body2' gutterBottom className={bold}>
-															Search in:
-														</Typography>
-														<Divider />
-														<FormGroup>
-															{constants.SEARCH_IN.map(({ label, value }) => {
-																const isDisabled =
-																	searchIn.length === 1 && searchIn[0] === value;
-																const isChecked = searchIn.includes(value);
-
-																return (
-																	<FormControlLabel
-																		key={value}
-																		control={
-																			<Checkbox
-																				checked={isChecked}
-																				onChange={(
-																					e: React.ChangeEvent<HTMLInputElement>
-																				) =>
-																					handleOnFilterChange({
-																						queryString: 'searchIn',
-																						value: `${e.target.name}-${e.target.checked}`,
-																						closeMenu: false
-																					})
-																				}
-																				disabled={isDisabled}
-																				name={value}
-																				color='primary'
-																				size='small'
-																			/>
-																		}
-																		label={
-																			<Typography variant='body2'>
-																				{label}
-																			</Typography>
-																		}
-																	/>
-																);
-															})}
-														</FormGroup>
-														<FormHelperText margin='dense'>
-															At least 1 checkbox must be selected
-														</FormHelperText>
-													</FormControl>
-												</Box>
-												<Box
-													width='50%'
-													display='flex'
-													flexDirection='column'
-													margin='20px 30px 20px 15px'
-												>
-													<Typography variant='body2' gutterBottom className={bold}>
-														Date:
-													</Typography>
-													<Divider />
-													<Button
-														variant='outlined'
-														className={cn(buttonMb, buttonMt)}
-														onClick={() =>
-															handleOnFilterChange({
-																queryString: 'dateTo',
-																value: date.getEndOfWeek(),
-																otherMenus: ['quickFilters']
-															})
-														}
-													>
-														This week
-													</Button>
-													<Button
-														variant='outlined'
-														className={buttonMb}
-														onClick={() =>
-															handleOnFilterChange({
-																queryString: 'dateTo',
-																value: date.getEndOfMonth(),
-																otherMenus: ['quickFilters']
-															})
-														}
-													>
-														This month
-													</Button>
-													<Button
-														variant='outlined'
-														className={buttonMb}
-														onClick={() => {
-															const upcomingMonth = date.addUnitToCurrentDate(1, 'month');
-
-															handleOnFilterChange({
-																queryString: 'dateTo',
-																value: date.getEndOfMonth(upcomingMonth),
-																otherMenus: ['quickFilters']
-															});
-														}}
-													>
-														Upcoming month
-													</Button>
-													<Button
-														variant='outlined'
-														className={buttonMb}
-														onClick={() => {
-															const upcomingMonths = date.addUnitToCurrentDate(
-																3,
-																'month'
-															);
-
-															handleOnFilterChange({
-																queryString: 'dateTo',
-																value: date.getEndOfMonth(upcomingMonths),
-																otherMenus: ['quickFilters']
-															});
-														}}
-													>
-														Upcoming 3 months
-													</Button>
-												</Box>
-											</Box>
-										</Popover>
-										{constants.POPOVER_FILTER_DATES.map(value => {
-											return (
-												<Popover
-													key={value}
-													type={value}
-													anchorEl={anchorEls[value as KeyOf<AnchorElementState>]}
-													onClose={type =>
-														handleOnMenuClose(type as KeyOf<AnchorElementState>)
-													}
-												>
-													<DatePicker
-														date={queryStringsAsFilters[value]}
-														onChange={date =>
-															handleOnFilterChange({ queryString: value, value: date })
-														}
+								<Divider />
+								<Flex justifyContent='space-between'>
+									<Wrap>
+										<WrapItem>
+											<Popover
+												width='450px'
+												trigger={({ isOpen }) => (
+													<FilterTag
+														label={renderTagLabel('quickFilters')}
+														defaultVariant='solid'
+														isPopoverOpen={isOpen}
 													/>
-												</Popover>
-											);
-										})}
-										<Menu
-											anchorEl={anchorEls.activityType}
-											type='activity'
-											onClose={() => handleOnMenuClose('activityType')}
-											menu={
-												activityTypesData?.activityTypes.map(({ name, type }) => ({
-													label: name,
-													value: type,
-													onMenuItemClick: value =>
-														handleOnFilterChange({
-															queryString: 'activityType',
-															value: value
-														}),
-													selected: activityType === type
-												})) || []
-											}
-										/>
-										<Menu
-											anchorEl={anchorEls.transportationType}
-											type='transportation'
-											onClose={() => handleOnMenuClose('transportationType')}
-											menu={
-												transportationTypesData?.transportationTypes.map(({ name, type }) => ({
-													label: name,
-													value: type,
-													onMenuItemClick: value =>
-														handleOnFilterChange({
-															queryString: 'transportationType',
-															value: value
-														}),
-													selected: transportationType === type
-												})) || []
-											}
-										/>
-										<Menu
-											anchorEl={anchorEls.sort}
-											type='sort-by'
-											multiple={true}
-											onClose={() => handleOnMenuClose('sort')}
-											menu={[
-												{
-													subHeader: 'Sort by',
-													type: 'sort',
-													menuItems: constants.SORT_BY_VALUES.map(({ label, value }) => ({
-														label,
-														value,
-														onMenuItemClick: value =>
-															handleOnFilterChange({
-																queryString: 'sort',
-																value: value,
-																closeMenu: false
-															}),
-														selected: sort === value
-													}))
-												},
-												{
-													subHeader: 'Order by',
-													type: 'order',
-													menuItems: constants.ORDER_BY_VALUES.map(({ label, value }) => ({
-														label,
-														value,
-														onMenuItemClick: value =>
-															handleOnFilterChange({
-																queryString: 'order',
-																value: value,
-																closeMenu: false
-															}),
-														selected: order === value
-													}))
+												)}
+												body={({ onClose }) => (
+													<Flex>
+														<VStack
+															width='50%'
+															margin='20px 15px 20px 20px'
+															align='stretch'
+														>
+															<Text textStyle='body' fontWeight='bold'>
+																Search in:
+															</Text>
+															<Divider />
+															<CheckboxGroup colorScheme='green' defaultValue={searchIn}>
+																{constants.SEARCH_IN.map(({ label, value }) => {
+																	const isDisabled =
+																		searchIn.length === 1 && searchIn[0] === value;
+
+																	return (
+																		<Checkbox
+																			key={label}
+																			isDisabled={isDisabled}
+																			value={value}
+																			colorScheme='secondary'
+																			onChange={e =>
+																				handleOnFilterChange({
+																					queryString: 'searchIn',
+																					value: `${value}-${e.target.checked}`
+																				})
+																			}
+																		>
+																			<Text textStyle='body'>{label}</Text>
+																		</Checkbox>
+																	);
+																})}
+															</CheckboxGroup>
+															<Text textStyle='subtitle-sm'>
+																At least 1 checkbox must be selected
+															</Text>
+														</VStack>
+														<VStack
+															width='50%'
+															margin='20px 15px 20px 20px'
+															align='stretch'
+														>
+															<Text textStyle='body' fontWeight='bold'>
+																Date:
+															</Text>
+															<Divider />
+															<VStack spacing={spacing.BUTTON} align='stretch'>
+																<Button
+																	variant='outline'
+																	onClick={() => {
+																		onClose();
+																		handleOnFilterChange({
+																			queryString: 'dateTo',
+																			value: date.getEndOfWeek().toDate()
+																		});
+																	}}
+																>
+																	This week
+																</Button>
+																<Button
+																	variant='outline'
+																	onClick={() => {
+																		onClose();
+																		handleOnFilterChange({
+																			queryString: 'dateTo',
+																			value: date.getEndOfMonth().toDate()
+																		});
+																	}}
+																>
+																	This month
+																</Button>
+																<Button
+																	variant='outline'
+																	onClick={() => {
+																		const upcomingMonth = date.addUnitToCurrentDate(
+																			1,
+																			'month'
+																		);
+
+																		onClose();
+																		handleOnFilterChange({
+																			queryString: 'dateTo',
+																			value: date
+																				.getEndOfMonth(upcomingMonth)
+																				.toDate()
+																		});
+																	}}
+																>
+																	Upcoming month
+																</Button>
+																<Button
+																	variant='outline'
+																	onClick={() => {
+																		const upcomingMonths = date.addUnitToCurrentDate(
+																			3,
+																			'month'
+																		);
+
+																		onClose();
+																		handleOnFilterChange({
+																			queryString: 'dateTo',
+																			value: date
+																				.getEndOfMonth(upcomingMonths)
+																				.toDate()
+																		});
+																	}}
+																>
+																	Upcoming 3 months
+																</Button>
+															</VStack>
+														</VStack>
+													</Flex>
+												)}
+											/>
+										</WrapItem>
+										{search ? (
+											<WrapItem>
+												<FilterTag
+													label={renderTagLabel('search')}
+													defaultVariant='solid'
+													hasValue={true}
+													onClose={() => handleOnChipDelete('search')}
+												/>
+											</WrapItem>
+										) : null}
+										<WrapItem>
+											<Menu
+												button={({ isOpen }) => (
+													<FilterTag
+														label={renderTagLabel('sort')}
+														defaultVariant='solid'
+														isPopoverOpen={isOpen}
+													/>
+												)}
+												options={{
+													closeOnSelect: false,
+													groups: [
+														{
+															defaultValue: sort,
+															title: 'Sort',
+															type: 'radio',
+															onChange: value =>
+																handleOnFilterChange({
+																	queryString: 'sort',
+																	value
+																}),
+															items: constants.SORT_BY_VALUES.map(({ label, value }) => ({
+																label,
+																value
+															}))
+														},
+														{
+															defaultValue: order,
+															title: 'Order',
+															type: 'radio',
+															onChange: value =>
+																handleOnFilterChange({
+																	queryString: 'order',
+																	value
+																}),
+															items: constants.ORDER_BY_VALUES.map(
+																({ label, value }) => ({
+																	label,
+																	value
+																})
+															)
+														}
+													]
+												}}
+											/>
+										</WrapItem>
+										<WrapItem>
+											<DatePicker
+												selected={dateTo}
+												onCalendarOpen={() => handleOnCalendarChange('dateFrom')}
+												onCalendarClose={() => handleOnCalendarChange('dateFrom')}
+												customInput={
+													<FilterTag
+														label={renderTagLabel('dateFrom')}
+														hasValue={Boolean(dateFrom)}
+														isPopoverOpen={calendarStates.dateFrom}
+														onClose={() => handleOnChipDelete('dateFrom')}
+													/>
 												}
-											]}
-										/>
+												onChange={async date =>
+													handleOnFilterChange({
+														queryString: 'dateFrom',
+														value: date as Date
+													})
+												}
+											/>
+										</WrapItem>
+										<WrapItem>
+											<DatePicker
+												selected={dateTo}
+												onCalendarOpen={() => handleOnCalendarChange('dateTo')}
+												onCalendarClose={() => handleOnCalendarChange('dateTo')}
+												customInput={
+													<FilterTag
+														label={renderTagLabel('dateTo')}
+														hasValue={Boolean(dateTo)}
+														isPopoverOpen={calendarStates.dateTo}
+														onClose={() => handleOnChipDelete('dateTo')}
+													/>
+												}
+												onChange={async date =>
+													handleOnFilterChange({
+														queryString: 'dateTo',
+														value: date as Date
+													})
+												}
+											/>
+										</WrapItem>
+										<WrapItem>
+											<DatePicker
+												selected={activityDate}
+												onCalendarOpen={() => handleOnCalendarChange('activityDate')}
+												onCalendarClose={() => handleOnCalendarChange('activityDate')}
+												customInput={
+													<FilterTag
+														label={renderTagLabel('activityDate')}
+														hasValue={Boolean(activityDate)}
+														isPopoverOpen={calendarStates.activityDate}
+														onClose={() => handleOnChipDelete('activityDate')}
+													/>
+												}
+												onChange={async date =>
+													handleOnFilterChange({
+														queryString: 'activityDate',
+														value: date as Date
+													})
+												}
+											/>
+										</WrapItem>
+										<WrapItem>
+											<Menu
+												button={({ isOpen }) => (
+													<FilterTag
+														label={renderTagLabel('activityType')}
+														hasValue={Boolean(activityType)}
+														isPopoverOpen={isOpen}
+														onClose={() => handleOnChipDelete('activityType')}
+													/>
+												)}
+												options={{
+													items:
+														activityTypesData?.activityTypes.map(({ name, type }) => ({
+															label: name,
+															value: type,
+															isSelected: activityType === type,
+															Icon: activityTypeIconMapping.find(
+																activity => activity.type === type
+															)?.icon,
+															onClick: value =>
+																handleOnFilterChange({
+																	queryString: 'activityType',
+																	value
+																})
+														})) ?? []
+												}}
+											/>
+										</WrapItem>
+										<WrapItem>
+											<Menu
+												button={({ isOpen }) => (
+													<FilterTag
+														label={renderTagLabel('transportationType')}
+														hasValue={Boolean(transportationType)}
+														isPopoverOpen={isOpen}
+														onClose={() => handleOnChipDelete('transportationType')}
+													/>
+												)}
+												options={{
+													items:
+														transportationTypesData?.transportationTypes.map(
+															({ name, type }) => ({
+																label: name,
+																value: type,
+																isSelected: transportationType === type,
+																Icon: transportationTypeIconMapping.find(
+																	transportation => transportation.type === type
+																)?.icon,
+																onClick: value =>
+																	handleOnFilterChange({
+																		queryString: 'transportationType',
+																		value
+																	})
+															})
+														) ?? []
+												}}
+											/>
+										</WrapItem>
+									</Wrap>
+									<Box>
+										<Tag
+											size='md'
+											borderRadius='full'
+											variant='solid'
+											colorScheme='red'
+											cursor='pointer'
+											onClick={handleOnClearFilters}
+											_hover={{
+												bgColor: 'red.600'
+											}}
+										>
+											<TagLabel>Clear filters</TagLabel>
+											<TagCloseButton />
+										</Tag>
 									</Box>
-									<Chip
-										className={errorChipContained}
-										clickable={true}
-										onClick={handleOnClearFilters}
-										deleteIcon={<ClearIcon className='white' />}
-										onDelete={handleOnClearFilters}
-										label='Clear filters'
-										size='small'
-									/>
-								</Box>
+								</Flex>
 							</>
 						)}
-					</Box>
-				</Box>
+					</VStack>
+				</Flex>
 			</Container>
 		</Box>
 	);

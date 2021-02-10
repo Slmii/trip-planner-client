@@ -1,17 +1,16 @@
 import { useApolloClient } from '@apollo/client';
-import Box from '@material-ui/core/Box';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
+import { Accordion, Box, Flex, Heading, VStack } from '@chakra-ui/react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import AccountTitle from '@components/account/account-title';
 import MarkAsRead from '@components/account/notifications/mark-as-read';
+import Notification from '@components/account/notifications/notification';
 import NotificationsSkeleton from '@components/account/notifications/skeleton';
 import Button from '@components/buttons/button';
-import Notification from '@components/common/header-notifications/notification';
+import InputSwitch from '@components/inputs/input-switch';
 import Pagination from '@components/pagination';
 import {
     NotificationFragment,
@@ -25,9 +24,9 @@ import {
     useNotificationsQuery
 } from '@generated/graphql';
 import { selectFilters } from '@lib/redux/filters';
-import { helpers } from '@lib/utils';
+import { url } from '@lib/utils';
 
-import { globalStyles } from '@styles/index';
+import spacing from '@theme/spacing';
 
 const Notifications = () => {
 	const apolloClient = useApolloClient();
@@ -35,7 +34,7 @@ const Notifications = () => {
 	const [showOnlyUnread, setShowOnlyUnread] = useState(false);
 
 	const { rows } = useSelector(selectFilters);
-	const { page } = helpers.getQueryStringFilters(router.query);
+	const { page } = url.getQueryStringFilters(router.query);
 
 	const [clear] = useClearNotificationMutation();
 	const [clearAll] = useClearAllNotificationsMutation();
@@ -51,8 +50,6 @@ const Notifications = () => {
 		}
 	});
 
-	const { buttonMr } = globalStyles();
-
 	const handleOnClearAll = () => {
 		clearAll({
 			update: cache => {
@@ -64,7 +61,7 @@ const Notifications = () => {
 					}
 				});
 			}
-		});
+		}).catch(err => console.log(err));
 	};
 
 	// TODO: make this a generic function because it now defined twice in header- and page notifications
@@ -91,7 +88,7 @@ const Notifications = () => {
 					}
 				});
 			}
-		});
+		}).catch(err => console.log(err));
 	};
 
 	const handleOnViewNotification = async (notificationId: number) => {
@@ -105,12 +102,12 @@ const Notifications = () => {
 			return;
 		}
 
-		const url = helpers.transformToNotificationRedirectUrl(notification.type, notification.uuid);
+		const redirectUrl = url.transformToNotificationRedirectUrl(notification.type, notification.uuid);
 
-		router.push(url);
+		router.push(redirectUrl);
 	};
 
-	const handleOnOpenNotification = async (notificationId: number) => {
+	const handleOnCollapseNotification = async (notificationId: number) => {
 		const notification = apolloClient.readFragment<NotificationFragment>({
 			id: `Notification:${notificationId}`,
 			fragment: NotificationFragmentDoc,
@@ -146,7 +143,7 @@ const Notifications = () => {
 			update: cache => {
 				cache.evict({ id: `Notification:${notificationId}` });
 			}
-		});
+		}).catch(err => console.log(err));
 	};
 
 	let body: JSX.Element;
@@ -156,53 +153,58 @@ const Notifications = () => {
 	} else if (data?.notifications.length) {
 		body = (
 			<>
-				<Box display='flex' flexDirection='column'>
-					{data.notifications.map(notification => (
-						<Notification
-							key={notification.id}
-							notification={notification}
-							isPage={true}
-							onOpen={handleOnOpenNotification}
-							onClear={handleOnClearNotification}
-							onView={handleOnViewNotification}
-						/>
-					))}
+				<Flex flexDirection='column'>
+					<Accordion defaultIndex={[]} allowMultiple>
+						{data.notifications.map(notification => (
+							<Notification
+								key={notification.id}
+								notification={notification}
+								isPage={true}
+								onCollapse={handleOnCollapseNotification}
+								onClear={handleOnClearNotification}
+								onView={handleOnViewNotification}
+							/>
+						))}
+					</Accordion>
 					<Pagination count={Math.ceil(data.notifications.length / Number(rows))} />
-				</Box>
+				</Flex>
 			</>
 		);
 	} else {
-		body = <>No notifications</>;
+		body = (
+			<Flex justifyContent='center'>
+				<VStack spacing={spacing.BODY_SPACING_LARGE} mt={10} align='center'>
+					<Box>
+						<Image src='/assets/illustrations/empty_inbox.svg' alt='Not found' width={500} height={250} />
+					</Box>
+					<Heading as='h2' textStyle='title'>
+						You have no (unread) notifications
+					</Heading>
+				</VStack>
+			</Flex>
+		);
 	}
 
 	return (
 		<>
-			<AccountTitle title='Notifications' />
-			<Box mb={1} display='flex' justifyContent='space-between' alignItems='center'>
-				<FormControlLabel
-					control={
-						<Switch
-							checked={showOnlyUnread}
-							onChange={() => setShowOnlyUnread(prevState => !prevState)}
-							name='showOnlyUnread'
-						/>
-					}
+			<AccountTitle heading='Notifications' suffix={`(${data?.notifications.length ?? 0} results)`} />
+			<Flex justifyContent='space-between' alignItems='center'>
+				<InputSwitch
+					name='unread'
+					checked={showOnlyUnread}
+					onChange={e => setShowOnlyUnread(e.target.checked)}
+					label='Show unread notifications'
 					labelPlacement='end'
-					label={<Typography variant='subtitle1'>Show unread notifications</Typography>}
 				/>
-				<Box display='flex' alignContent='center'>
-					<Button
-						color='inherit'
-						fullWidth={false}
-						variant='outlined'
-						className={buttonMr}
-						onClick={handleOnClearAll}
-					>
-						Clear all
-					</Button>
-					<MarkAsRead isPage={true} onMarkAllAsRead={handleOnMarkAllAsRead} />
-				</Box>
-			</Box>
+				{data?.notifications.length ? (
+					<Flex alignContent='center'>
+						<Button colorScheme='red' variant='ghost' onClick={handleOnClearAll}>
+							Clear all
+						</Button>
+						<MarkAsRead isPage={true} onMarkAllAsRead={handleOnMarkAllAsRead} />
+					</Flex>
+				) : null}
+			</Flex>
 			{body}
 		</>
 	);
