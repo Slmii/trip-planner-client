@@ -15,19 +15,21 @@ export default function FormInputField({
 	strengthMeter = false,
 	optional = false,
 	placeholder = '',
-	size = 'lg'
+	size = 'md',
+	onClick
 }: FormInputFieldProps) {
 	const [field, meta, _helpers] = useField(name);
-	const [passwordStrength, setPasswordStrength] = useState<string>('');
+	const [passwordStrength, setPasswordStrength] = useState<string | null>('');
 
 	useEffect(() => {
 		if (strengthMeter) {
-			setPasswordStrength((zxcvbn(meta.value).score + 1).toString());
+			setPasswordStrength(meta.value ? (zxcvbn(meta.value).score + 1).toString() : null);
 		}
 	}, [meta.value, strengthMeter]);
 
 	return (
 		<InputField
+			onClick={onClick}
 			field={field}
 			label={label}
 			type={type}

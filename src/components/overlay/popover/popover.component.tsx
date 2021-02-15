@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 
 import { PopoverProps } from '@components/overlay/popover';
-import Paper from '@components/paper';
 
 const Popover = ({ trigger, header, body, footer, width, placement = 'bottom' }: PopoverProps) => {
 	return (
@@ -23,11 +22,9 @@ const Popover = ({ trigger, header, body, footer, width, placement = 'bottom' }:
 					<Portal>
 						<PopoverContent>
 							{/* <PopoverArrow /> */}
-							<Paper>
-								{header && <PopoverHeader p={0}>{header({ isOpen, onClose })}</PopoverHeader>}
-								<PopoverBody p={0}>{body({ isOpen, onClose })}</PopoverBody>
-								{footer && <PopoverFooter p={0}>{footer({ isOpen, onClose })}</PopoverFooter>}
-							</Paper>
+							{header && <PopoverHeader p={0}>{header({ isOpen, onClose })}</PopoverHeader>}
+							<PopoverBody p={0}>{body({ isOpen, onClose })}</PopoverBody>
+							{footer && <PopoverFooter p={0}>{footer({ isOpen, onClose })}</PopoverFooter>}
 						</PopoverContent>
 					</Portal>
 				</>

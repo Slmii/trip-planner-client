@@ -11,7 +11,7 @@ const Favorites = () => {
 	const rows = useSelector(selectRows);
 
 	const queryStringFilters = url.getQueryStringFilters(router.query);
-	const queryVariables = url.apolloTripsQueryVariables({ ...queryStringFilters, rows });
+	const queryVariables = url.apolloTripsQueryVariables({ ...queryStringFilters, past: true, rows });
 
 	const { data, loading } = useMyFavoritesQuery({
 		variables: {

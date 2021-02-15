@@ -15,7 +15,7 @@ export interface InputFieldProps {
 	error?: string;
 	touched?: boolean;
 	strengthMeter?: boolean;
-	passwordStrength?: string;
+	passwordStrength?: string | null;
 	optional?: boolean;
 	autoFocus?: boolean;
 	placeholder?: string;
@@ -23,10 +23,11 @@ export interface InputFieldProps {
 	startAdornment?: JSX.Element;
 	endAdornment?: JSX.Element;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
 	onFocus?: (event: React.FocusEvent) => void;
 	onFocusOut?: (event: React.FocusEvent) => void;
 	onIconClick?: () => void;
 	onKeyDown?: (event: React.KeyboardEvent) => void;
 }
 
-export type InputFieldType = 'text' | 'number' | 'password';
+export type InputFieldType = 'text' | 'number' | 'password' | 'date';

@@ -1,6 +1,6 @@
 import '@lib/dayjs';
 import 'focus-visible/dist/focus-visible';
-import 'react-datepicker/dist/react-datepicker.css';
+import 'react-calendar/dist/Calendar.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useApolloClient } from '@apollo/client';
-import { Avatar, Box, Container, Spinner } from '@chakra-ui/react';
-import Link from 'next/link';
+import { Avatar, Box, Container, Link, Spinner } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -45,7 +45,7 @@ function Header() {
 			<Container maxW='container.xl'>
 				<Box display='flex' justifyContent='space-between' alignItems='center' px={6} py={2}>
 					<Box>
-						<Link href='/'>
+						<Link as={NextLink} href='/'>
 							<Box as='a' fontWeight='bold' color='white'>
 								Home
 							</Box>
@@ -53,14 +53,14 @@ function Header() {
 					</Box>
 					<Box display='flex' alignItems='center'>
 						<NavbarItem>
-							<Link href='/explore'>
+							<Link as={NextLink} href='/explore' passHref>
 								<Box as='a' fontWeight='bold' color='white'>
 									Explore community
 								</Box>
 							</Link>
 						</NavbarItem>
 						<NavbarItem>
-							<Link href='/planner'>
+							<Link as={NextLink} href='/planner' passHref>
 								<Box as='a' fontWeight='bold' color='white'>
 									Plan a trip
 								</Box>

@@ -47,6 +47,16 @@ const textStyles = {
 		fontWeight: 'light',
 		letterSpacing: 'wider',
 		textTransform: 'uppercase'
+	},
+	'helper-text-error': {
+		color: 'red.500',
+		mt: 4,
+		fontSize: 'sm'
+	},
+	'helper-text': {
+		color: 'gray.500',
+		mt: 4,
+		fontSize: 'sm'
 	}
 };
 

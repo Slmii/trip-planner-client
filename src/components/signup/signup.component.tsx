@@ -1,14 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, Input, Text, VStack } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import { Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+// import DatePicker from 'react-datepicker';
+import Calendar from 'react-calendar';
 
+import AccountTitle from '@components/account/account-title';
 import Button from '@components/buttons/button';
 import Alert from '@components/feedback/alert';
-import FormGroup from '@components/inputs/form-group';
 import FormInputField from '@components/inputs/form-input-field';
+import Popover from '@components/overlay/popover';
 import { SubmitState } from '@components/signin';
 import {
     MeDocument,
@@ -16,9 +20,37 @@ import {
     useEmailAddressByInvitationTokenQuery,
     useSignUpMutation
 } from '@generated/graphql';
+import { EU_DATE_FORMAT_SLASHES } from '@lib/constants';
+import { date } from '@lib/utils';
 import { signUpSchema } from '@lib/validations';
 
-import { Content } from '@styles/index';
+import { Content } from '@theme/shared.styled';
+import spacing from '@theme/spacing';
+
+const CustomDatePicker = (props: React.InputHTMLAttributes<HTMLInputElement>, _ref: React.Ref<HTMLInputElement>) => {
+	return (
+		<Input
+			focusBorderColor='primary.500'
+			errorBorderColor='red.500'
+			_hover={{
+				borderColor: 'black'
+			}}
+			value={
+				props.value
+					? date.formatDate({
+							date: dayjs(props.value as string),
+							format: EU_DATE_FORMAT_SLASHES
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  })
+					: ''
+			}
+			isReadOnly={true}
+			name='dateOfBirth'
+			onClick={props.onClick}
+			size='lg'
+		/>
+	);
+};
 
 export default function SignIn() {
 	const router = useRouter();
@@ -41,12 +73,13 @@ export default function SignIn() {
 					email: data?.getEmailAddressByInvitationToken ?? '',
 					firstName: '',
 					lastName: '',
+					dateOfBirth: '',
 					password: '',
 					confirmPassword: ''
 				}}
 				enableReinitialize={true}
 				validationSchema={signUpSchema}
-				onSubmit={async (values, _actions) => {
+				onSubmit={async values => {
 					setSubmitState(prevState => ({
 						formError: prevState.formError,
 						isSubmitted: true
@@ -93,40 +126,71 @@ export default function SignIn() {
 					}
 				}}
 			>
-				{props => (
+				{({ values, setFieldValue, handleSubmit }) => (
 					<Box width='100%'>
-						<Form className='w-100' onSubmit={props.handleSubmit}>
-							<Box textAlign='center' mb='20px'>
-								<Heading as='h1' size='md'>
-									Sign Up for an account
-								</Heading>
+						<Form onSubmit={handleSubmit}>
+							<Box textAlign='center' mb={5}>
+								<AccountTitle heading='Sign up' />
 								{submitState.formError && (
 									<Box mt={5}>
 										<Alert status='error' error={submitState.formError} />
 									</Box>
 								)}
 							</Box>
-							<FormGroup>
-								<FormInputField name='email' label='Email address' />
-							</FormGroup>
-							<FormGroup>
+							<VStack align='stretch' spacing={spacing.BODY_SPACING}>
 								<FormInputField name='firstName' label='First name' />
-							</FormGroup>
-							<FormGroup>
 								<FormInputField name='lastName' label='Last name' />
-							</FormGroup>
-							<FormGroup>
+								<FormInputField name='email' label='Email address' />
+								<Popover
+									trigger={() => (
+										<FormInputField name='dateOfBirth' label='Date of birth' isReadOnly={true} />
+									)}
+									body={({ onClose }) => (
+										<Calendar
+											value={values.dateOfBirth ? dayjs(values.dateOfBirth).toDate() : undefined}
+											onChange={value => {
+												onClose();
+												setFieldValue(
+													'dateOfBirth',
+													date.formatDate({
+														date: value as Date
+													})
+												);
+											}}
+										/>
+									)}
+									placement='bottom-start'
+								/>
+								{/* <Field name='dateOfBirth'>
+									{({
+										field, // { name, value, onChange, onBlur }
+										form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+										meta
+									}: FieldProps) => (
+										<FormControl id='dateOfBirth' isInvalid={meta.touched && Boolean(meta.error)}>
+											<FormLabel htmlFor='dateOfBirth'>Date of birth</FormLabel>
+											<DatePicker
+												selected={field.value}
+												onChange={(date, e) => setFieldValue('dateOfBirth', date as Date)}
+												customInput={React.createElement(React.forwardRef(CustomDatePicker))}
+												showYearDropdown
+												showMonthDropdown
+												showPopperArrow={false}
+											/>
+											
+											<FormErrorMessage>{meta.initialError}</FormErrorMessage>
+										</FormControl>
+									)}
+								</Field> */}
 								<FormInputField name='password' label='Password' type='password' strengthMeter={true} />
-							</FormGroup>
-							<FormGroup>
 								<FormInputField name='confirmPassword' label='Confirm password' type='password' />
-							</FormGroup>
+							</VStack>
 							<Box mt={5}>
 								<Button type='submit' size='lg' isFullWidth={true} colorScheme='primary'>
 									Sign Up
 								</Button>
 							</Box>
-							<Text textAlign='center' mt={12}>
+							<Text textAlign='center' mt={6}>
 								Already have an account?&nbsp;
 								<Text as={Link} href='/signin' passHref>
 									<Text as='a' fontWeight='bold' color='secondary.500'>

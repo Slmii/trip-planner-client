@@ -11,10 +11,6 @@ export const formatDate = ({
 	timezone?: string;
 	format?: string;
 }) => {
-	if (!date) {
-		return;
-	}
-
 	if (timezone) {
 		return dayjs(date).tz(timezone).format(format);
 	}
@@ -127,4 +123,34 @@ const dhm = (ms: number) => {
 		hours,
 		minutes
 	};
+};
+
+export const generateArrayOfYears = () => {
+	const max = dayjs().year();
+	const min = 1970;
+	const years = [];
+
+	for (let i = max; i >= min; i--) {
+		years.push(i);
+	}
+
+	return years;
+};
+
+export const getDifference = ({
+	comparisonDate,
+	initialDate,
+	unit = 'day',
+	withDecimals = false
+}: {
+	comparisonDate: Date | Dayjs;
+	initialDate?: Date | Dayjs;
+	unit?: OpUnitType;
+	withDecimals?: boolean;
+}) => {
+	if (initialDate) {
+		return dayjs(initialDate).diff(comparisonDate, unit, withDecimals);
+	}
+
+	return dayjs().diff(comparisonDate, unit, withDecimals);
 };

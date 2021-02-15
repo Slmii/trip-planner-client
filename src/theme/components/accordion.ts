@@ -4,6 +4,7 @@ const baseStyle = {
 	container: {
 		borderLeftWidth: 1,
 		borderRightWidth: 1,
+		borderWidth: '1px',
 		borderColor: 'border',
 		_last: {
 			borderBottomWidth: 0,

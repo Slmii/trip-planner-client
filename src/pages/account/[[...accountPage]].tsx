@@ -6,6 +6,7 @@ import AccountMenu, { constants } from '@components/account/account-menu';
 import AccountTitle from '@components/account/account-title';
 import Favorites from '@components/account/favorites';
 import Notifications from '@components/account/notifications';
+import Profile from '@components/account/profile';
 import Trips from '@components/account/trips';
 import Layout from '@components/common/layout';
 import Icon from '@components/icon';
@@ -18,7 +19,8 @@ import spacing from '@theme/spacing';
 const PAGE_COMPONENT: Record<string, JSX.Element> = {
 	trips: <Trips />,
 	favorites: <Favorites />,
-	notifications: <Notifications />
+	notifications: <Notifications />,
+	profile: <Profile />
 };
 
 function AccountPage() {

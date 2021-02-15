@@ -14,4 +14,5 @@ export interface FormInputFieldProps {
 	size?: Size;
 	startAdornment?: JSX.Element;
 	endAdornment?: JSX.Element;
+	onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
 }

@@ -17,6 +17,9 @@ const styles: Styles = {
 		'*:disabled': {
 			cursor: 'not-allowed !important'
 		},
+		// ':focus:not(:focus-visible):not([role="dialog"]):not([role="menu"])': {
+		// 	boxShadow: 'none !important'
+		// },
 		code: {
 			fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace"
 		},
@@ -76,7 +79,39 @@ const styles: Styles = {
 					}
 				}
 			}
+		},
+		'.react-calendar': {
+			fontFamily: 'unset'
 		}
+		// '.react-datepicker': {
+		// },
+		// '.react-datepicker-wrapper': {
+		// 	width: '100%'
+		// },
+		// '.react-datepicker__day--today': {
+		// 	color: 'primary.500',
+		// 	fontWeight: 'bold'
+		// },
+		// '.react-datepicker__day--selected, .react-datepicker__day--keyboard-selected, .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range, .react-datepicker__month-text--selected, .react-datepicker__month-text--in-selecting-range, .react-datepicker__month-text--in-range, .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected': {
+		// 	background: 'primary.500',
+		// 	color: 'white',
+		// 	'&:hover': {
+		// 		background: 'primary.600'
+		// 	}
+		// },
+		// '.react-datepicker__header': {
+		// 	background: 'primary.500',
+		// 	color: 'white'
+		// },
+		// '.react-datepicker__header, .react-datepicker__time-container': {
+		// 	borderColor: 'border'
+		// },
+		// '.react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header': {
+		// 	color: 'white'
+		// },
+		// '.react-datepicker__day-name': {
+		// 	color: 'white'
+		// }
 	})
 };
 
