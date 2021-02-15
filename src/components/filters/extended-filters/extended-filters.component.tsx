@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
+// TODO: change to react-calendar
 import DatePicker from 'react-datepicker';
 import { MdCancel, MdSearch } from 'react-icons/md';
 
@@ -27,7 +28,6 @@ import {
     QueryStringFilters
 } from '@components/filters/extended-filters';
 import FilterTag from '@components/filters/filter-tag';
-import InputField from '@components/inputs/input-field';
 import InputSwitch from '@components/inputs/input-switch';
 import Menu from '@components/overlay/menu';
 import Popover from '@components/overlay/popover';

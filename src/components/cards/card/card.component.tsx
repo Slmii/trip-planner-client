@@ -57,7 +57,7 @@ const Card = ({
 					<Box width='360px'>
 						<Box
 							as={NextImage}
-							alt={trip.user?.name ?? ''}
+							alt={trip.name}
 							src={trip.backgroundUrl}
 							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 							// @ts-ignore

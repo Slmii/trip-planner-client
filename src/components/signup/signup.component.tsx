@@ -5,7 +5,6 @@ import { Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-// import DatePicker from 'react-datepicker';
 import Calendar from 'react-calendar';
 
 import AccountTitle from '@components/account/account-title';
@@ -26,31 +25,6 @@ import { signUpSchema } from '@lib/validations';
 
 import { Content } from '@theme/shared.styled';
 import spacing from '@theme/spacing';
-
-const CustomDatePicker = (props: React.InputHTMLAttributes<HTMLInputElement>, _ref: React.Ref<HTMLInputElement>) => {
-	return (
-		<Input
-			focusBorderColor='primary.500'
-			errorBorderColor='red.500'
-			_hover={{
-				borderColor: 'black'
-			}}
-			value={
-				props.value
-					? date.formatDate({
-							date: dayjs(props.value as string),
-							format: EU_DATE_FORMAT_SLASHES
-							// eslint-disable-next-line no-mixed-spaces-and-tabs
-					  })
-					: ''
-			}
-			isReadOnly={true}
-			name='dateOfBirth'
-			onClick={props.onClick}
-			size='lg'
-		/>
-	);
-};
 
 export default function SignIn() {
 	const router = useRouter();
@@ -161,27 +135,6 @@ export default function SignIn() {
 									)}
 									placement='bottom-start'
 								/>
-								{/* <Field name='dateOfBirth'>
-									{({
-										field, // { name, value, onChange, onBlur }
-										form: { touched, errors, setFieldValue }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-										meta
-									}: FieldProps) => (
-										<FormControl id='dateOfBirth' isInvalid={meta.touched && Boolean(meta.error)}>
-											<FormLabel htmlFor='dateOfBirth'>Date of birth</FormLabel>
-											<DatePicker
-												selected={field.value}
-												onChange={(date, e) => setFieldValue('dateOfBirth', date as Date)}
-												customInput={React.createElement(React.forwardRef(CustomDatePicker))}
-												showYearDropdown
-												showMonthDropdown
-												showPopperArrow={false}
-											/>
-											
-											<FormErrorMessage>{meta.initialError}</FormErrorMessage>
-										</FormControl>
-									)}
-								</Field> */}
 								<FormInputField name='password' label='Password' type='password' strengthMeter={true} />
 								<FormInputField name='confirmPassword' label='Confirm password' type='password' />
 							</VStack>
